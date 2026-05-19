@@ -14,6 +14,8 @@ import { TransactionCreateComponent } from './components/personal-finance/transa
 import { AnalysisViewComponent } from './components/personal-finance/analysis-view/analysis-view.component';
 import { PredictionViewComponent } from './components/personal-finance/prediction-view/prediction-view.component';
 import { SimulationViewComponent } from './components/personal-finance/simulation-view/simulation-view.component';
+import { BusinessListComponent } from './components/business-finance/business-list/business-list.component';
+import { ApprovalListComponent } from './components/business-finance/approval-list/approval-list.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -34,6 +36,8 @@ export const routes: Routes = [
       { path: 'transactions/analysis', component: AnalysisViewComponent },
       { path: 'transactions/prediction', component: PredictionViewComponent },
       { path: 'transactions/simulation', component: SimulationViewComponent },
+      { path: 'business', component: BusinessListComponent },
+      { path: 'business/approvals', component: ApprovalListComponent },
       // Aquí agregaremos más rutas autenticadas en futuras fases
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

@@ -1,0 +1,66 @@
+<div class="container-fluid py-2">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold m-0">Finanzas Empresariales</h2>
+    <a routerLink="/business/approvals" class="btn btn-outline-warning">
+      <i class="bi bi-shield-check me-1"></i> Aprobaciones Pendientes
+    </a>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <div *ngIf="isLoading" class="text-center p-5">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+
+      <div *ngIf="!isLoading && transactions.length === 0" class="text-center p-5 text-muted">
+        <i class="bi bi-briefcase fs-1"></i>
+        <p class="mt-2">No hay transacciones empresariales.</p>
+      </div>
+
+      <div class="table-responsive" *ngIf="!isLoading && transactions.length > 0">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>ID/Cliente</th>
+              <th>Tipo</th>
+              <th>Monto</th>
+              <th>Vencimiento</th>
+              <th>Estado</th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let txn of transactions">
+              <td class="fw-semibold">
+                {{ txn.clienteId }}
+                <div class="small text-muted">ID: {{ txn.id }}</div>
+              </td>
+              <td><span class="badge bg-secondary">{{ txn.tipo }}</span></td>
+              <td class="fw-bold text-dark">${{ txn.monto }}</td>
+              <td>{{ txn.fechaVencimiento | date:'shortDate' }}</td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'bg-secondary': txn.estado === 'borrador',
+                  'bg-warning': txn.estado === 'pendiente',
+                  'bg-success': txn.estado === 'aprobada' || txn.estado === 'contabilizada',
+                  'bg-danger': txn.estado === 'rechazada'
+                }">{{ txn.estado }}</span>
+              </td>
+              <td class="text-end pe-4">
+                <button *ngIf="txn.estado === 'borrador' || txn.estado === 'rechazada'" class="btn btn-sm btn-outline-primary me-2" (click)="submitForApproval(txn.id)" title="Enviar a Aprobación">
+                  <i class="bi bi-send"></i>
+                </button>
+                <button *ngIf="txn.estado === 'aprobada'" class="btn btn-sm btn-outline-success me-2" (click)="postTransaction(txn.id)" title="Contabilizar">
+                  <i class="bi bi-journal-check"></i>
+                </button>
+                <button *ngIf="txn.estado === 'borrador'" class="btn btn-sm btn-outline-danger" (click)="deleteTransaction(txn.id)" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
