@@ -4,6 +4,9 @@ import { RegisterComponent } from './components/auth/register/register.component
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { authGuard } from './guards/auth.guard';
 import { DashboardComponent } from './components/dashboard/main/dashboard.component';
+import { AccountListComponent } from './components/accounts/account-list/account-list.component';
+import { AccountCreateComponent } from './components/accounts/account-create/account-create.component';
+import { AccountEditComponent } from './components/accounts/account-edit/account-edit.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -14,6 +17,9 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'accounts', component: AccountListComponent },
+      { path: 'accounts/create', component: AccountCreateComponent },
+      { path: 'accounts/:id/edit', component: AccountEditComponent },
       // Aquí agregaremos más rutas autenticadas en futuras fases
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
