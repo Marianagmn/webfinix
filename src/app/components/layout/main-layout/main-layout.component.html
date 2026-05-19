@@ -1,0 +1,11 @@
+<div class="d-flex flex-column min-vh-100">
+  <app-navbar></app-navbar>
+  
+  <div class="d-flex flex-grow-1">
+    <app-sidebar class="d-none d-md-block"></app-sidebar>
+    
+    <main class="flex-grow-1 p-4 bg-light overflow-auto" style="height: calc(100vh - 56px);">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
