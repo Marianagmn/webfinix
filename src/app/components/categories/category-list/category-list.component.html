@@ -1,0 +1,56 @@
+<div class="container-fluid py-2">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold m-0">Mis Categorías</h2>
+    <button class="btn btn-primary" routerLink="/categories/create">
+      <i class="bi bi-plus-circle me-1"></i> Nueva Categoría
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="mb-4">
+    <div class="btn-group" role="group">
+      <input type="radio" class="btn-check" name="catfilter" id="btnall" [checked]="currentFilter === 'all'" (click)="applyFilter('all')">
+      <label class="btn btn-outline-primary" for="btnall">Todas</label>
+
+      <input type="radio" class="btn-check" name="catfilter" id="btnincome" [checked]="currentFilter === 'income'" (click)="applyFilter('income')">
+      <label class="btn btn-outline-success" for="btnincome">Ingresos</label>
+
+      <input type="radio" class="btn-check" name="catfilter" id="btnexpense" [checked]="currentFilter === 'expense'" (click)="applyFilter('expense')">
+      <label class="btn btn-outline-danger" for="btnexpense">Gastos</label>
+      
+      <input type="radio" class="btn-check" name="catfilter" id="btntransfer" [checked]="currentFilter === 'transfer'" (click)="applyFilter('transfer')">
+      <label class="btn btn-outline-secondary" for="btntransfer">Transferencias</label>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center p-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <div *ngIf="!isLoading && filteredCategories.length === 0" class="text-center p-5 text-muted bg-white rounded shadow-sm border-0">
+    <i class="bi bi-tags fs-1"></i>
+    <p class="mt-2">No hay categorías para mostrar en este filtro.</p>
+  </div>
+
+  <div class="row g-3" *ngIf="!isLoading && filteredCategories.length > 0">
+    <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let cat of filteredCategories">
+      <div class="card shadow-sm border-0 h-100 position-relative overflow-hidden">
+        <div class="position-absolute top-0 start-0 h-100" [style.width]="'4px'" [style.backgroundColor]="cat.color || '#ccc'"></div>
+        <div class="card-body ms-2 d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle p-2 d-flex justify-content-center align-items-center" [style.backgroundColor]="(cat.color || '#ccc') + '33'" [style.color]="cat.color || '#333'" style="width: 45px; height: 45px;">
+              <i class="bi bi-{{cat.icono || 'tag'}} fs-4"></i>
+            </div>
+            <div class="ms-3">
+              <h6 class="mb-0 fw-bold">{{ cat.nombre }}</h6>
+              <small class="text-muted text-capitalize">{{ cat.tipo }}</small>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-light text-danger" (click)="deleteCategory(cat.id)" title="Eliminar">
+            <i class="bi bi-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
