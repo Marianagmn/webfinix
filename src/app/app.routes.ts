@@ -9,6 +9,11 @@ import { AccountCreateComponent } from './components/accounts/account-create/acc
 import { AccountEditComponent } from './components/accounts/account-edit/account-edit.component';
 import { CategoryListComponent } from './components/categories/category-list/category-list.component';
 import { CategoryCreateComponent } from './components/categories/category-create/category-create.component';
+import { TransactionListComponent } from './components/personal-finance/transaction-list/transaction-list.component';
+import { TransactionCreateComponent } from './components/personal-finance/transaction-create/transaction-create.component';
+import { AnalysisViewComponent } from './components/personal-finance/analysis-view/analysis-view.component';
+import { PredictionViewComponent } from './components/personal-finance/prediction-view/prediction-view.component';
+import { SimulationViewComponent } from './components/personal-finance/simulation-view/simulation-view.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -24,6 +29,11 @@ export const routes: Routes = [
       { path: 'accounts/:id/edit', component: AccountEditComponent },
       { path: 'categories', component: CategoryListComponent },
       { path: 'categories/create', component: CategoryCreateComponent },
+      { path: 'transactions', component: TransactionListComponent },
+      { path: 'transactions/create', component: TransactionCreateComponent },
+      { path: 'transactions/analysis', component: AnalysisViewComponent },
+      { path: 'transactions/prediction', component: PredictionViewComponent },
+      { path: 'transactions/simulation', component: SimulationViewComponent },
       // Aquí agregaremos más rutas autenticadas en futuras fases
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
