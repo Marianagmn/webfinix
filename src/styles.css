@@ -1,1 +1,72 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --primary-color: #4f46e5; /* Indigo */
+  --primary-hover: #4338ca;
+  --secondary-color: #64748b; /* Slate */
+  --success-color: #10b981; /* Emerald */
+  --error-color: #ef4444; /* Red */
+  --warning-color: #f59e0b; /* Amber */
+  --background-light: #f8fafc;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+}
+
+body {
+  background-color: var(--background-light);
+  color: var(--text-main);
+  font-family: 'Inter', 'Roboto', 'Helvetica Neue', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* Utilitarias Flexbox */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Espaciado adicional */
+.mt-6 { margin-top: 1.5rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.p-6 { padding: 1.5rem; }
+
+/* Custom Bootstrap Overrides */
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  background-color: var(--card-bg);
+}
+
+.card-header {
+  background-color: transparent;
+  border-bottom: 1px solid var(--border-color);
+}
