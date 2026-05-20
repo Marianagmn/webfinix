@@ -1,49 +1,50 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User as UserModel, ApiResponse } from '../models/user.model';
+import { environment } from '../../environments/environment';
+import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
+import { User, UpdateProfileDto, ChangePasswordDto } from '../models/user.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = '/api/users';
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/users`;
 
-  constructor(private http: HttpClient) { }
-
-  getMe(): Observable<ApiResponse<UserModel>> {
-    return this.http.get<ApiResponse<UserModel>>(`${this.apiUrl}/me`);
+  me(): Observable<ApiResponse<User>> {
+    return this.http.get<ApiResponse<User>>(`${this.base}/me`);
   }
 
-  updateMe(data: Partial<UserModel>): Observable<ApiResponse<UserModel>> {
-    return this.http.patch<ApiResponse<UserModel>>(`${this.apiUrl}/me`, data);
+  updateMe(dto: UpdateProfileDto): Observable<ApiResponse<User>> {
+    return this.http.patch<ApiResponse<User>>(`${this.base}/me`, dto);
   }
 
-  changePassword(data: { currentPassword: string; newPassword: string; passwordConfirm: string }): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/me/password`, data);
+  changePassword(dto: ChangePasswordDto): Observable<ApiResponse<null>> {
+    return this.http.patch<ApiResponse<null>>(`${this.base}/me/password`, dto);
   }
 
-  deleteMe(): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/me`);
+  deleteMe(): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(`${this.base}/me`);
   }
 
-  listUsers(): Observable<ApiResponse<UserModel[]>> {
-    return this.http.get<ApiResponse<UserModel[]>>(this.apiUrl);
+  list(params?: Record<string, any>): Observable<PaginatedResponse<User[]>> {
+    let httpParams = new HttpParams();
+    if (params) Object.entries(params).forEach(([k, v]) => (httpParams = httpParams.set(k, String(v))));
+    return this.http.get<PaginatedResponse<User[]>>(this.base, { params: httpParams });
   }
 
-  getUserById(id: string): Observable<ApiResponse<UserModel>> {
-    return this.http.get<ApiResponse<UserModel>>(`${this.apiUrl}/${id}`);
+  getById(id: string): Observable<ApiResponse<User>> {
+    return this.http.get<ApiResponse<User>>(`${this.base}/${id}`);
   }
 
-  updateUser(id: string, data: Partial<UserModel>): Observable<ApiResponse<UserModel>> {
-    return this.http.patch<ApiResponse<UserModel>>(`${this.apiUrl}/${id}`, data);
+  updateUser(id: string, dto: Partial<User>): Observable<ApiResponse<User>> {
+    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}`, dto);
   }
 
-  setUserStatus(id: string, isActive: boolean): Observable<ApiResponse<UserModel>> {
-    return this.http.patch<ApiResponse<UserModel>>(`${this.apiUrl}/${id}/status`, { isActive });
+  setStatus(id: string, isActive: boolean): Observable<ApiResponse<User>> {
+    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}/status`, { isActive });
   }
 
-  deleteUser(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  remove(id: string): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(`${this.base}/${id}`);
   }
 }
