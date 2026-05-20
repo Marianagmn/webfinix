@@ -1,0 +1,21 @@
+import { Routes } from '@angular/router';
+import { publicGuard } from '../../core/guards/public.guard';
+
+export const AUTH_ROUTES: Routes = [
+  {
+    path: '',
+    children: [
+      {
+        path: 'login',
+        loadComponent: () => import('../../components/auth/login/login.ts').then(m => m.Login),
+        canActivate: [publicGuard],
+      },
+      {
+        path: 'register',
+        loadComponent: () => import('../../components/auth/register/register.ts').then(m => m.Register),
+        canActivate: [publicGuard],
+      },
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+    ],
+  },
+];
