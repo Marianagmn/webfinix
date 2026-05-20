@@ -1,3 +1,5 @@
+import { ApiResponse } from './transaction.model';
+
 export interface User {
   id: string;
   name: string;
@@ -9,3 +11,5 @@ export interface User {
   lastLoginAt: string;
   createdAt: string;
 }
+
+export { ApiResponse };

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
-import { LoginRequest, LoginResponse, RegisterRequest, RefreshTokenRequest } from '../models/auth.model';
+import { LoginRequest, RegisterRequest, LoginResponse, RefreshTokenRequest } from '../models/auth.model';
 import { User } from '../models/user.model';
 
 @Injectable({
@@ -10,29 +10,42 @@ import { User } from '../models/user.model';
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = '/api/auth';
-  
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
+  currentUser$ = this.currentUserSubject.asObservable();
+
+  constructor() {
+    this.loadUserFromStorage();
+  }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        this.saveToken(response.accessToken, response.refreshToken);
-        this.currentUserSubject.next(response.user);
+        if (response.success && response.data) {
+          this.saveTokens(response.data.accessToken, response.data.refreshToken);
+          this.currentUserSubject.next(response.data.user);
+        }
       })
     );
   }
 
   register(data: RegisterRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data);
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data).pipe(
+      tap(response => {
+        if (response.success && response.data) {
+          this.saveTokens(response.data.accessToken, response.data.refreshToken);
+          this.currentUserSubject.next(response.data.user);
+        }
+      })
+    );
   }
 
-  refreshToken(token: string): Observable<LoginResponse> {
-    const data: RefreshTokenRequest = { refreshToken: token };
-    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, data).pipe(
+  refreshToken(refreshToken: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
       tap(response => {
-        this.saveToken(response.accessToken, response.refreshToken);
-        if(response.user) this.currentUserSubject.next(response.user);
+        if (response.success && response.data) {
+          this.saveTokens(response.data.accessToken, response.data.refreshToken);
+          this.currentUserSubject.next(response.data.user);
+        }
       })
     );
   }
@@ -40,33 +53,65 @@ export class AuthService {
   logout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
       tap(() => {
-        this.removeToken();
+        this.clearTokens();
         this.currentUserSubject.next(null);
       })
     );
   }
 
-  getProfile(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/me`).pipe(
-      tap(user => this.currentUserSubject.next(user))
+  getProfile(): Observable<{ success: boolean; data: User }> {
+    return this.http.get<{ success: boolean; data: User }>(`${this.apiUrl}/me`).pipe(
+      tap(response => {
+        if (response.success && response.data) {
+          this.currentUserSubject.next(response.data);
+        }
+      })
     );
   }
 
-  saveToken(accessToken: string, refreshToken: string): void {
-    localStorage.setItem('access_token', accessToken);
-    localStorage.setItem('refresh_token', refreshToken);
+  private saveTokens(accessToken: string, refreshToken: string): void {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('access_token');
+  getAccessToken(): string | null {
+    return localStorage.getItem('accessToken');
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem('refresh_token');
+    return localStorage.getItem('refreshToken');
+  }
+
+  getToken(): string | null {
+    return this.getAccessToken();
+  }
+
+  private clearTokens(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   }
 
   removeToken(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
+    this.clearTokens();
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getAccessToken();
+  }
+
+  private loadUserFromStorage(): void {
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.currentUserSubject.next(user);
+      } catch (e) {
+        this.clearTokens();
+      }
+    }
+  }
+
+  private saveUser(user: User): void {
+    localStorage.setItem('currentUser', JSON.stringify(user));
   }
 }

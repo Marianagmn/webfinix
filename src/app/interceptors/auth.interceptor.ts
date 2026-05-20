@@ -1,37 +1,84 @@
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { Injectable } from '@angular/core';
+import {
+  HttpRequest,
+  HttpHandler,
+  HttpEvent,
+  HttpInterceptor,
+  HttpErrorResponse
+} from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
-import { ToastrService } from 'ngx-toastr';
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const router = inject(Router);
-  const toastr = inject(ToastrService);
-  
-  const token = authService.getToken();
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+  private isRefreshing = false;
 
-  let modifiedReq = req;
-  
-  if (token && !req.url.includes('/auth/login') && !req.url.includes('/auth/register')) {
-    modifiedReq = req.clone({
-      headers: req.headers.set('Authorization', `Bearer ${token}`)
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  intercept(
+    request: HttpRequest<unknown>,
+    next: HttpHandler
+  ): Observable<HttpEvent<unknown>> {
+    if (request.url.includes('/api/auth')) {
+      return next.handle(request);
+    }
+
+    const token = this.authService.getAccessToken();
+
+    if (token) {
+      request = this.addToken(request, token);
+    }
+
+    return next.handle(request).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401 && !request.url.includes('/refresh')) {
+          return this.handle401Error(request, next);
+        }
+        return throwError(() => error);
+      })
+    );
+  }
+
+  private addToken(request: HttpRequest<unknown>, token: string): HttpRequest<unknown> {
+    return request.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
     });
   }
 
-  return next(modifiedReq).pipe(
-    catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) {
-        authService.removeToken();
-        router.navigate(['/login']);
-        toastr.error('Tu sesión ha expirado, por favor ingresa de nuevo.', 'No autorizado');
-      } else if (error.status === 403) {
-        toastr.warning('No tienes permisos suficientes para realizar esta acción.', 'Acceso denegado');
-      } else if (error.status === 500) {
-        toastr.error('Ocurrió un error en el servidor.', 'Error');
+  private handle401Error(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    if (!this.isRefreshing) {
+      this.isRefreshing = true;
+
+      const refreshToken = this.authService.getRefreshToken();
+
+      if (refreshToken) {
+        return this.authService.refreshToken(refreshToken).pipe(
+          switchMap(() => {
+            this.isRefreshing = false;
+            const newToken = this.authService.getAccessToken();
+            return next.handle(this.addToken(request, newToken!));
+          }),
+          catchError((error) => {
+            this.isRefreshing = false;
+            this.authService.logout();
+            this.router.navigate(['/login']);
+            return throwError(() => error);
+          })
+        );
+      } else {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+        return throwError(() => new Error('No refresh token available'));
       }
-      return throwError(() => error);
-    })
-  );
-};
+    }
+
+    return next.handle(request);
+  }
+}

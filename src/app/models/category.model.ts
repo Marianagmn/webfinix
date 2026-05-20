@@ -1,3 +1,5 @@
+import { ApiResponse } from './transaction.model';
+
 export type CategoryType = 'income' | 'expense' | 'transfer';
 
 export interface Category {
@@ -17,3 +19,14 @@ export interface CreateCategoryDTO {
 }
 
 export interface UpdateCategoryDTO extends Partial<CreateCategoryDTO> {}
+
+export interface CreateCategoryRequest {
+  nombre: string;
+  tipo: CategoryType;
+  color: string;
+  icono: string;
+}
+
+export interface UpdateCategoryRequest extends Partial<CreateCategoryRequest> {}
+
+export { ApiResponse };

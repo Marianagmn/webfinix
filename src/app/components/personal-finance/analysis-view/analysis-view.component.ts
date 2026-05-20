@@ -2,12 +2,11 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
-import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
   selector: 'app-analysis-view',
   standalone: true,
-  imports: [CommonModule, RouterLink, BaseChartDirective],
+  imports: [CommonModule, RouterLink],
   template: `
     <div class="container-fluid py-2">
       <div class="d-flex align-items-center mb-4">
