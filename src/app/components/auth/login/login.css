@@ -1,0 +1,27 @@
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: radial-gradient(circle at top, rgba(26,115,232,0.12), transparent 35%), var(--finix-bg);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  border-radius: var(--finix-radius-lg);
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
+}
+
+.auth-card .form-control {
+  border-radius: 0.75rem;
+}
+
+.auth-card .btn-primary {
+  border-radius: 0.75rem;
+}
+
+.auth-card .form-text {
+  font-size: 0.9rem;
+}

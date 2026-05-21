@@ -1,1 +1,63 @@
-<p>register works!</p>
+<div class="auth-wrapper">
+  <div class="auth-card card p-4 p-md-5">
+    <div class="mb-4 text-center">
+      <h1 class="h4 mb-2">Crear cuenta</h1>
+      <p class="text-muted mb-0">Regístrate para empezar a administrar tus finanzas.</p>
+    </div>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="mb-3">
+        <label for="name" class="form-label">Nombre completo</label>
+        <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre completo" />
+        @if (registerForm.controls.name.touched && registerForm.controls.name.invalid) {
+          <div class="form-text text-danger">El nombre es obligatorio.</div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label for="email" class="form-label">Correo electrónico</label>
+        <input id="email" type="email" class="form-control" formControlName="email" placeholder="usuario@finix.com" />
+        @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
+          <div class="form-text text-danger">
+            @if (registerForm.controls.email.errors?.required) {El correo es obligatorio.}
+            @if (registerForm.controls.email.errors?.email) {Ingresa un correo válido.}
+          </div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label for="password" class="form-label">Contraseña</label>
+        <input id="password" type="password" class="form-control" formControlName="password" placeholder="••••••••" />
+        @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
+          <div class="form-text text-danger">
+            @if (registerForm.controls.password.errors?.required) {La contraseña es obligatoria.}
+            @if (registerForm.controls.password.errors?.minlength) {La contraseña debe tener al menos 6 caracteres.}
+          </div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label for="passwordConfirm" class="form-label">Confirmar contraseña</label>
+        <input id="passwordConfirm" type="password" class="form-control" formControlName="passwordConfirm" placeholder="••••••••" />
+        @if (registerForm.controls.passwordConfirm.touched && registerForm.controls.passwordConfirm.invalid) {
+          <div class="form-text text-danger">
+            @if (registerForm.controls.passwordConfirm.errors?.required) {La confirmación de contraseña es obligatoria.}
+            @if (registerForm.controls.passwordConfirm.errors?.minlength) {La contraseña debe tener al menos 6 caracteres.}
+          </div>
+        }
+        @if (registerForm.errors?.passwordMismatch && registerForm.touched) {
+          <div class="form-text text-danger">Las contraseñas no coinciden.</div>
+        }
+      </div>
+
+      <button class="btn btn-primary w-100" type="submit" [disabled]="loading()">
+        @if (loading()) {Registrando...} @else {Crear cuenta}
+      </button>
+    </form>
+
+    <div class="mt-4 text-center text-muted">
+      ¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a>
+    </div>
+  </div>
+</div>
+
