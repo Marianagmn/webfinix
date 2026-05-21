@@ -1,0 +1,23 @@
+.spinner-wrapper {
+  display: grid;
+  place-items: center;
+  min-height: 100px;
+}
+
+.spinner-wrapper.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.spinner {
+  border: 0.35rem solid rgba(31, 41, 55, 0.12);
+  border-top-color: var(--finix-primary);
+  border-radius: 50%;
+  animation: spinner-rotate 0.8s linear infinite;
+}
+
+@keyframes spinner-rotate {
+  to { transform: rotate(360deg); }
+}

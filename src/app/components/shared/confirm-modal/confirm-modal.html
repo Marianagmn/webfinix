@@ -1,1 +1,16 @@
-<p>confirm-modal works!</p>
+<div class="modal-backdrop">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3>{{ title }}</h3>
+      <button type="button" class="close-btn" (click)="onCancel()">×</button>
+    </div>
+    <div class="modal-body">
+      <p>{{ description }}</p>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">{{ cancelText }}</button>
+      <button type="button" class="btn btn-primary" (click)="onConfirm()">{{ confirmText }}</button>
+    </div>
+  </div>
+</div>
+

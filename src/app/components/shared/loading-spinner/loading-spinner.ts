@@ -1,9 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-loading-spinner',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './loading-spinner.html',
-  styleUrl: './loading-spinner.css',
+  styleUrls: ['./loading-spinner.css'],
 })
-export class LoadingSpinner {}
+export class LoadingSpinnerComponent {
+  readonly size = input<number>(2);
+  readonly fullscreen = input<boolean>(false);
+  readonly loading = signal(true);
+}
+
