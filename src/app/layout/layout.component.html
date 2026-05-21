@@ -1,0 +1,63 @@
+<div class="layout-wrapper" [class.sidebar-collapsed]="!sidebarOpen()">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a class="sidebar-brand" routerLink="/dashboard">
+        <i class="bi bi-currency-dollar"></i>
+        <span>Finix</span>
+      </a>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-speedometer2"></i>
+        Dashboard
+      </a>
+      <a routerLink="/accounts" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-wallet2"></i>
+        Cuentas
+      </a>
+      <a routerLink="/categories" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-tags"></i>
+        Categorías
+      </a>
+      <a routerLink="/personal-finance" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-graph-up"></i>
+        Finanzas personales
+      </a>
+      <a routerLink="/business-finance" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-building"></i>
+        Finanzas de negocio
+      </a>
+      <span class="nav-section-label">Cuenta</span>
+      <a routerLink="/user/profile" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-person-circle"></i>
+        Perfil
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn btn-outline-secondary btn-logout" type="button" (click)="logout()">
+        <i class="bi bi-box-arrow-right"></i>
+        Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <button class="btn btn-ghost btn-toggle-sidebar" type="button" (click)="toggleSidebar()" aria-label="Alternar menú lateral">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="user-info">
+        @if (authStore.user()) {
+          <span class="user-name">{{ authStore.user()?.name }}</span>
+          <span class="user-role">{{ authStore.user()?.role }}</span>
+        }
+      </div>
+    </header>
+
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
