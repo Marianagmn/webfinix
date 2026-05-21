@@ -1,18 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { PersonalFinance, CreatePersonalFinanceRequest, UpdatePersonalFinanceRequest, ApiResponse } from '../models/transaction.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonalFinanceService {
+  private readonly http = inject(HttpClient);
   private apiUrl = '/api/personal-finance';
 
-  constructor(private http: HttpClient) { }
-
-  getTransactions(): Observable<ApiResponse<PersonalFinance[]>> {
-    return this.http.get<ApiResponse<PersonalFinance[]>>(this.apiUrl);
+  getTransactions(): Observable<PersonalFinance[]> {
+    return this.http.get<ApiResponse<PersonalFinance[]>>(this.apiUrl).pipe(
+      map(response => response.data)
+    );
   }
 
   getTransactionById(id: string): Observable<ApiResponse<PersonalFinance>> {

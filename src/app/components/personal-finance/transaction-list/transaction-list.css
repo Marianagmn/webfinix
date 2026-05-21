@@ -1,0 +1,96 @@
+:host {
+  display: block;
+  gap: 1.5rem;
+}
+
+.page-header,
+.toolbar,
+.transaction-table {
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.section-label {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--finix-primary);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.section-copy {
+  margin: 0.5rem 0 0;
+  color: var(--finix-text-muted);
+}
+
+.toolbar {
+  display: grid;
+}
+
+.transaction-table {
+  overflow: hidden;
+}
+
+.loading-panel,
+.empty-state {
+  display: grid;
+  place-items: center;
+  min-height: 220px;
+  text-align: center;
+  gap: 1rem;
+}
+
+.empty-state h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.badge-type {
+  text-transform: capitalize;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.badge-state {
+  background: var(--finix-bg-dark);
+  color: var(--finix-text);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.badge-income {
+  background: rgba(52, 168, 83, 0.12);
+  color: var(--finix-success);
+}
+
+.badge-expense {
+  background: rgba(234, 67, 53, 0.12);
+  color: var(--finix-danger);
+}
+
+.badge-transfer {
+  background: rgba(66, 133, 244, 0.12);
+  color: var(--finix-info);
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f4f7fb;
+}

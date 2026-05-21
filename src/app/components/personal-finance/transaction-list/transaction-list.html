@@ -1,1 +1,76 @@
-<p>transaction-list works!</p>
+<section class="page-header">
+  <div>
+    <p class="section-label">Finanzas personales</p>
+    <h1>Transacciones</h1>
+    <p class="section-copy">Visualiza y gestiona tus gastos, ingresos y transferencias recientes.</p>
+  </div>
+  <a routerLink="create" class="btn btn-primary">Nueva transacción</a>
+</section>
+
+<section class="toolbar card shadow-sm">
+  <div class="input-group input-group-lg">
+    <span class="input-group-text"><i class="bi bi-search"></i></span>
+    <input
+      type="search"
+      class="form-control"
+      placeholder="Buscar descripción, tipo o cuenta"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="filterTransactions()"
+    />
+  </div>
+</section>
+
+<section class="transaction-table card shadow-sm">
+  @if (isLoading()) {
+    <div class="loading-panel">
+      <app-loading-spinner [size]="3"></app-loading-spinner>
+    </div>
+  } @else {
+    @if (filteredTransactions().length === 0) {
+      <div class="empty-state">
+        <h2>No hay transacciones registradas</h2>
+        <p>Agrega tu primera transacción o ajusta los filtros para ver resultados.</p>
+        <a routerLink="create" class="btn btn-outline-primary">Agregar transacción</a>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Fecha</th>
+              <th>Descripción</th>
+              <th>Tipo</th>
+              <th>Cuenta</th>
+              <th class="text-end">Monto</th>
+              <th>Estado</th>
+              <th class="text-end">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (transaction of filteredTransactions(); track transaction.id) {
+              <tr>
+                <td>{{ transaction.date | date:'shortDate' }}</td>
+                <td>{{ transaction.description || '—' }}</td>
+                <td>
+                  <span class="badge badge-type badge-{{ transaction.type }}">
+                    {{ transaction.type }}</span>
+                </td>
+                <td>{{ transaction.accountId || 'Sin cuenta' }}</td>
+                <td class="text-end">{{ formatAmount(transaction.amount) }}</td>
+                <td>
+                  <span class="badge badge-state">{{ transaction.isRecurring ? 'Recurrente' : 'Normal' }}</span>
+                </td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteTransaction(transaction.id)">
+                    <i class="bi bi-trash"></i> Eliminar
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>
+
