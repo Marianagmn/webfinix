@@ -1,12 +1,19 @@
-import { Component, signal } from '@angular/core';
+// src/app/app.ts — D-05: llama authStore.init() al arrancar para restaurar usuario tras F5
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { AuthStore } from './store/auth.store';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
-export class App {
-  protected readonly title = signal('webfinix');
+export class App implements OnInit {
+  private readonly authStore = inject(AuthStore);
+
+  ngOnInit(): void {
+    // M-02/D-05: restaurar usuario desde /auth/me al cargar la app
+    this.authStore.init();
+  }
 }

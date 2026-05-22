@@ -1,1 +1,146 @@
-<p>transaction-create works!</p>
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+
+      <!-- Header -->
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <a routerLink="/personal-finance" class="btn btn-outline-secondary btn-sm">
+          ← Volver
+        </a>
+        <h2 class="h4 mb-0 fw-semibold">Nueva Transacción</h2>
+      </div>
+
+      <!-- Form Card -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <!-- Tipo -->
+            <div class="mb-3">
+              <label class="form-label fw-medium">Tipo <span class="text-danger">*</span></label>
+              <div class="d-flex gap-2">
+                @for (t of tipos; track t) {
+                  <button type="button"
+                    [class]="'btn flex-fill ' + (tipoValue === t ? 'btn-primary' : 'btn-outline-secondary')"
+                    (click)="form.get('tipo')?.setValue(t)">
+                    {{ t | titlecase }}
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <!-- Monto -->
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Monto <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <select class="input-group-text border-end-0 bg-white" formControlName="moneda" style="max-width:90px">
+                    <option value="COP">COP</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                  </select>
+                  <input type="number" class="form-control" formControlName="monto"
+                    placeholder="0.00" step="0.01" min="0.01"
+                    [class.is-invalid]="form.get('monto')?.invalid && form.get('monto')?.touched">
+                  <div class="invalid-feedback">El monto es requerido y debe ser mayor a 0.</div>
+                </div>
+              </div>
+
+              <!-- Fecha -->
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Fecha <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" formControlName="fecha"
+                  [class.is-invalid]="form.get('fecha')?.invalid && form.get('fecha')?.touched">
+                <div class="invalid-feedback">La fecha es requerida.</div>
+              </div>
+
+              <!-- Categoría -->
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Categoría <span class="text-danger">*</span></label>
+                <select class="form-select" formControlName="categoriaId"
+                  [class.is-invalid]="form.get('categoriaId')?.invalid && form.get('categoriaId')?.touched">
+                  <option value="">Seleccionar categoría…</option>
+                  @for (cat of categories(); track cat.id) {
+                    <option [value]="cat.id">{{ cat.nombre }}</option>
+                  }
+                </select>
+                <div class="invalid-feedback">La categoría es requerida.</div>
+              </div>
+
+              <!-- Método de pago -->
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Método de pago</label>
+                <select class="form-select" formControlName="metodoPago">
+                  @for (m of metodosPago; track m) {
+                    <option [value]="m">{{ m | titlecase }}</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Cuenta Origen -->
+              <div class="col-md-6">
+                <label class="form-label fw-medium">
+                  {{ tipoValue === 'transferencia' ? 'Cuenta Origen' : 'Cuenta' }}
+                </label>
+                <select class="form-select" formControlName="cuentaOrigenId">
+                  <option value="">Sin cuenta</option>
+                  @for (acc of accounts(); track acc.id) {
+                    <option [value]="acc.id">{{ acc.nombre }} ({{ acc.moneda }})</option>
+                  }
+                </select>
+              </div>
+
+              <!-- Cuenta Destino (solo transferencia) -->
+              @if (tipoValue === 'transferencia') {
+                <div class="col-md-6">
+                  <label class="form-label fw-medium">Cuenta Destino</label>
+                  <select class="form-select" formControlName="cuentaDestinoId">
+                    <option value="">Sin cuenta</option>
+                    @for (acc of accounts(); track acc.id) {
+                      <option [value]="acc.id">{{ acc.nombre }} ({{ acc.moneda }})</option>
+                    }
+                  </select>
+                </div>
+              }
+
+              <!-- Descripción -->
+              <div class="col-12">
+                <label class="form-label fw-medium">Descripción</label>
+                <textarea class="form-control" formControlName="descripcion"
+                  rows="2" placeholder="Descripción opcional…"></textarea>
+              </div>
+
+              <!-- Tags -->
+              <div class="col-12">
+                <label class="form-label fw-medium">Tags</label>
+                <input type="text" class="form-control" formControlName="tags"
+                  placeholder="Ej: comida, transporte (separados por coma)">
+                <div class="form-text">Separa los tags con comas.</div>
+              </div>
+
+              <!-- Es ahorro -->
+              <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="esAhorro" formControlName="esAhorro">
+                  <label class="form-check-label" for="esAhorro">Marcar como ahorro</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+              <a routerLink="/personal-finance" class="btn btn-outline-secondary">Cancelar</a>
+              <button type="submit" class="btn btn-primary" [disabled]="loading()">
+                @if (loading()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                }
+                Crear Transacción
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

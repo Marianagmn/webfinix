@@ -1,11 +1,11 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { map } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
-import { PersonalFinance } from '../../../models/transaction.model';
+import { PersonalFinance } from '../../../models/personal-finance.model';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.ts';
 
 @Component({
@@ -18,10 +18,14 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
 export class TransactionList implements OnInit {
   private readonly financeService = inject(PersonalFinanceService);
   private readonly toastr = inject(ToastrService);
+  // M-04: DestroyRef para takeUntilDestroyed y evitar memory leaks
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly transactions = signal<PersonalFinance[]>([]);
   readonly filteredTransactions = signal<PersonalFinance[]>([]);
   readonly isLoading = signal(false);
+  // B-02: estado para modal de confirmación en lugar de confirm() nativo
+  readonly confirmDeleteId = signal<string | null>(null);
   searchTerm = '';
 
   ngOnInit() {
@@ -30,63 +34,93 @@ export class TransactionList implements OnInit {
 
   loadTransactions() {
     this.isLoading.set(true);
-    this.financeService.getTransactions().subscribe({
-      next: (data) => {
-        this.transactions.set(data);
-        this.filteredTransactions.set(data);
-        this.isLoading.set(false);
-      },
-      error: () => {
-        this.toastr.error('No se pudieron cargar las transacciones.');
-        this.filteredTransactions.set([]);
-        this.isLoading.set(false);
-      },
-    });
+    // M-04: takeUntilDestroyed evita memory leaks
+    this.financeService
+      .getTransactions()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          // C-04: la respuesta ya es PaginatedResponse<PersonalFinance[]>, datos en .data
+          const data = res.data ?? [];
+          this.transactions.set(data);
+          this.filteredTransactions.set(data);
+          this.isLoading.set(false);
+        },
+        error: () => {
+          this.toastr.error('No se pudieron cargar las transacciones.');
+          this.filteredTransactions.set([]);
+          this.isLoading.set(false);
+        },
+      });
   }
 
   filterTransactions() {
     const term = this.searchTerm.trim().toLowerCase();
-
     if (!term) {
       this.filteredTransactions.set(this.transactions());
       return;
     }
-
+    // A-02: filtrar por campos REALES del backend (descripcion, tipo, fecha)
     this.filteredTransactions.set(
-      this.transactions().filter((transaction) => {
-        return [
-          transaction.description,
-          transaction.type,
-          transaction.accountId,
-        ]
+      this.transactions().filter((t) =>
+        [t.descripcion, t.tipo, t.fecha]
           .filter(Boolean)
-          .some((value) => value!.toString().toLowerCase().includes(term));
-      })
+          .some((v) => v!.toString().toLowerCase().includes(term))
+      )
     );
   }
 
-  deleteTransaction(id: string) {
-    if (!confirm('¿Eliminar esta transacción?')) {
-      return;
-    }
-
-    this.financeService.deleteTransaction(id).subscribe({
-      next: () => {
-        this.toastr.success('Transacción eliminada');
-        this.loadTransactions();
-      },
-      error: () => {
-        this.toastr.error('No se pudo eliminar la transacción.');
-      },
-    });
+  // B-02: abrir modal de confirmación en lugar de confirm() nativo
+  requestDelete(id: string) {
+    this.confirmDeleteId.set(id);
   }
 
-  formatAmount(amount: number) {
+  cancelDelete() {
+    this.confirmDeleteId.set(null);
+  }
+
+  confirmDelete() {
+    const id = this.confirmDeleteId();
+    if (!id) return;
+    this.confirmDeleteId.set(null);
+
+    this.financeService
+      .deleteTransaction(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toastr.success('Transacción eliminada');
+          this.loadTransactions();
+        },
+        error: () => {
+          this.toastr.error('No se pudo eliminar la transacción.');
+        },
+      });
+  }
+
+  formatAmount(amount: number, moneda = 'COP') {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
-      currency: 'COP',
+      currency: moneda,
       maximumFractionDigits: 0,
     }).format(amount);
   }
-}
 
+  tipoColor(tipo: string): string {
+    const map: Record<string, string> = {
+      ingreso: 'success',
+      gasto: 'danger',
+      transferencia: 'info',
+    };
+    return map[tipo] ?? 'secondary';
+  }
+
+  tipoIcon(tipo: string): string {
+    const map: Record<string, string> = {
+      ingreso: '↑',
+      gasto: '↓',
+      transferencia: '⇄',
+    };
+    return map[tipo] ?? '•';
+  }
+}

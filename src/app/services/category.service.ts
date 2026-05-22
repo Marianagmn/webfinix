@@ -1,37 +1,36 @@
-import { Injectable } from '@angular/core';
+// src/app/services/category.service.ts — C-02: usa environment + modelos correctos
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Category, CreateCategoryRequest, UpdateCategoryRequest, ApiResponse } from '../models/category.model';
+import { environment } from '../../environments/environment';
+import { ApiResponse } from '../models/api-response.model';
+import { Category, CreateCategoryDto, UpdateCategoryDto, CategoryTipo } from '../models/category.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class CategoryService {
-  private apiUrl = '/api/categories';
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/categories`;
 
-  constructor(private http: HttpClient) { }
-
-  getCategories(tipo?: string): Observable<ApiResponse<Category[]>> {
+  getCategories(tipo?: CategoryTipo): Observable<ApiResponse<Category[]>> {
     let params = new HttpParams();
-    if (tipo) {
-      params = params.set('tipo', tipo);
-    }
-    return this.http.get<ApiResponse<Category[]>>(this.apiUrl, { params });
+    if (tipo) params = params.set('tipo', tipo);
+    return this.http.get<ApiResponse<Category[]>>(this.base, { params });
   }
 
   getCategoryById(id: string): Observable<ApiResponse<Category>> {
-    return this.http.get<ApiResponse<Category>>(`${this.apiUrl}/${id}`);
+    return this.http.get<ApiResponse<Category>>(`${this.base}/${id}`);
   }
 
-  createCategory(data: CreateCategoryRequest): Observable<ApiResponse<Category>> {
-    return this.http.post<ApiResponse<Category>>(this.apiUrl, data);
+  createCategory(dto: CreateCategoryDto): Observable<ApiResponse<Category>> {
+    return this.http.post<ApiResponse<Category>>(this.base, dto);
   }
 
-  updateCategory(id: string, data: UpdateCategoryRequest): Observable<ApiResponse<Category>> {
-    return this.http.put<ApiResponse<Category>>(`${this.apiUrl}/${id}`, data);
+  // M-05: backend usa PUT para actualizar categorías
+  updateCategory(id: string, dto: UpdateCategoryDto): Observable<ApiResponse<Category>> {
+    return this.http.put<ApiResponse<Category>>(`${this.base}/${id}`, dto);
   }
 
-  deleteCategory(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  deleteCategory(id: string): Observable<ApiResponse<null>> {
+    return this.http.delete<ApiResponse<null>>(`${this.base}/${id}`);
   }
 }

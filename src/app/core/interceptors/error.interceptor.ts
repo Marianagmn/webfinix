@@ -1,24 +1,19 @@
+// src/app/core/interceptors/error.interceptor.ts — M-03: ya no redirige al login en 401 sin intentar refresh
+// El authInterceptor maneja el refresh; este interceptor solo loguea errores no-401
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { catchError, throwError } from 'rxjs';
-import { AuthStore } from '../../store/auth.store';
+import { ToastrService } from 'ngx-toastr';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-  const router = inject(Router);
   const toastr = inject(ToastrService);
-  const authStore = inject(AuthStore);
 
   return next(req).pipe(
     catchError((err: unknown) => {
-      if (err instanceof HttpErrorResponse) {
-        if (err.status === 401) {
-          authStore.clear();
-          router.navigate(['/login']);
-          toastr.error('Sesión expirada. Por favor inicia sesión nuevamente.');
-        } else if (err.status >= 400 && err.status < 500) {
-          const msg = err.error?.message || 'Ocurrió un error en la petición.';
+      // authInterceptor ya maneja 401 — aquí solo cubrimos casos no manejados
+      if (err instanceof HttpErrorResponse && err.status !== 401) {
+        if (err.status >= 400 && err.status < 500) {
+          const msg = (err.error as any)?.message || 'Error en la petición.';
           toastr.error(msg);
         } else if (err.status >= 500) {
           toastr.error('Error del servidor. Intenta más tarde.');

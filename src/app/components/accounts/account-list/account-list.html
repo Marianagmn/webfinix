@@ -1,1 +1,88 @@
-<p>account-list works!</p>
+<div class="container-fluid py-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="h4 mb-0 fw-semibold">Mis Cuentas</h2>
+    <a routerLink="create" class="btn btn-primary">+ Nueva Cuenta</a>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando…</span>
+      </div>
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!isLoading() && accounts().length === 0) {
+    <div class="card border-0 shadow-sm text-center py-5">
+      <div class="card-body">
+        <div class="fs-1 mb-3">🏦</div>
+        <h5 class="text-muted">No tienes cuentas aún</h5>
+        <p class="text-muted small">Crea tu primera cuenta para comenzar a registrar transacciones.</p>
+        <a routerLink="create" class="btn btn-primary">Crear cuenta</a>
+      </div>
+    </div>
+  }
+
+  <!-- Accounts grid -->
+  @if (!isLoading() && accounts().length > 0) {
+    <div class="row g-3">
+      @for (account of accounts(); track account.id) {
+        <div class="col-12 col-md-6 col-xl-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <span class="fs-3">{{ tipoIcon(account.tipo) }}</span>
+                </div>
+                <span class="badge" [class]="account.isActive ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                  {{ account.isActive ? 'Activa' : 'Inactiva' }}
+                </span>
+              </div>
+              <h5 class="fw-semibold mb-1">{{ account.nombre }}</h5>
+              <p class="text-muted small text-capitalize mb-2">{{ account.tipo }}</p>
+              <p class="fs-5 fw-bold mb-3">{{ formatBalance(account.balance, account.moneda) }}</p>
+              @if (account.descripcion) {
+                <p class="text-muted small mb-3">{{ account.descripcion }}</p>
+              }
+              <div class="d-flex gap-2">
+                <a [routerLink]="[account.id, 'edit']" class="btn btn-outline-primary btn-sm flex-fill">Editar</a>
+                <button class="btn btn-outline-danger btn-sm flex-fill" (click)="requestDelete(account.id)">Eliminar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Balance total -->
+    <div class="card border-0 shadow-sm mt-4 bg-primary text-white">
+      <div class="card-body d-flex justify-content-between align-items-center p-3">
+        <span class="fw-medium">Balance total (COP activas)</span>
+        <span class="fs-5 fw-bold">
+          {{ formatBalance(accounts().filter(a => a.isActive && a.moneda === 'COP').reduce((s, a) => s + a.balance, 0), 'COP') }}
+        </span>
+      </div>
+    </div>
+  }
+
+  <!-- Confirm delete modal -->
+  @if (confirmDeleteId()) {
+    <div class="modal d-block" tabindex="-1" style="background:rgba(0,0,0,0.5)">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title">¿Eliminar cuenta?</h5>
+          </div>
+          <div class="modal-body text-muted small">Esta acción no se puede deshacer.</div>
+          <div class="modal-footer border-0 gap-2">
+            <button class="btn btn-outline-secondary btn-sm" (click)="cancelDelete()">Cancelar</button>
+            <button class="btn btn-danger btn-sm" (click)="confirmDelete()">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

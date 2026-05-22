@@ -1,44 +1,79 @@
-// src/app/models/business-finance.model.ts
+// src/app/models/business-finance.model.ts — alineado con backend Finix (C-03)
+import { ApiResponse } from './api-response.model';
 
-export type BusinessTransactionType =
+export type BusinessTransactionTipo =
   | 'ingreso'
   | 'gasto'
-  | 'transferencia'
-  | 'factura'
+  | 'factura_venta'
+  | 'factura_compra'
+  | 'nota_credito'
+  | 'nota_debito'
   | 'anticipo'
   | 'devolucion';
 
-export type BusinessTransactionStatus =
+export type BusinessTransactionEstado =
   | 'borrador'
-  | 'pendiente_aprobacion'
-  | 'aprobado'
-  | 'pagado'
-  | 'revertido'
-  | 'anulado'
-  | 'en_disputa';
+  | 'pendiente'
+  | 'aprobada'
+  | 'contabilizada'
+  | 'rechazada';
+
+export interface Vencimiento {
+  fechaVencimiento?: string | null;
+  diasVencimiento?: number | null;
+}
+
+export interface Impuesto {
+  nombre: string;
+  tasa: number;
+  monto: number;
+}
+
+export interface Pago {
+  monto: number;
+  fecha: string;
+  metodoPago: string;
+  referencia?: string;
+}
 
 export interface BusinessTransaction {
   id: string;
-  tipo: BusinessTransactionType;
+  tipo: BusinessTransactionTipo;
   numero?: string | null;
-  tercero?: string | null;
+  terceroId?: string | null;   // backend usa terceroId, no clienteId
   monto: number;
-  moneda?: string;
+  moneda: string;
   fecha?: string;
   descripcion?: string | null;
-  status: BusinessTransactionStatus;
+  estado: BusinessTransactionEstado;
+  vencimiento?: Vencimiento | null;
+  impuestos?: Impuesto[];
+  pagos?: Pago[];
+  tags?: string[];
   createdAt: string;
   updatedAt?: string;
 }
 
 export interface CreateBusinessTransactionDto {
-  tipo: BusinessTransactionType;
+  tipo: BusinessTransactionTipo;
   numero?: string;
-  tercero?: string;
+  terceroId?: string;
   monto: number;
   moneda?: string;
   descripcion?: string;
   fecha?: string;
+  vencimiento?: Vencimiento;
+  impuestos?: Impuesto[];
+  tags?: string[];
 }
 
 export type UpdateBusinessTransactionDto = Partial<CreateBusinessTransactionDto>;
+
+export interface ApplyPaymentDto {
+  monto: number;
+  fecha?: string;
+  metodoPago: string;
+  referencia?: string;
+}
+
+export { ApiResponse };

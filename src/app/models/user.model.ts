@@ -1,13 +1,15 @@
-// src/app/models/user.model.ts
+// src/app/models/user.model.ts — alineado con backend Finix
 export type UserRole = 'user' | 'admin' | 'superadmin' | 'aprobador' | 'contador';
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: UserRole;
-  avatarUrl?: string | null;
-  lastLogin?: string | null;
+  roles: UserRole[];       // ← array, no string único (corrección C-03)
+  provider: string;
+  isActive: boolean;
+  isEmailVerified: boolean;
+  lastLoginAt: string | null;
   createdAt: string;
   updatedAt?: string;
 }
@@ -22,18 +24,3 @@ export interface ChangePasswordDto {
   newPassword: string;
   newPasswordConfirm: string;
 }
-import { ApiResponse } from './transaction.model';
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  roles: string[];
-  provider: string;
-  isActive: boolean;
-  isEmailVerified: boolean;
-  lastLoginAt: string;
-  createdAt: string;
-}
-
-export { ApiResponse };

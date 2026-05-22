@@ -1,3 +1,4 @@
+// src/app/services/user.service.ts — A-05: renombrado a user.service.ts (desde user.ts)
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';

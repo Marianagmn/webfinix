@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthStore } from '../store/auth.store';
-import { AuthService } from '../services/auth';
+import { AuthService } from '../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({

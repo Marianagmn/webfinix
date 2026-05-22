@@ -1,4 +1,4 @@
-// src/app/models/account.model.ts
+// src/app/models/account.model.ts — unificado, sin duplicados (C-02 C-03)
 export type AccountType = 'efectivo' | 'ahorro' | 'corriente' | 'credito' | 'inversion';
 export type Currency = 'COP' | 'USD' | 'EUR';
 
@@ -9,8 +9,9 @@ export interface Account {
   moneda: Currency;
   balance: number;
   descripcion?: string | null;
+  isActive: boolean;
   createdAt: string;
-  updatedAt?: string;
+  updatedAt: string;
 }
 
 export interface CreateAccountDto {
@@ -22,25 +23,3 @@ export interface CreateAccountDto {
 }
 
 export type UpdateAccountDto = Partial<CreateAccountDto>;
-export type AccountType = 'efectivo' | 'ahorro' | 'corriente' | 'credito' | 'inversion';
-export type Currency = 'COP' | 'USD' | 'EUR';
-
-export interface Account {
-  id: string;
-  nombre: string;
-  tipo: AccountType;
-  moneda: Currency;
-  balance: number;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreateAccountDTO {
-  nombre: string;
-  tipo: AccountType;
-  moneda: Currency;
-  balance: number;
-}
-
-export interface UpdateAccountDTO extends Partial<CreateAccountDTO> {}
