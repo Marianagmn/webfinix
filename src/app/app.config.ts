@@ -6,7 +6,7 @@ import { provideToastr } from 'ngx-toastr';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { routes } from './app.routes';
-import { authInterceptor } from './interceptors/auth.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor.fn';
 
 export const appConfig: ApplicationConfig = {
   providers: [

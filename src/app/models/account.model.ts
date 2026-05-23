@@ -13,7 +13,7 @@ export interface Account {
   updatedAt: string;
 }
 
-export interface CreateAccountDTO {
+export interface CreateAccountDto {
   userId?: string; // Se puede inferir del token, opcional en el DTO
   nombre: string;
   tipo: AccountType;
@@ -21,4 +21,4 @@ export interface CreateAccountDTO {
   balance: number;
 }
 
-export interface UpdateAccountDTO extends Partial<CreateAccountDTO> {}
+export interface UpdateAccountDto extends Partial<CreateAccountDto> {}

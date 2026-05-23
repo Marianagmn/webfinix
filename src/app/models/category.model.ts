@@ -1,28 +1,28 @@
 import { ApiResponse } from './transaction.model';
 
-export type CategoryType = 'ingreso' | 'gasto' | 'transferencia'; // Cambiado a español para coincidir con backend
+export type CategoryTipo = 'ingreso' | 'gasto' | 'transferencia';
 
 export interface Category {
   id: string;
   nombre: string;
-  tipo: CategoryType;
+  tipo: CategoryTipo;
   color: string;
   icono: string;
   createdAt: string;
 }
 
-export interface CreateCategoryDTO {
+export interface CreateCategoryDto {
   nombre: string;
-  tipo: CategoryType;
+  tipo: CategoryTipo;
   color: string;
   icono: string;
 }
 
-export interface UpdateCategoryDTO extends Partial<CreateCategoryDTO> {}
+export interface UpdateCategoryDto extends Partial<CreateCategoryDto> {}
 
 export interface CreateCategoryRequest {
   nombre: string;
-  tipo: CategoryType;
+  tipo: CategoryTipo;
   color: string;
   icono: string;
 }

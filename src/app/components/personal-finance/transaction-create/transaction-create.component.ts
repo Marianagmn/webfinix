@@ -6,7 +6,7 @@ import { PersonalFinanceService } from '../../../services/personal-finance.servi
 import { CategoryService } from '../../../services/category.service';
 import { AccountService } from '../../../services/account.service';
 import { ToastrService } from 'ngx-toastr';
-import { Category, CategoryType } from '../../../models/category.model';
+import { Category, CategoryTipo } from '../../../models/category.model';
 import { Account } from '../../../models/account.model';
 
 @Component({
@@ -40,16 +40,16 @@ export class TransactionCreateComponent implements OnInit {
 
   ngOnInit() {
     this.accountService.getAccounts().subscribe(accs => this.accounts = accs);
-    this.loadCategories('expense');
+    this.loadCategories('gasto');
 
     this.txnForm.get('type')?.valueChanges.subscribe(type => {
-      this.loadCategories(type as CategoryType);
+      this.loadCategories(type as CategoryTipo);
       this.txnForm.patchValue({ categoryId: '' });
     });
   }
 
-  loadCategories(type: CategoryType) {
-    this.categoryService.getCategories(type).subscribe(cats => this.categories = cats);
+  loadCategories(type: CategoryTipo) {
+    this.categoryService.getCategories(type).subscribe(cats => this.categories = cats.data);
   }
 
   onSubmit() {

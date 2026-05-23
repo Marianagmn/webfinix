@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CategoryService } from '../../../services/category.service';
-import { Category, CategoryType } from '../../../models/category.model';
+import { Category, CategoryTipo } from '../../../models/category.model';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -18,7 +18,7 @@ export class CategoryListComponent implements OnInit {
   categories: Category[] = [];
   filteredCategories: Category[] = [];
   isLoading = true;
-  currentFilter: CategoryType | 'all' = 'all';
+  currentFilter: CategoryTipo | 'all' = 'all';
 
   ngOnInit() {
     this.loadCategories();
@@ -28,7 +28,7 @@ export class CategoryListComponent implements OnInit {
     this.isLoading = true;
     this.categoryService.getCategories().subscribe({
       next: (data) => {
-        this.categories = data;
+        this.categories = data.data;
         this.applyFilter(this.currentFilter);
         this.isLoading = false;
       },
@@ -39,7 +39,7 @@ export class CategoryListComponent implements OnInit {
     });
   }
 
-  applyFilter(type: CategoryType | 'all') {
+  applyFilter(type: CategoryTipo | 'all') {
     this.currentFilter = type;
     if (type === 'all') {
       this.filteredCategories = this.categories;

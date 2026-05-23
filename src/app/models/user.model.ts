@@ -12,4 +12,4 @@ export interface User {
   createdAt: string;
 }
 
-export { ApiResponse };
+export type { ApiResponse };

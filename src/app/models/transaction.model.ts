@@ -1,4 +1,4 @@
-import { CategoryType } from './category.model';
+import { CategoryTipo } from './category.model';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -8,16 +8,16 @@ export interface ApiResponse<T> {
 export interface PersonalFinance {
   id: string;
   userId: string;
-  tipo: CategoryType; // Cambiado de 'type' a 'tipo' para coincidir con backend
-  monto: number; // Cambiado de 'amount' a 'monto'
+  tipo: CategoryTipo;
+  monto: number;
   moneda: string;
   tasaCambio: number;
-  categoria: string; // Cambiado de 'categoryId' a 'categoria' (ObjectId en backend)
-  cuentaOrigenId: string; // Cambiado de 'accountId' a 'cuentaOrigenId'
+  categoria: string;
+  cuentaOrigenId: string;
   cuentaDestinoId: string;
   metodoPago: string;
   descripcion: string;
-  fecha: string; // Cambiado de 'date' a 'fecha'
+  fecha: string;
   estado: string;
   esAhorro: boolean;
   tags: string[];
@@ -25,8 +25,8 @@ export interface PersonalFinance {
   updatedAt: string;
 }
 
-export interface CreatePersonalFinanceDTO {
-  tipo: CategoryType;
+export interface CreatePersonalFinanceDto {
+  tipo: CategoryTipo;
   monto: number;
   moneda?: string;
   tasaCambio?: number;
@@ -41,10 +41,10 @@ export interface CreatePersonalFinanceDTO {
   tags?: string[];
 }
 
-export interface UpdatePersonalFinanceDTO extends Partial<CreatePersonalFinanceDTO> {}
+export interface UpdatePersonalFinanceDto extends Partial<CreatePersonalFinanceDto> {}
 
 export interface CreatePersonalFinanceRequest {
-  tipo: CategoryType;
+  tipo: CategoryTipo;
   monto: number;
   moneda?: string;
   tasaCambio?: number;
@@ -74,7 +74,7 @@ export interface BusinessFinance {
   createdAt: string;
 }
 
-export interface CreateBusinessFinanceRequest {
+export interface CreateBusinessFinanceDto {
   businessId: string; // Agregado para coincidir con backend
   tipo: 'cobrar' | 'pagar';
   monto: number;
@@ -82,14 +82,4 @@ export interface CreateBusinessFinanceRequest {
   fechaVencimiento: string;
 }
 
-export interface UpdateBusinessFinanceRequest extends Partial<CreateBusinessFinanceRequest> {}
-
-export interface CreateBusinessFinanceDTO {
-  businessId: string; // Agregado para coincidir con backend
-  tipo: 'cobrar' | 'pagar';
-  monto: number;
-  clienteId: string;
-  fechaVencimiento: string;
-}
-
-export interface UpdateBusinessFinanceDTO extends Partial<CreateBusinessFinanceDTO> {}
+export interface UpdateBusinessFinanceDto extends Partial<CreateBusinessFinanceDto> {}

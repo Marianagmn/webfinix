@@ -11,11 +11,14 @@ import { CategoryListComponent } from './components/categories/category-list/cat
 import { CategoryCreateComponent } from './components/categories/category-create/category-create.component';
 import { TransactionListComponent } from './components/personal-finance/transaction-list/transaction-list.component';
 import { TransactionCreateComponent } from './components/personal-finance/transaction-create/transaction-create.component';
+import { TransactionEdit } from './components/personal-finance/transaction-edit/transaction-edit';
 import { AnalysisViewComponent } from './components/personal-finance/analysis-view/analysis-view.component';
 import { PredictionViewComponent } from './components/personal-finance/prediction-view/prediction-view.component';
 import { SimulationViewComponent } from './components/personal-finance/simulation-view/simulation-view.component';
 import { BusinessListComponent } from './components/business-finance/business-list/business-list.component';
 import { ApprovalListComponent } from './components/business-finance/approval-list/approval-list.component';
+import { Profile } from './components/user/profile/profile';
+import { ChangePassword } from './components/user/change-password/change-password';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -26,6 +29,8 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'dashboard', component: DashboardComponent },
+      { path: 'profile', component: Profile },
+      { path: 'change-password', component: ChangePassword },
       { path: 'accounts', component: AccountListComponent },
       { path: 'accounts/create', component: AccountCreateComponent },
       { path: 'accounts/:id/edit', component: AccountEditComponent },
@@ -33,12 +38,12 @@ export const routes: Routes = [
       { path: 'categories/create', component: CategoryCreateComponent },
       { path: 'transactions', component: TransactionListComponent },
       { path: 'transactions/create', component: TransactionCreateComponent },
+      { path: 'transactions/:id/edit', component: TransactionEdit },
       { path: 'transactions/analysis', component: AnalysisViewComponent },
       { path: 'transactions/prediction', component: PredictionViewComponent },
       { path: 'transactions/simulation', component: SimulationViewComponent },
       { path: 'business', component: BusinessListComponent },
       { path: 'business/approvals', component: ApprovalListComponent },
-      // Aquí agregaremos más rutas autenticadas en futuras fases
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

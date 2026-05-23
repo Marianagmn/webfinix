@@ -1,66 +1,65 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BusinessFinance, CreateBusinessFinanceRequest, UpdateBusinessFinanceRequest, ApiResponse } from '../models/transaction.model';
+import { BusinessFinance, CreateBusinessFinanceDto, UpdateBusinessFinanceDto, ApiResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusinessFinanceService {
-  private apiUrl = `${environment.apiUrl}/business-finance`;
-
-  constructor(private http: HttpClient) { }
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/business-finance`;
 
   getTransactions(): Observable<ApiResponse<BusinessFinance[]>> {
-    return this.http.get<ApiResponse<BusinessFinance[]>>(this.apiUrl);
+    return this.http.get<ApiResponse<BusinessFinance[]>>(this.base);
   }
 
   getTransactionById(id: string): Observable<ApiResponse<BusinessFinance>> {
-    return this.http.get<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}`);
+    return this.http.get<ApiResponse<BusinessFinance>>(`${this.base}/${id}`);
   }
 
-  createTransaction(data: CreateBusinessFinanceRequest): Observable<ApiResponse<BusinessFinance>> {
-    return this.http.post<ApiResponse<BusinessFinance>>(this.apiUrl, data);
+  createTransaction(data: CreateBusinessFinanceDto): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(this.base, data);
   }
 
-  updateTransaction(id: string, data: UpdateBusinessFinanceRequest): Observable<ApiResponse<BusinessFinance>> {
-    return this.http.put<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}`, data);
+  updateTransaction(id: string, data: UpdateBusinessFinanceDto): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.put<ApiResponse<BusinessFinance>>(`${this.base}/${id}`, data);
   }
 
   deleteTransaction(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+    return this.http.delete(`${this.base}/${id}`);
   }
 
   submitForApproval(id: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/submit`, {});
+    return this.http.post(`${this.base}/${id}/submit`, {});
   }
 
   approve(id: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/approve`, {});
+    return this.http.post(`${this.base}/${id}/approve`, {});
   }
 
   reject(id: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/reject`, {});
+    return this.http.post(`${this.base}/${id}/reject`, {});
   }
 
   post(id: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/post`, {});
+    return this.http.post(`${this.base}/${id}/post`, {});
   }
 
   reverse(id: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/reverse`, {});
+    return this.http.post(`${this.base}/${id}/reverse`, {});
   }
 
   applyPayment(id: string, paymentData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/payments`, paymentData);
+    return this.http.post(`${this.base}/${id}/payments`, paymentData);
   }
 
   getPendingApprovals(): Observable<ApiResponse<BusinessFinance[]>> {
-    return this.http.get<ApiResponse<BusinessFinance[]>>(`${this.apiUrl}/approvals/pending`);
+    return this.http.get<ApiResponse<BusinessFinance[]>>(`${this.base}/approvals/pending`);
   }
 
   getOverdue(tipo: 'cobrar' | 'pagar'): Observable<ApiResponse<BusinessFinance[]>> {
-    return this.http.get<ApiResponse<BusinessFinance[]>>(`${this.apiUrl}/overdue/${tipo}`);
+    return this.http.get<ApiResponse<BusinessFinance[]>>(`${this.base}/overdue/${tipo}`);
   }
 }
