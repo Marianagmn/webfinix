@@ -4,6 +4,7 @@ export type Currency = 'COP' | 'USD' | 'EUR';
 
 export interface Account {
   id: string;
+  userId: string;
   nombre: string;
   tipo: AccountType;
   moneda: Currency;
@@ -14,7 +15,8 @@ export interface Account {
   updatedAt: string;
 }
 
-export interface CreateAccountDto {
+export interface CreateAccountDTO {
+  userId?: string; // Se puede inferir del token, opcional en el DTO
   nombre: string;
   tipo: AccountType;
   moneda: Currency;

@@ -2,18 +2,17 @@
 // usa environment.apiUrl, AuthStore, withCredentials via interceptor
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { LoginRequest, RegisterRequest, LoginResponse, RefreshTokenRequest } from '../models/auth.model';
+import { User } from '../models/user.model';
 import { environment } from '../../environments/environment';
-import { AuthStore } from '../store/auth.store';
-import { ApiResponse } from '../models/api-response.model';
-import { LoginDto, RegisterDto, AuthResponse } from '../models/auth.model';
-import { User, UpdateProfileDto, ChangePasswordDto } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly http = inject(HttpClient);
-  private readonly authStore = inject(AuthStore);
-  private readonly base = `${environment.apiUrl}/auth`;
+  private http = inject(HttpClient);
+  private apiUrl = `${environment.apiUrl}/auth`;
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
 
   login(dto: LoginDto): Observable<ApiResponse<AuthResponse>> {
     return this.http.post<ApiResponse<AuthResponse>>(`${this.base}/login`, dto).pipe(

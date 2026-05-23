@@ -29,9 +29,9 @@ export class TransactionListComponent implements OnInit {
   loadTransactions() {
     this.isLoading = true;
     this.financeService.getTransactions().subscribe({
-      next: (data) => {
-        this.transactions = data;
-        this.filteredTransactions = data;
+      next: (response) => {
+        this.transactions = response.data;
+        this.filteredTransactions = response.data;
         this.isLoading = false;
       },
       error: () => {
@@ -47,8 +47,8 @@ export class TransactionListComponent implements OnInit {
     } else {
       const term = this.searchTerm.toLowerCase();
       this.filteredTransactions = this.transactions.filter(t => 
-        t.description.toLowerCase().includes(term) || 
-        t.type.toLowerCase().includes(term)
+        t.descripcion.toLowerCase().includes(term) ||
+        t.tipo.toLowerCase().includes(term)
       );
     }
   }

@@ -2,14 +2,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Category, CreateCategoryRequest, UpdateCategoryRequest, ApiResponse } from '../models/category.model';
 import { environment } from '../../environments/environment';
-import { ApiResponse } from '../models/api-response.model';
-import { Category, CreateCategoryDto, UpdateCategoryDto, CategoryTipo } from '../models/category.model';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
-  private readonly http = inject(HttpClient);
-  private readonly base = `${environment.apiUrl}/categories`;
+  private apiUrl = `${environment.apiUrl}/categories`;
 
   getCategories(tipo?: CategoryTipo): Observable<ApiResponse<Category[]>> {
     let params = new HttpParams();
