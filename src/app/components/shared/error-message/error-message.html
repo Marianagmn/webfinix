@@ -2,8 +2,8 @@
   <div class="error-header">
     <i class="bi bi-exclamation-triangle-fill"></i>
     <div>
-      <strong>{{ title }}</strong>
-      <p>{{ message }}</p>
+      <strong>{{ title() }}</strong>
+      <p>{{ message() }}</p>
     </div>
   </div>
   <button type="button" class="btn btn-light btn-sm" (click)="retry.emit()">

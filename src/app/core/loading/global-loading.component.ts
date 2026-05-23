@@ -7,9 +7,11 @@ import { GlobalLoadingService } from './global-loading.service';
   selector: 'app-global-loading',
   standalone: true,
   template: `
-    <div *ngIf="globalLoading.isLoading()" class="global-loading-overlay">
-      <div class="global-loading-spinner"></div>
-    </div>
+    @if (globalLoading.isLoading()) {
+      <div class="global-loading-overlay">
+        <div class="global-loading-spinner"></div>
+      </div>
+    }
   `,
   styles: `
     .global-loading-overlay {
