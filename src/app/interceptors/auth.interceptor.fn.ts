@@ -28,7 +28,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next): Observable<HttpEv
     req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
-      }
+      },
+      withCredentials: true // IMPORTANT: Send httpOnly cookies (refresh token)
     });
   }
 
@@ -57,15 +58,24 @@ function handle401Error(
 
     if (refreshToken) {
       return authService.refreshToken().pipe(
-        switchMap(() => {
+        switchMap((response) => {
           isRefreshing = false;
-          const newToken = authService.getAccessToken();
-          refreshTokenSubject.next(newToken);
-          return next(req.clone({
-            setHeaders: {
-              Authorization: `Bearer ${newToken}`
-            }
-          })) as Observable<HttpEvent<unknown>>;
+          // Validate response before proceeding
+          if (response && response.success && response.data) {
+            const newToken = response.data.accessToken;
+            refreshTokenSubject.next(newToken);
+            return next(req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${newToken}`
+              },
+              withCredentials: true // IMPORTANT: Send httpOnly cookies
+            })) as Observable<HttpEvent<unknown>>;
+          }
+          // Invalid response, logout
+          isRefreshing = false;
+          authService.logout();
+          router.navigate(['/login']);
+          return throwError(() => new Error('Invalid refresh response'));
         }),
         catchError((error) => {
           isRefreshing = false;
@@ -88,11 +98,18 @@ function handle401Error(
     return refreshTokenSubject.pipe(
       take(1),
       switchMap((token) => {
-        return next(req.clone({
-          setHeaders: {
-            Authorization: `Bearer ${token}`
-          }
-        })) as Observable<HttpEvent<unknown>>;
+        if (token) {
+          return next(req.clone({
+            setHeaders: {
+              Authorization: `Bearer ${token}`
+            },
+            withCredentials: true // IMPORTANT: Send httpOnly cookies
+          })) as Observable<HttpEvent<unknown>>;
+        }
+        // No token available, logout
+        authService.logout();
+        router.navigate(['/login']);
+        return throwError(() => new Error('No token available after refresh'));
       })
     );
   }

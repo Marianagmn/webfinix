@@ -15,10 +15,43 @@ export class AuthService {
   currentUser$ = this.currentUserSubject.asObservable();
 
   constructor() {
-    this.loadUserFromStorage();
+    // Load user from API instead of localStorage for security
+    // localStorage is vulnerable to XSS attacks
+    if (this.isAuthenticated()) {
+      this.getProfile().subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.currentUserSubject.next(response.data);
+          } else {
+            // Invalid response format, clear tokens
+            this.clearTokens();
+            this.currentUserSubject.next(null);
+          }
+        },
+        error: (err) => {
+          // If profile fetch fails (401, 403, network error, etc.), clear tokens
+          console.warn('Failed to fetch user profile:', err);
+          this.clearTokens();
+          this.currentUserSubject.next(null);
+        }
+      });
+    }
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
+    // Basic client-side validation
+    if (!credentials.email || !this.isValidEmail(credentials.email)) {
+      throw new Error('Email inválido');
+    }
+    if (!credentials.password) {
+      throw new Error('Contraseña requerida');
+    }
+
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         if (response.success && response.data) {
@@ -30,6 +63,20 @@ export class AuthService {
   }
 
   register(data: RegisterRequest): Observable<LoginResponse> {
+    // Basic client-side validation
+    if (!data.name || data.name.trim().length < 2) {
+      throw new Error('Nombre inválido (mínimo 2 caracteres)');
+    }
+    if (!data.email || !this.isValidEmail(data.email)) {
+      throw new Error('Email inválido');
+    }
+    if (!data.password || data.password.length < 8) {
+      throw new Error('Contraseña inválida (mínimo 8 caracteres)');
+    }
+    if (data.password !== data.passwordConfirm) {
+      throw new Error('Las contraseñas no coinciden');
+    }
+
     return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data).pipe(
       tap(response => {
         if (response.success && response.data) {
@@ -62,7 +109,9 @@ export class AuthService {
   }
 
   getProfile(): Observable<{ success: boolean; data: User }> {
-    return this.http.get<{ success: boolean; data: User }>(`${this.apiUrl}/me`).pipe(
+    // Use /api/users/me instead of /api/auth/me for consistency
+    // Both endpoints exist but /api/users/me is the standard one
+    return this.http.get<{ success: boolean; data: User }>(`${environment.apiUrl}/users/me`).pipe(
       tap(response => {
         if (response.success && response.data) {
           this.currentUserSubject.next(response.data);
@@ -107,19 +156,6 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
-  private loadUserFromStorage(): void {
-    const userStr = localStorage.getItem('currentUser');
-    if (userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        this.currentUserSubject.next(user);
-      } catch (e) {
-        this.clearTokens();
-      }
-    }
-  }
-
-  private saveUser(user: User): void {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-  }
+  // REMOVED: loadUserFromStorage() and saveUser() - Never store user data in localStorage (XSS vulnerability)
+  // User data should only come from the API
 }

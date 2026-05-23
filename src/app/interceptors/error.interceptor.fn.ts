@@ -45,7 +45,9 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         }
       } else if (error.status === 401) {
         errorMessage = 'No autorizado. Inicia sesión nuevamente.';
-        router.navigate(['/login']);
+        // REMOVED: router.navigate(['/login']);
+        // Auth interceptor already handles 401 and navigation to login
+        // This prevents double navigation and race conditions
       } else if (error.status === 403) {
         errorMessage = 'No tienes permisos para esta acción.';
       } else if (error.status === 404) {

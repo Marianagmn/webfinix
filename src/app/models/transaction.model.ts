@@ -174,6 +174,17 @@ export interface BusinessFinance {
   ejercicioFiscal: number;
   periodoContable: number;
   periodoContableCerrado: boolean;
+  // Accounting fields
+  cuentaContablePrincipal?: string;
+  asientoContable?: Array<{
+    cuentaPUC: string;
+    nombreCuenta?: string;
+    debito: number;
+    credito: number;
+    terceroId?: string;
+    centroCostoId?: string;
+    descripcion?: string;
+  }>;
   // Impuestos
   tarifaIVA: number;
   ivaDescontable: boolean;
@@ -305,10 +316,14 @@ export interface BusinessFinance {
   notaTransaccion?: string;
   createdAt: string;
   updatedAt: string;
+  // Virtual fields from backend
+  estaAprobado?: boolean;
+  estaPagado?: boolean;
+  etiqueta?: string;
 }
 
 export interface CreateBusinessFinanceDto {
-  businessId: string;
+  // REMOVED: businessId - Backend infers from req.user.businessId (JWT payload)
   tipo: 'cobrar' | 'pagar' | 'factura_venta' | 'factura_compra' | 'nomina' | 'activo_fijo';
   monto: number;
   moneda?: string;
