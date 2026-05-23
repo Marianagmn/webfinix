@@ -1,0 +1,50 @@
+// src/app/shared/ui/components/loader/loader.component.scss
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  &.sm {
+    .spinner {
+      width: 1rem;
+      height: 1rem;
+      border-width: 2px;
+    }
+  }
+
+  &.md {
+    .spinner {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-width: 3px;
+    }
+  }
+
+  &.lg {
+    .spinner {
+      width: 2rem;
+      height: 2rem;
+      border-width: 4px;
+    }
+  }
+}
+
+.spinner {
+  border-color: #3b82f6;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

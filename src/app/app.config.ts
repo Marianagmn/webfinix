@@ -1,4 +1,4 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, provideAppInitializer } from '@angular/core';
 import {
   provideRouter,
   withViewTransitions,
@@ -12,6 +12,8 @@ import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { sessionInitializer } from './core/auth/session-initializer';
+import { GlobalLoadingComponent } from './core/loading/global-loading.component';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -23,5 +25,9 @@ export const appConfig: ApplicationConfig = {
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
+    // PHASE 2 FIX: Bootstrap auth - restore session on app startup
+    provideAppInitializer(sessionInitializer),
+    // PHASE 3 FIX: Global loading component
+    GlobalLoadingComponent,
   ],
 };

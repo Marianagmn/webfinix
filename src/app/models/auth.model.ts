@@ -26,3 +26,14 @@ export interface RegisterDto {
 export interface RefreshTokenRequest {
   refreshToken?: string; // Optional since backend reads from cookie
 }
+
+// JWT payload structure for token decoding
+export interface JwtPayload {
+  userId: string;
+  email: string;
+  roles: string[];
+  type: 'access' | 'refresh';
+  iat: number;
+  exp: number;
+  iss?: string;
+}

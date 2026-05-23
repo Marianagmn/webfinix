@@ -1,0 +1,56 @@
+// src/app/shared/ui/components/card/card.component.scss
+.card {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+
+  &.hoverable {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+  }
+
+  &.sm {
+    .card-body {
+      padding: 0.75rem;
+    }
+  }
+
+  &.md {
+    .card-body {
+      padding: 1rem;
+    }
+  }
+
+  &.lg {
+    .card-body {
+      padding: 1.5rem;
+    }
+  }
+}
+
+.card-header {
+  padding: 1rem 1.5rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.25rem 0;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.card-body {
+  padding: 1.5rem;
+}

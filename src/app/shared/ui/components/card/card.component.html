@@ -1,0 +1,9 @@
+<div class="card" [class]="padding" [class.hoverable]="hoverable">
+  <div *ngIf="title || subtitle" class="card-header">
+    <h3 *ngIf="title" class="title">{{ title }}</h3>
+    <p *ngIf="subtitle" class="subtitle">{{ subtitle }}</p>
+  </div>
+  <div class="card-body">
+    <ng-content></ng-content>
+  </div>
+</div>
