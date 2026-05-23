@@ -948,8 +948,8 @@ import { User, UpdateProfileDto, ChangePasswordDto } from '../models/user.model'
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly authStore = inject(AuthStore);
-  private readonly authUrl = `${environment.apiUrl}/api/auth`;
-  private readonly usersUrl = `${environment.apiUrl}/api/users`;
+  private readonly authUrl = `${environment.apiUrl}/auth`;
+  private readonly usersUrl = `${environment.apiUrl}/users`;
 
   login(dto: LoginDto): Observable<ApiResponse<AuthResponse>> {
     return this.http
@@ -1045,7 +1045,7 @@ import { Account, CreateAccountDto, UpdateAccountDto } from '../models/account.m
 @Injectable({ providedIn: 'root' })
 export class AccountService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/api/accounts`;
+  private readonly baseUrl = `${environment.apiUrl}/accounts`;
 
   getAll(): Observable<ApiResponse<Account[]>> {
     return this.http.get<ApiResponse<Account[]>>(this.baseUrl);
@@ -1081,7 +1081,7 @@ import { TransactionType } from '../models/transaction.model';
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/api/categories`;
+  private readonly baseUrl = `${environment.apiUrl}/categories`;
 
   getAll(tipo?: TransactionType): Observable<ApiResponse<Category[]>> {
     const params = tipo ? new HttpParams().set('tipo', tipo) : undefined;
@@ -1123,7 +1123,7 @@ import { AnalysisData, PredictionData, SimulationData } from '../models/analytic
 @Injectable({ providedIn: 'root' })
 export class PersonalFinanceService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/api/personal-finance`;
+  private readonly baseUrl = `${environment.apiUrl}/personal-finance`;
 
   getAll(filter: TransactionFilter = {}): Observable<PaginatedResponse<Transaction>> {
     const cleanFilter = Object.fromEntries(
@@ -1183,7 +1183,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class BusinessFinanceService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/api/business-finance`;
+  private readonly baseUrl = `${environment.apiUrl}/business-finance`;
 
   getAll(filter: Record<string, string> = {}): Observable<PaginatedResponse<BusinessTransaction>> {
     const params = new HttpParams({ fromObject: filter });
@@ -1255,7 +1255,7 @@ import { User } from '../models/user.model';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = `${environment.apiUrl}/api/users`;
+  private readonly baseUrl = `${environment.apiUrl}/users`;
 
   getMe(): Observable<ApiResponse<User>> {
     return this.http.get<ApiResponse<User>>(`${this.baseUrl}/me`);

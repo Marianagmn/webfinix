@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
 import { CategoryService } from '../../../services/category.service';
 import { AccountService } from '../../../services/account.service';
@@ -25,6 +26,7 @@ export class TransactionEdit implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly toastr = inject(ToastrService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly isLoading = signal(true);
   readonly isSaving = signal(false);
@@ -50,15 +52,21 @@ export class TransactionEdit implements OnInit {
   ngOnInit(): void {
     this.transactionId = this.route.snapshot.paramMap.get('id') || '';
 
-    this.accountService.getAccounts().subscribe(accs => this.accounts.set(accs || []));
+    this.accountService.getAccounts()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(accs => this.accounts.set(accs || []));
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(params => {
       const tipo = params['tipo'] || 'gasto';
       this.txnForm.patchValue({ tipo });
       this.loadCategories(tipo as 'ingreso' | 'gasto' | 'transferencia');
     });
 
-    this.txnForm.get('tipo')?.valueChanges.subscribe(tipo => {
+    this.txnForm.get('tipo')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(tipo => {
       this.loadCategories(tipo as 'ingreso' | 'gasto' | 'transferencia');
       this.txnForm.patchValue({ categoriaId: '' });
     });
@@ -69,7 +77,9 @@ export class TransactionEdit implements OnInit {
   }
 
   loadTransaction(): void {
-    this.financeService.getTransactionById(this.transactionId).subscribe({
+    this.financeService.getTransactionById(this.transactionId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (response) => {
         const txn = response.data;
         this.txnForm.patchValue({
@@ -96,7 +106,9 @@ export class TransactionEdit implements OnInit {
   }
 
   loadCategories(tipo: 'ingreso' | 'gasto' | 'transferencia'): void {
-    this.categoryService.getCategories(tipo).subscribe(cats => {
+    this.categoryService.getCategories(tipo)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(cats => {
       this.categories.set(cats || []);
     });
   }
@@ -130,7 +142,9 @@ export class TransactionEdit implements OnInit {
     };
 
     this.isSaving.set(true);
-    this.financeService.updateTransaction(this.transactionId, payload).subscribe({
+    this.financeService.updateTransaction(this.transactionId, payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: () => {
         this.toastr.success('Transacción actualizada');
         this.router.navigate(['/personal-finance']);

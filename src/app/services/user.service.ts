@@ -35,9 +35,13 @@ export class UserService {
   /**
    * Cambia la contraseña del usuario autenticado
    * PATCH /api/users/me/password
-   * Body: { currentPassword, newPassword }
+   * Body: { currentPassword, newPassword, newPasswordConfirm }
    */
-  changePassword(data: { currentPassword: string; newPassword: string }): Observable<void> {
+  changePassword(data: {
+    currentPassword: string;
+    newPassword: string;
+    newPasswordConfirm: string;
+  }): Observable<void> {
     return this.http.patch<ApiResponse<void>>(`${this.base}/me/password`, data).pipe(
       map(() => undefined)
     );

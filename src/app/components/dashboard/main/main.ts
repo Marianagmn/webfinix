@@ -1,11 +1,11 @@
-import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angular/core';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin } from 'rxjs';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
 import { AccountService } from '../../../services/account.service';
-import { AuthService } from '../../../services/auth.service';
+import { AuthStore } from '../../../store/auth.store';
 import { PersonalFinance } from '../../../models/transaction.model';
 import { Account } from '../../../models/account.model';
 
@@ -19,20 +19,16 @@ import { Account } from '../../../models/account.model';
 export class Main implements OnInit {
   private readonly financeService = inject(PersonalFinanceService);
   private readonly accountService = inject(AccountService);
-  private readonly authService = inject(AuthService);
+  private readonly authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly isLoading = signal(true);
   readonly recentTransactions = signal<PersonalFinance[]>([]);
   readonly accounts = signal<Account[]>([]);
   readonly totalBalance = signal(0);
-  readonly userName = signal<string>('Usuario');
+  readonly userName = computed(() => this.authStore.user()?.name ?? 'Usuario');
 
   ngOnInit(): void {
-    this.authService.currentUser$.subscribe(user => {
-      this.userName.set(user?.name || 'Usuario');
-    });
-
     forkJoin({
       transactions: this.financeService.getTransactions(),
       accounts: this.accountService.getAccounts(),

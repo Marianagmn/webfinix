@@ -1,10 +1,11 @@
-// src/app/core/interceptors/auth.interceptor.ts — C-01 D-04
+// src/app/core/interceptors/auth.interceptor.ts — C-01 D-04 A-05
 // Maneja: withCredentials para cookies, Authorization Bearer, refresh automático de token
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { catchError, switchMap, throwError, filter, take } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AuthStore } from '../../store/auth.store';
 import { ApiResponse } from '../../models/api-response.model';
@@ -13,6 +14,8 @@ import { environment } from '../../../environments/environment';
 
 // Flag global para evitar múltiples refreshes simultáneos
 let isRefreshing = false;
+// BehaviorSubject para cola de requests pendientes durante refresh
+const refreshToken$ = new BehaviorSubject<string | null>(null);
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authStore = inject(AuthStore);
@@ -44,6 +47,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
         if (!isRefreshing) {
           isRefreshing = true;
+          refreshToken$.next(null);
           // C-01: El refreshToken está en cookie httpOnly — solo enviamos body vacío con withCredentials
           return http
             .post<ApiResponse<{ accessToken: string; user: User }>>(
@@ -56,6 +60,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 isRefreshing = false;
                 authStore.setToken(res.data.accessToken);
                 authStore.setUser(res.data.user);
+                refreshToken$.next(res.data.accessToken);
                 // Reintentar la petición original con el nuevo token
                 const retryReq = req.clone({
                   withCredentials: true,
@@ -65,12 +70,26 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
               }),
               catchError((refreshErr) => {
                 isRefreshing = false;
+                refreshToken$.next(null);
                 authStore.clear();
                 router.navigate(['/auth/login']);
                 toastr.error('Sesión expirada. Por favor inicia sesión nuevamente.');
                 return throwError(() => refreshErr);
               })
             );
+        } else {
+          // Esperar a que el refresh existente termine y reintentar
+          return refreshToken$.pipe(
+            filter(token => token !== null),
+            take(1),
+            switchMap(token => {
+              const retryReq = req.clone({
+                withCredentials: true,
+                setHeaders: { Authorization: `Bearer ${token}` }
+              });
+              return next(retryReq);
+            })
+          );
         }
       }
 

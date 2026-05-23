@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
-import { AuthService } from '../../../services/auth.service';
+import { AuthStore } from '../../../store/auth.store';
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../../../models/user.model';
 
@@ -16,7 +16,7 @@ import { User } from '../../../models/user.model';
 export class Profile implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
-  private readonly authService = inject(AuthService);
+  private readonly authStore = inject(AuthStore);
   private readonly toastr = inject(ToastrService);
 
   readonly isLoading = signal(true);
@@ -51,9 +51,9 @@ export class Profile implements OnInit {
 
     this.isSaving.set(true);
     this.userService.updateMe(this.profileForm.value).subscribe({
-      next: (response: any) => {
+      next: (user: User) => {
         this.toastr.success('Perfil actualizado');
-        this.authService.getProfile().subscribe();
+        this.authStore.setUser(user);
         this.isSaving.set(false);
       },
       error: () => {

@@ -11,6 +11,7 @@ export const PERSONAL_FINANCE_ROUTES: Routes = [
       { path: 'analysis', loadComponent: () => import('../../components/personal-finance/analysis-view/analysis-view.ts').then(m => m.AnalysisView) },
       { path: 'prediction', loadComponent: () => import('../../components/personal-finance/prediction-view/prediction-view.ts').then(m => m.PredictionView) },
       { path: 'simulation', loadComponent: () => import('../../components/personal-finance/simulation-view/simulation-view.ts').then(m => m.SimulationView) },
+      { path: ':id/edit', loadComponent: () => import('../../components/personal-finance/transaction-edit/transaction-edit.ts').then(m => m.TransactionEdit) },
     ],
   },
 ];
