@@ -43,6 +43,5 @@ export class AccountService {
     return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(
       map(() => undefined)
     );
->>>>>>> Mariana-Gordillo
   }
 }

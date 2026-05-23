@@ -2,40 +2,25 @@
 // usa environment.apiUrl, AuthStore, withCredentials via interceptor
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
-import { LoginRequest, RegisterRequest, LoginResponse, RefreshTokenRequest } from '../models/auth.model';
+import { Observable, BehaviorSubject, tap, throwError } from 'rxjs';
+import { LoginRequest, RegisterDto, LoginResponse, RefreshTokenRequest } from '../models/auth.model';
 import { User } from '../models/user.model';
+import { AuthStore } from '../store/auth.store';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/auth`;
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  currentUser$ = this.currentUserSubject.asObservable();
+  private readonly http = inject(HttpClient);
+  private readonly authStore = inject(AuthStore);
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
 
-  constructor() {
-    // Load user from API instead of localStorage for security
-    // localStorage is vulnerable to XSS attacks
-    if (this.isAuthenticated()) {
-      this.getProfile().subscribe({
-        next: (response) => {
-          if (response.success && response.data) {
-            this.currentUserSubject.next(response.data);
-          } else {
-            // Invalid response format, clear tokens
-            this.clearTokens();
-            this.currentUserSubject.next(null);
-          }
-        },
-        error: (err) => {
-          // If profile fetch fails (401, 403, network error, etc.), clear tokens
-          console.warn('Failed to fetch user profile:', err);
-          this.clearTokens();
-          this.currentUserSubject.next(null);
-        }
-      });
-    }
+  // currentUser$ is a mirror of the store — avoids duplicating state
+  get currentUser$() {
+    return this.authStore.user;
+  }
+
+  get currentUserValue(): User | null {
+    return this.authStore.user();
   }
 
   private isValidEmail(email: string): boolean {
@@ -44,115 +29,53 @@ export class AuthService {
   }
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    // Basic client-side validation
-    if (!credentials.email || !this.isValidEmail(credentials.email)) {
-      throw new Error('Email inválido');
-    }
-    if (!credentials.password) {
-      throw new Error('Contraseña requerida');
+    if (!credentials.email || !credentials.password) {
+      return throwError(() => new Error('Credenciales requeridas'));
     }
 
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials).pipe(
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, credentials, { withCredentials: true }).pipe(
       tap(response => {
         if (response.success && response.data) {
-          this.saveTokens(response.data.accessToken, response.data.refreshToken);
-          this.currentUserSubject.next(response.data.user);
+          this.authStore.setToken(response.data.accessToken);
+          this.authStore.setUser(response.data.user);
         }
       })
     );
   }
 
-  register(data: RegisterRequest): Observable<LoginResponse> {
-    // Basic client-side validation
-    if (!data.name || data.name.trim().length < 2) {
-      throw new Error('Nombre inválido (mínimo 2 caracteres)');
-    }
-    if (!data.email || !this.isValidEmail(data.email)) {
-      throw new Error('Email inválido');
-    }
-    if (!data.password || data.password.length < 8) {
-      throw new Error('Contraseña inválida (mínimo 8 caracteres)');
-    }
-    if (data.password !== data.passwordConfirm) {
-      throw new Error('Las contraseñas no coinciden');
-    }
-
-    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data).pipe(
+  register(data: RegisterDto): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/register`, data, { withCredentials: true }).pipe(
       tap(response => {
         if (response.success && response.data) {
-          this.saveTokens(response.data.accessToken, response.data.refreshToken);
-          this.currentUserSubject.next(response.data.user);
+          this.authStore.setToken(response.data.accessToken);
+          this.authStore.setUser(response.data.user);
         }
       })
     );
   }
 
   refreshToken(): Observable<LoginResponse> {
-    // Backend reads refresh token from httpOnly cookie, not from body
-    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, {}).pipe(
+    // The refreshToken is in httpOnly cookie — we send empty body with withCredentials
+    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, {}, { withCredentials: true }).pipe(
       tap(response => {
         if (response.success && response.data) {
-          this.saveTokens(response.data.accessToken, response.data.refreshToken);
-          this.currentUserSubject.next(response.data.user);
+          this.authStore.setToken(response.data.accessToken);
+          this.authStore.setUser(response.data.user);
         }
       })
     );
   }
 
-  me(): Observable<ApiResponse<User>> {
-    return this.http.get<ApiResponse<User>>(`${this.base}/me`).pipe(
-      tap((res) => {
-        if (res.success) this.authStore.setUser(res.data);
-      })
+
+
+  logout(): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.apiUrl}/logout`, {}, { withCredentials: true }).pipe(
+      tap(() => this.authStore.clear())
     );
-  }
-
-  getProfile(): Observable<{ success: boolean; data: User }> {
-    // Use /api/users/me instead of /api/auth/me for consistency
-    // Both endpoints exist but /api/users/me is the standard one
-    return this.http.get<{ success: boolean; data: User }>(`${environment.apiUrl}/users/me`).pipe(
-      tap(response => {
-        if (response.success && response.data) {
-          this.currentUserSubject.next(response.data);
-        }
-      })
-    );
-  }
-
-  private saveTokens(accessToken: string, refreshToken?: string): void {
-    localStorage.setItem('accessToken', accessToken);
-    // Refresh token is stored in httpOnly cookie by backend, not in localStorage
-    // Never store refresh token in localStorage for security (XSS vulnerability)
-  }
-
-  getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
-  }
-
-  getRefreshToken(): string | null {
-    // Refresh token should only be in httpOnly cookie, never in localStorage
-    return null;
-  }
-
-  getToken(): string | null {
-    return this.getAccessToken();
-  }
-
-  private clearTokens(): void {
-    localStorage.removeItem('accessToken');
-    // No need to remove refreshToken from localStorage as it should never be there
-  }
-
-  removeToken(): void {
-    this.clearTokens();
   }
 
   isAuthenticated(): boolean {
-    return !!this.getAccessToken();
-  }
-
-  get currentUserValue(): User | null {
-    return this.currentUserSubject.value;
+    return this.authStore.isAuthenticated();
   }
 
   // REMOVED: loadUserFromStorage() and saveUser() - Never store user data in localStorage (XSS vulnerability)

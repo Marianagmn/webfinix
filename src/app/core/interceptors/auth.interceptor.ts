@@ -8,7 +8,7 @@ import { catchError, switchMap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AuthStore } from '../../store/auth.store';
 import { ApiResponse } from '../../models/api-response.model';
-import { AuthResponse } from '../../models/auth.model';
+import { User } from '../../models/user.model';
 import { environment } from '../../../environments/environment';
 
 // Flag global para evitar múltiples refreshes simultáneos
@@ -46,7 +46,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           isRefreshing = true;
           // C-01: El refreshToken está en cookie httpOnly — solo enviamos body vacío con withCredentials
           return http
-            .post<ApiResponse<AuthResponse>>(
+            .post<ApiResponse<{ accessToken: string; user: User }>>(
               `${environment.apiUrl}/auth/refresh`,
               {},
               { withCredentials: true }

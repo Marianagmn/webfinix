@@ -1,61 +1,26 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/auth/login/login.component';
-import { RegisterComponent } from './components/auth/register/register.component';
-import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
-import { authGuard } from './guards/auth.guard';
-import { RoleGuard } from './guards/role.guard';
-import { DashboardComponent } from './components/dashboard/main/dashboard.component';
-import { AccountListComponent } from './components/accounts/account-list/account-list.component';
-import { AccountCreateComponent } from './components/accounts/account-create/account-create.component';
-import { AccountEditComponent } from './components/accounts/account-edit/account-edit.component';
-import { CategoryListComponent } from './components/categories/category-list/category-list.component';
-import { CategoryCreateComponent } from './components/categories/category-create/category-create.component';
-import { TransactionListComponent } from './components/personal-finance/transaction-list/transaction-list.component';
-import { TransactionCreateComponent } from './components/personal-finance/transaction-create/transaction-create.component';
-import { TransactionEdit } from './components/personal-finance/transaction-edit/transaction-edit';
-import { AnalysisViewComponent } from './components/personal-finance/analysis-view/analysis-view.component';
-import { PredictionViewComponent } from './components/personal-finance/prediction-view/prediction-view.component';
-import { SimulationViewComponent } from './components/personal-finance/simulation-view/simulation-view.component';
-import { BusinessListComponent } from './components/business-finance/business-list/business-list.component';
-import { ApprovalListComponent } from './components/business-finance/approval-list/approval-list.component';
-import { Profile } from './components/user/profile/profile';
-import { ChangePassword } from './components/user/change-password/change-password';
+import { LayoutComponent } from './layout/layout.component';
+import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  { path: 'auth', loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES) },
+  {
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
+  },
   {
     path: '',
     component: LayoutComponent,
     canActivate: [authGuard],
     children: [
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'profile', component: Profile },
-      { path: 'change-password', component: ChangePassword },
-      { path: 'accounts', component: AccountListComponent },
-      { path: 'accounts/create', component: AccountCreateComponent },
-      { path: 'accounts/:id/edit', component: AccountEditComponent },
-      { path: 'categories', component: CategoryListComponent },
-      { path: 'categories/create', component: CategoryCreateComponent },
-      { path: 'transactions', component: TransactionListComponent },
-      { path: 'transactions/create', component: TransactionCreateComponent },
-      { path: 'transactions/:id/edit', component: TransactionEdit },
-      { path: 'transactions/analysis', component: AnalysisViewComponent },
-      { path: 'transactions/prediction', component: PredictionViewComponent },
-      { path: 'transactions/simulation', component: SimulationViewComponent },
-      {
-        path: 'business',
-        component: BusinessListComponent,
-        canActivate: [RoleGuard],
-        data: { roles: ['user', 'admin', 'aprobador', 'contador'], requireBusinessId: true }
-      },
-      {
-        path: 'business/approvals',
-        component: ApprovalListComponent,
-        canActivate: [RoleGuard],
-        data: { roles: ['admin', 'aprobador'], requireBusinessId: true }
-      },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-    ]
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', loadChildren: () => import('./features/dashboard/dashboard.routes').then(m => m.DASHBOARD_ROUTES) },
+      { path: 'personal-finance', loadChildren: () => import('./features/personal-finance/personal-finance.routes').then(m => m.PERSONAL_FINANCE_ROUTES) },
+      { path: 'business-finance', loadChildren: () => import('./features/business-finance/business-finance.routes').then(m => m.BUSINESS_FINANCE_ROUTES) },
+      { path: 'accounts', loadChildren: () => import('./features/accounts/accounts.routes').then(m => m.ACCOUNTS_ROUTES) },
+      { path: 'categories', loadChildren: () => import('./features/categories/categories.routes').then(m => m.CATEGORIES_ROUTES) },
+      { path: 'user', loadChildren: () => import('./features/user/user.routes').then(m => m.USER_ROUTES) },
+    ],
   },
   { path: '**', redirectTo: 'auth' },
 ];

@@ -11,9 +11,9 @@ export class CategoryService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/categories`;
 
-  getCategories(params?: any): Observable<Category[]> {
+  getCategories(tipo?: 'ingreso' | 'gasto' | 'transferencia'): Observable<Category[]> {
     // Backend devuelve ApiResponse wrapper, necesitamos extraer data
-    // Agregamos soporte para filtro por tipo (ingreso, gasto, transferencia)
+    const params = tipo ? { tipo } : undefined;
     return this.http.get<ApiResponse<Category[]>>(this.base, { params }).pipe(
       map(response => response.data)
     );

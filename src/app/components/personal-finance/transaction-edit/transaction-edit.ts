@@ -8,7 +8,7 @@ import { AccountService } from '../../../services/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Category, CategoryTipo } from '../../../models/category.model';
 import { Account } from '../../../models/account.model';
-import { PersonalFinance } from '../../../models/transaction.model';
+import { PersonalFinance, TransactionTipo, MetodoPago } from '../../../models/personal-finance.model';
 
 @Component({
   selector: 'app-transaction-edit',
@@ -32,14 +32,17 @@ export class TransactionEdit implements OnInit {
   readonly accounts = signal<Account[]>([]);
 
   txnForm: FormGroup = this.fb.group({
-    amount: [null, [Validators.required, Validators.min(0.01)]],
-    type: ['expense', Validators.required],
-    categoryId: ['', Validators.required],
-    accountId: ['', Validators.required],
-    date: ['', Validators.required],
-    description: ['', Validators.required],
+    tipo: ['gasto' as TransactionTipo, Validators.required],
+    monto: [null as number | null, [Validators.required, Validators.min(0.01)]],
+    moneda: ['COP'],
+    categoriaId: ['', Validators.required],
+    cuentaOrigenId: [''],
+    cuentaDestinoId: [''],
+    descripcion: [''],
+    fecha: ['', Validators.required],
+    metodoPago: ['efectivo' as MetodoPago],
     tags: [''],
-    isRecurring: [false]
+    esAhorro: [false]
   });
 
   transactionId: string = '';
@@ -50,14 +53,14 @@ export class TransactionEdit implements OnInit {
     this.accountService.getAccounts().subscribe(accs => this.accounts.set(accs || []));
 
     this.route.queryParams.subscribe(params => {
-      const type = params['type'] || 'gasto';
-      this.txnForm.patchValue({ type });
-      this.loadCategories(type as CategoryTipo);
+      const tipo = params['tipo'] || 'gasto';
+      this.txnForm.patchValue({ tipo });
+      this.loadCategories(tipo as 'ingreso' | 'gasto' | 'transferencia');
     });
 
-    this.txnForm.get('type')?.valueChanges.subscribe(type => {
-      this.loadCategories(type as CategoryTipo);
-      this.txnForm.patchValue({ categoryId: '' });
+    this.txnForm.get('tipo')?.valueChanges.subscribe(tipo => {
+      this.loadCategories(tipo as 'ingreso' | 'gasto' | 'transferencia');
+      this.txnForm.patchValue({ categoriaId: '' });
     });
 
     if (this.transactionId) {
@@ -70,28 +73,31 @@ export class TransactionEdit implements OnInit {
       next: (response) => {
         const txn = response.data;
         this.txnForm.patchValue({
-          amount: txn.monto,
-          type: txn.tipo,
-          categoryId: txn.categoria,
-          accountId: txn.cuentaOrigenId,
-          date: txn.fecha.substring(0, 10),
-          description: txn.descripcion,
-          tags: txn.tags?.join(', ') || '',
-          isRecurring: txn.esAhorro
+          tipo: txn.tipo,
+          monto: txn.monto,
+          moneda: txn.moneda ?? 'COP',
+          categoriaId: txn.categoria ?? '',
+          cuentaOrigenId: txn.cuentaOrigenId ?? '',
+          cuentaDestinoId: txn.cuentaDestinoId ?? '',
+          descripcion: txn.descripcion ?? '',
+          fecha: txn.fecha?.substring(0, 10) ?? '',
+          metodoPago: txn.metodoPago ?? 'efectivo',
+          tags: txn.tags?.join(', ') ?? '',
+          esAhorro: txn.esAhorro ?? false
         });
-        this.loadCategories(txn.tipo);
+        this.loadCategories(txn.tipo as 'ingreso' | 'gasto' | 'transferencia');
         this.isLoading.set(false);
       },
       error: () => {
         this.toastr.error('Error al cargar transacción');
-        this.router.navigate(['/transactions']);
+        this.router.navigate(['/personal-finance']);
       }
     });
   }
 
-  loadCategories(type: CategoryTipo): void {
-    this.categoryService.getCategories(type).subscribe(cats => {
-      this.categories.set(cats.data || []);
+  loadCategories(tipo: 'ingreso' | 'gasto' | 'transferencia'): void {
+    this.categoryService.getCategories(tipo).subscribe(cats => {
+      this.categories.set(cats || []);
     });
   }
 
@@ -101,18 +107,33 @@ export class TransactionEdit implements OnInit {
       return;
     }
 
-    const formValue = { ...this.txnForm.value };
-    if (formValue.tags && typeof formValue.tags === 'string') {
-      formValue.tags = formValue.tags.split(',').map((t: string) => t.trim()).filter((t: string) => t);
-    } else {
-      formValue.tags = [];
-    }
+    const raw = this.txnForm.value;
+    const tagsArray = raw.tags
+      ? raw.tags
+          .split(',')
+          .map((t: string) => t.trim())
+          .filter(Boolean)
+      : [];
+
+    const payload = {
+      tipo: raw.tipo!,
+      monto: raw.monto!,
+      moneda: raw.moneda || 'COP',
+      categoriaId: raw.categoriaId || undefined,
+      cuentaOrigenId: raw.cuentaOrigenId || undefined,
+      cuentaDestinoId: raw.cuentaDestinoId || undefined,
+      descripcion: raw.descripcion || undefined,
+      fecha: raw.fecha || undefined,
+      metodoPago: (raw.metodoPago as MetodoPago) || 'efectivo',
+      tags: tagsArray,
+      esAhorro: raw.esAhorro ?? false,
+    };
 
     this.isSaving.set(true);
-    this.financeService.updateTransaction(this.transactionId, formValue).subscribe({
+    this.financeService.updateTransaction(this.transactionId, payload).subscribe({
       next: () => {
         this.toastr.success('Transacción actualizada');
-        this.router.navigate(['/transactions']);
+        this.router.navigate(['/personal-finance']);
       },
       error: () => {
         this.toastr.error('Error al actualizar transacción');

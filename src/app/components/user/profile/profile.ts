@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserService } from '../../../services/user';
+import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../../../models/user.model';
@@ -29,10 +29,10 @@ export class Profile implements OnInit {
 
   ngOnInit(): void {
     this.userService.getMe().subscribe({
-      next: (response: any) => {
+      next: (user: User) => {
         this.profileForm.patchValue({
-          name: response.data.name,
-          email: response.data.email,
+          name: user.name,
+          email: user.email,
         });
         this.isLoading.set(false);
       },

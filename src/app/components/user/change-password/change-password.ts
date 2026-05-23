@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { UserService } from '../../../services/user';
+import { UserService } from '../../../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -36,8 +36,15 @@ export class ChangePassword {
       return;
     }
 
+    const raw = this.passwordForm.value;
+    const payload = {
+      currentPassword: raw.currentPassword,
+      newPassword: raw.newPassword,
+      newPasswordConfirm: raw.passwordConfirm,
+    };
+
     this.isSaving.set(true);
-    this.userService.changePassword(this.passwordForm.value).subscribe({
+    this.userService.changePassword(payload).subscribe({
       next: () => {
         this.toastr.success('Contraseña cambiada exitosamente');
         this.passwordForm.reset();
