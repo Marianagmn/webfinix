@@ -3,14 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Account, CreateAccountDto, UpdateAccountDto } from '../models/account.model';
+import { ApiResponse, PaginatedResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
-
-// Interface para respuesta estandarizada del backend
-interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-}
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +13,8 @@ export class AccountService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/accounts`;
 
-  getAccounts(): Observable<Account[]> {
-    return this.http.get<ApiResponse<Account[]>>(this.base).pipe(
+  getAccounts(params?: any): Observable<Account[]> {
+    return this.http.get<PaginatedResponse<Account>>(this.base, { params }).pipe(
       map(response => response.data)
     );
   }
@@ -44,7 +38,7 @@ export class AccountService {
   }
 
   deleteAccount(id: string): Observable<void> {
-    return this.http.delete(`${this.base}/${id}`).pipe(
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(
       map(() => undefined)
     );
   }

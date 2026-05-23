@@ -40,8 +40,9 @@ export class AuthService {
     );
   }
 
-  refreshToken(refreshToken: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+  refreshToken(): Observable<LoginResponse> {
+    // Backend reads refresh token from httpOnly cookie, not from body
+    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, {}).pipe(
       tap(response => {
         if (response.success && response.data) {
           this.saveTokens(response.data.accessToken, response.data.refreshToken);
@@ -70,9 +71,10 @@ export class AuthService {
     );
   }
 
-  private saveTokens(accessToken: string, refreshToken: string): void {
+  private saveTokens(accessToken: string, refreshToken?: string): void {
     localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
+    // Refresh token is stored in httpOnly cookie by backend, not in localStorage
+    // If refreshToken is provided (for backward compatibility), don't store it
   }
 
   getAccessToken(): string | null {
@@ -98,6 +100,10 @@ export class AuthService {
 
   isAuthenticated(): boolean {
     return !!this.getAccessToken();
+  }
+
+  get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
   }
 
   private loadUserFromStorage(): void {

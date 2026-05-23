@@ -3,6 +3,7 @@ import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { authGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
 import { DashboardComponent } from './components/dashboard/main/dashboard.component';
 import { AccountListComponent } from './components/accounts/account-list/account-list.component';
 import { AccountCreateComponent } from './components/accounts/account-create/account-create.component';
@@ -42,8 +43,18 @@ export const routes: Routes = [
       { path: 'transactions/analysis', component: AnalysisViewComponent },
       { path: 'transactions/prediction', component: PredictionViewComponent },
       { path: 'transactions/simulation', component: SimulationViewComponent },
-      { path: 'business', component: BusinessListComponent },
-      { path: 'business/approvals', component: ApprovalListComponent },
+      {
+        path: 'business',
+        component: BusinessListComponent,
+        canActivate: [RoleGuard],
+        data: { roles: ['user', 'admin', 'aprobador', 'contador'] }
+      },
+      {
+        path: 'business/approvals',
+        component: ApprovalListComponent,
+        canActivate: [RoleGuard],
+        data: { roles: ['admin', 'aprobador'] }
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },

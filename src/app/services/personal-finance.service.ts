@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PersonalFinance, CreatePersonalFinanceDto, UpdatePersonalFinanceDto, ApiResponse } from '../models/transaction.model';
+import { PersonalFinance, CreatePersonalFinanceDto, UpdatePersonalFinanceDto, ApiResponse, PaginatedResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -11,8 +11,8 @@ export class PersonalFinanceService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/personal-finance`;
 
-  getTransactions(): Observable<ApiResponse<PersonalFinance[]>> {
-    return this.http.get<ApiResponse<PersonalFinance[]>>(this.base);
+  getTransactions(params?: any): Observable<PaginatedResponse<PersonalFinance>> {
+    return this.http.get<PaginatedResponse<PersonalFinance>>(this.base, { params });
   }
 
   getTransactionById(id: string): Observable<ApiResponse<PersonalFinance>> {
@@ -31,15 +31,18 @@ export class PersonalFinanceService {
     return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`);
   }
 
-  getAnalysis(): Observable<any> {
-    return this.http.get(`${this.base}/analysis`);
+  getAnalysis(fechaDesde?: string, fechaHasta?: string): Observable<ApiResponse<any>> {
+    const params: any = {};
+    if (fechaDesde) params.fechaDesde = fechaDesde;
+    if (fechaHasta) params.fechaHasta = fechaHasta;
+    return this.http.get<ApiResponse<any>>(`${this.base}/analysis`, { params });
   }
 
-  getPrediction(): Observable<any> {
-    return this.http.get(`${this.base}/prediction`);
+  getPrediction(): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.base}/prediction`);
   }
 
-  getSimulation(): Observable<any> {
-    return this.http.get(`${this.base}/simulation`);
+  getSimulation(): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.base}/simulation`);
   }
 }

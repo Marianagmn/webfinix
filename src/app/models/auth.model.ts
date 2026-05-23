@@ -4,9 +4,10 @@ export interface LoginResponse {
   success: boolean;
   data: {
     accessToken: string;
-    refreshToken: string;
+    refreshToken?: string; // Optional since it comes in httpOnly cookie
     user: User;
   };
+  message?: string;
 }
 
 export interface LoginRequest {
@@ -22,5 +23,5 @@ export interface RegisterRequest {
 }
 
 export interface RefreshTokenRequest {
-  refreshToken: string;
+  refreshToken?: string; // Optional since backend reads from cookie
 }

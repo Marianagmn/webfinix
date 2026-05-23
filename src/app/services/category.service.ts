@@ -1,7 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Category, CreateCategoryDto, UpdateCategoryDto, ApiResponse } from '../models/category.model';
+import { map } from 'rxjs/operators';
+import { Category, CreateCategoryDto, UpdateCategoryDto } from '../models/category.model';
+import { ApiResponse, PaginatedResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -11,27 +13,33 @@ export class CategoryService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/categories`;
 
-  getCategories(tipo?: string): Observable<ApiResponse<Category[]>> {
-    let params = new HttpParams();
-    if (tipo) {
-      params = params.set('tipo', tipo);
-    }
-    return this.http.get<ApiResponse<Category[]>>(this.base, { params });
+  getCategories(params?: any): Observable<Category[]> {
+    return this.http.get<PaginatedResponse<Category>>(this.base, { params }).pipe(
+      map(response => response.data)
+    );
   }
 
-  getCategoryById(id: string): Observable<ApiResponse<Category>> {
-    return this.http.get<ApiResponse<Category>>(`${this.base}/${id}`);
+  getCategoryById(id: string): Observable<Category> {
+    return this.http.get<ApiResponse<Category>>(`${this.base}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
-  createCategory(data: CreateCategoryDto): Observable<ApiResponse<Category>> {
-    return this.http.post<ApiResponse<Category>>(this.base, data);
+  createCategory(data: CreateCategoryDto): Observable<Category> {
+    return this.http.post<ApiResponse<Category>>(this.base, data).pipe(
+      map(response => response.data)
+    );
   }
 
-  updateCategory(id: string, data: UpdateCategoryDto): Observable<ApiResponse<Category>> {
-    return this.http.put<ApiResponse<Category>>(`${this.base}/${id}`, data);
+  updateCategory(id: string, data: UpdateCategoryDto): Observable<Category> {
+    return this.http.put<ApiResponse<Category>>(`${this.base}/${id}`, data).pipe(
+      map(response => response.data)
+    );
   }
 
-  deleteCategory(id: string): Observable<any> {
-    return this.http.delete(`${this.base}/${id}`);
+  deleteCategory(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(
+      map(() => undefined)
+    );
   }
 }

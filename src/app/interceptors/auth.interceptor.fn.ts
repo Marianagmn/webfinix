@@ -5,8 +5,8 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { catchError, switchMap, filter, take } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { environment } from '../../environments/environment';
 
@@ -31,7 +31,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next): Observable<HttpEv
     });
   }
 
-  return next(req) as Observable<HttpEvent<unknown>>;
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401 && !req.url.includes('/refresh')) {
+        return handle401Error(req, next, authService, router);
+      }
+      return throwError(() => error);
+    })
+  ) as Observable<HttpEvent<unknown>>;
 };
 
 function handle401Error(
@@ -47,8 +54,8 @@ function handle401Error(
     const refreshToken = getCookie('refreshToken') || authService.getRefreshToken();
 
     if (refreshToken) {
-      return authService.refreshToken(refreshToken).pipe(
-        switchMap((response: any) => {
+      return authService.refreshToken().pipe(
+        switchMap(() => {
           isRefreshing = false;
           const newToken = authService.getAccessToken();
           return next(req.clone({

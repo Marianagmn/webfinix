@@ -7,14 +7,15 @@ export interface Account {
   nombre: string;
   tipo: AccountType;
   moneda: Currency;
-  balance: number;
+  balance: number; // Stored in cents, displayed as decimal
   isActive: boolean;
+  isDeleted: boolean;
+  deletedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface CreateAccountDto {
-  userId?: string; // Se puede inferir del token, opcional en el DTO
   nombre: string;
   tipo: AccountType;
   moneda: Currency;

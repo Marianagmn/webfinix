@@ -10,6 +10,7 @@ export interface User {
   isEmailVerified: boolean;
   lastLoginAt: string;
   createdAt: string;
+  businessId?: string; // Required for business finance operations
 }
 
 export type { ApiResponse };
