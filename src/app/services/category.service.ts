@@ -1,34 +1,45 @@
-// src/app/services/category.service.ts — C-02: usa environment + modelos correctos
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Category, CreateCategoryRequest, UpdateCategoryRequest, ApiResponse } from '../models/category.model';
+import { map } from 'rxjs/operators';
+import { Category, CreateCategoryDto, UpdateCategoryDto } from '../models/category.model';
+import { ApiResponse, PaginatedResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CategoryService {
-  private apiUrl = `${environment.apiUrl}/categories`;
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/categories`;
 
-  getCategories(tipo?: CategoryTipo): Observable<ApiResponse<Category[]>> {
-    let params = new HttpParams();
-    if (tipo) params = params.set('tipo', tipo);
-    return this.http.get<ApiResponse<Category[]>>(this.base, { params });
+  getCategories(params?: any): Observable<Category[]> {
+    // Backend devuelve ApiResponse wrapper, necesitamos extraer data
+    // Agregamos soporte para filtro por tipo (ingreso, gasto, transferencia)
+    return this.http.get<ApiResponse<Category[]>>(this.base, { params }).pipe(
+      map(response => response.data)
+    );
   }
 
-  getCategoryById(id: string): Observable<ApiResponse<Category>> {
-    return this.http.get<ApiResponse<Category>>(`${this.base}/${id}`);
+  getCategoryById(id: string): Observable<Category> {
+    return this.http.get<ApiResponse<Category>>(`${this.base}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
-  createCategory(dto: CreateCategoryDto): Observable<ApiResponse<Category>> {
-    return this.http.post<ApiResponse<Category>>(this.base, dto);
+  createCategory(data: CreateCategoryDto): Observable<Category> {
+    return this.http.post<ApiResponse<Category>>(this.base, data).pipe(
+      map(response => response.data)
+    );
   }
 
-  // M-05: backend usa PUT para actualizar categorías
-  updateCategory(id: string, dto: UpdateCategoryDto): Observable<ApiResponse<Category>> {
-    return this.http.put<ApiResponse<Category>>(`${this.base}/${id}`, dto);
+  updateCategory(id: string, data: UpdateCategoryDto): Observable<Category> {
+    return this.http.put<ApiResponse<Category>>(`${this.base}/${id}`, data).pipe(
+      map(response => response.data)
+    );
   }
 
-  deleteCategory(id: string): Observable<ApiResponse<null>> {
-    return this.http.delete<ApiResponse<null>>(`${this.base}/${id}`);
+  deleteCategory(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(
+      map(() => undefined)
+    );
   }
 }

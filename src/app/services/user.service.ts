@@ -1,51 +1,107 @@
-// src/app/services/user.service.ts — A-05: renombrado a user.service.ts (desde user.ts)
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { User } from '../models/user.model';
+import { ApiResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
-import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
-import { User, UpdateProfileDto, ChangePasswordDto } from '../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/users`;
 
-  me(): Observable<ApiResponse<User>> {
-    return this.http.get<ApiResponse<User>>(`${this.base}/me`);
+  /**
+   * Obtiene el perfil del usuario autenticado
+   * GET /api/users/me
+   */
+  getMe(): Observable<User> {
+    return this.http.get<ApiResponse<User>>(`${this.base}/me`).pipe(
+      map(response => response.data)
+    );
   }
 
-  updateMe(dto: UpdateProfileDto): Observable<ApiResponse<User>> {
-    return this.http.patch<ApiResponse<User>>(`${this.base}/me`, dto);
+  /**
+   * Actualiza el perfil del usuario autenticado
+   * PATCH /api/users/me
+   * Body: { name?, email? }
+   */
+  updateMe(data: { name?: string; email?: string }): Observable<User> {
+    return this.http.patch<ApiResponse<User>>(`${this.base}/me`, data).pipe(
+      map(response => response.data)
+    );
   }
 
-  changePassword(dto: ChangePasswordDto): Observable<ApiResponse<null>> {
-    return this.http.patch<ApiResponse<null>>(`${this.base}/me/password`, dto);
+  /**
+   * Cambia la contraseña del usuario autenticado
+   * PATCH /api/users/me/password
+   * Body: { currentPassword, newPassword }
+   */
+  changePassword(data: { currentPassword: string; newPassword: string }): Observable<void> {
+    return this.http.patch<ApiResponse<void>>(`${this.base}/me/password`, data).pipe(
+      map(() => undefined)
+    );
   }
 
-  deleteMe(): Observable<ApiResponse<null>> {
-    return this.http.delete<ApiResponse<null>>(`${this.base}/me`);
+  /**
+   * Elimina la cuenta del usuario autenticado (soft delete)
+   * DELETE /api/users/me
+   */
+  deleteMe(): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.base}/me`).pipe(
+      map(() => undefined)
+    );
   }
 
-  list(params?: Record<string, any>): Observable<PaginatedResponse<User[]>> {
-    let httpParams = new HttpParams();
-    if (params) Object.entries(params).forEach(([k, v]) => (httpParams = httpParams.set(k, String(v))));
-    return this.http.get<PaginatedResponse<User[]>>(this.base, { params: httpParams });
+  /**
+   * [Admin] Lista todos los usuarios con paginación
+   * GET /api/users
+   * Query params: page, limit, sort, search, isActive, role
+   */
+  listUsers(params?: any): Observable<{ items: User[]; total: number; meta: any }> {
+    return this.http.get<ApiResponse<{ items: User[]; total: number; meta: any }>>(`${this.base}`, { params }).pipe(
+      map(response => response.data)
+    );
   }
 
-  getById(id: string): Observable<ApiResponse<User>> {
-    return this.http.get<ApiResponse<User>>(`${this.base}/${id}`);
+  /**
+   * [Admin] Obtiene un usuario por ID
+   * GET /api/users/:id
+   */
+  getUserById(id: string): Observable<User> {
+    return this.http.get<ApiResponse<User>>(`${this.base}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
-  updateUser(id: string, dto: Partial<User>): Observable<ApiResponse<User>> {
-    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}`, dto);
+  /**
+   * [Admin] Actualiza un usuario por ID
+   * PATCH /api/users/:id
+   */
+  updateUser(id: string, data: any): Observable<User> {
+    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}`, data).pipe(
+      map(response => response.data)
+    );
   }
 
-  setStatus(id: string, isActive: boolean): Observable<ApiResponse<User>> {
-    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}/status`, { isActive });
+  /**
+   * [Admin] Activa o desactiva una cuenta
+   * PATCH /api/users/:id/status
+   * Body: { isActive: boolean }
+   */
+  setUserStatus(id: string, isActive: boolean): Observable<User> {
+    return this.http.patch<ApiResponse<User>>(`${this.base}/${id}/status`, { isActive }).pipe(
+      map(response => response.data)
+    );
   }
 
-  remove(id: string): Observable<ApiResponse<null>> {
-    return this.http.delete<ApiResponse<null>>(`${this.base}/${id}`);
+  /**
+   * [Superadmin] Elimina un usuario (soft delete)
+   * DELETE /api/users/:id
+   */
+  deleteUser(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(
+      map(() => undefined)
+    );
   }
 }

@@ -8,15 +8,15 @@ export interface Account {
   nombre: string;
   tipo: AccountType;
   moneda: Currency;
-  balance: number;
-  descripcion?: string | null;
+  balance: number; // Stored in cents, displayed as decimal
   isActive: boolean;
+  isDeleted: boolean;
+  deletedAt?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface CreateAccountDTO {
-  userId?: string; // Se puede inferir del token, opcional en el DTO
+export interface CreateAccountDto {
   nombre: string;
   tipo: AccountType;
   moneda: Currency;
@@ -24,4 +24,4 @@ export interface CreateAccountDTO {
   balance?: number;
 }
 
-export type UpdateAccountDto = Partial<CreateAccountDto>;
+export interface UpdateAccountDto extends Partial<CreateAccountDto> {}

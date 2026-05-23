@@ -1,46 +1,57 @@
-// src/app/services/personal-finance.service.ts — C-02: usa environment + modelos correctos + paginación
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PersonalFinance, CreatePersonalFinanceRequest, UpdatePersonalFinanceRequest, ApiResponse } from '../models/transaction.model';
+import { PersonalFinance, CreatePersonalFinanceDto, UpdatePersonalFinanceDto, ApiResponse, PaginatedResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PersonalFinanceService {
-  private apiUrl = `${environment.apiUrl}/personal-finance`;
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/personal-finance`;
 
-  // M-06: soporte de paginación y filtros (filter opcional)
-  getTransactions(filter?: TransactionFilter): Observable<PaginatedResponse<PersonalFinance[]>> {
-    let params = new HttpParams();
-    if (filter) {
-      Object.entries(filter).forEach(([k, v]) => {
+  getTransactions(params?: any): Observable<PaginatedResponse<PersonalFinance>> {
+    return this.http.get<PaginatedResponse<PersonalFinance>>(this.base, { params });
   }
+
+  /**
+   * Obtiene transacciones con paginación
+   * @param page - Número de página (default: 1)
+   * @param limit - Límite de items por página (default: 10)
+   * @param filters - Filtros opcionales (tipo, estado, fechaDesde, fechaHasta, etc.)
+   */
+  getTransactionsPaginated(page: number = 1, limit: number = 10, filters?: any): Observable<PaginatedResponse<PersonalFinance>> {
+    const params: any = { page, limit, ...filters };
+    return this.http.get<PaginatedResponse<PersonalFinance>>(this.base, { params });
+  }
+
   getTransactionById(id: string): Observable<ApiResponse<PersonalFinance>> {
     return this.http.get<ApiResponse<PersonalFinance>>(`${this.base}/${id}`);
   }
 
-  createTransaction(dto: CreatePersonalFinanceDto): Observable<ApiResponse<PersonalFinance>> {
-    return this.http.post<ApiResponse<PersonalFinance>>(this.base, dto);
+  createTransaction(data: CreatePersonalFinanceDto): Observable<ApiResponse<PersonalFinance>> {
+    return this.http.post<ApiResponse<PersonalFinance>>(this.base, data);
   }
 
-  // backend usa PATCH para updates parciales
-  updateTransaction(id: string, dto: UpdatePersonalFinanceDto): Observable<ApiResponse<PersonalFinance>> {
-    return this.http.patch<ApiResponse<PersonalFinance>>(`${this.base}/${id}`, dto);
+  updateTransaction(id: string, data: UpdatePersonalFinanceDto): Observable<ApiResponse<PersonalFinance>> {
+    return this.http.put<ApiResponse<PersonalFinance>>(`${this.base}/${id}`, data);
   }
 
   deleteTransaction(id: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`);
   }
 
-  getAnalysis(): Observable<ApiResponse<AnalysisData>> {
-    return this.http.get<ApiResponse<AnalysisData>>(`${this.base}/analysis`);
+  getAnalysis(fechaDesde?: string, fechaHasta?: string): Observable<ApiResponse<any>> {
+    const params: any = {};
+    if (fechaDesde) params.fechaDesde = fechaDesde;
+    if (fechaHasta) params.fechaHasta = fechaHasta;
+    return this.http.get<ApiResponse<any>>(`${this.base}/analysis`, { params });
   }
 
-  getPrediction(): Observable<ApiResponse<PredictionData>> {
-    return this.http.get<ApiResponse<PredictionData>>(`${this.base}/prediction`);
+  getPrediction(): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.base}/prediction`);
   }
 
-  getSimulation(): Observable<ApiResponse<SimulationData>> {
-    return this.http.get<ApiResponse<SimulationData>>(`${this.base}/simulation`);
+  getSimulation(): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.base}/simulation`);
   }
 }

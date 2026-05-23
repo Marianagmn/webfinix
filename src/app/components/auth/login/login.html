@@ -1,53 +1,53 @@
-<div class="auth-wrapper">
-  <div class="auth-card card p-4 p-md-5">
-    <div class="mb-4 text-center">
-      <h1 class="h4 mb-2">Bienvenido a Finix</h1>
-      <p class="text-muted mb-0">Accede a tu panel de gestión financiera.</p>
-    </div>
-
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      <div class="mb-3">
-        <label for="email" class="form-label">Correo electrónico</label>
-        <input
-          id="email"
-          type="email"
-          class="form-control"
-          formControlName="email"
-          placeholder="usuario@finix.com"
-        />
-        @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
-          <div class="form-text text-danger">
-            @if (loginForm.controls.email.errors?.required) {El correo es obligatorio.}
-            @if (loginForm.controls.email.errors?.email) {Ingresa un correo válido.}
+<div class="container-fluid d-flex align-items-center justify-content-center min-vh-100 bg-light">
+  <div class="card shadow-lg border-0" style="max-width: 400px; width: 100%;">
+    <div class="card-body p-5">
+      <h3 class="fw-bold text-center mb-4">Iniciar Sesión</h3>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            formControlName="email"
+            [class.is-invalid]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+          />
+          <div class="invalid-feedback" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']">
+            El email es requerido
           </div>
-        }
-      </div>
-
-      <div class="mb-3">
-        <label for="password" class="form-label">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          class="form-control"
-          formControlName="password"
-          placeholder="••••••••"
-        />
-        @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
-          <div class="form-text text-danger">
-            @if (loginForm.controls.password.errors?.required) {La contraseña es obligatoria.}
-            @if (loginForm.controls.password.errors?.minlength) {La contraseña debe tener al menos 6 caracteres.}
+          <div class="invalid-feedback" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['email']">
+            Email inválido
           </div>
-        }
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            formControlName="password"
+            [class.is-invalid]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+          />
+          <div class="invalid-feedback" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['required']">
+            La contraseña es requerida
+          </div>
+          <div class="invalid-feedback" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.errors?.['minlength']">
+            La contraseña debe tener al menos 6 caracteres
+          </div>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Iniciar Sesión</span>
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+          </button>
+        </div>
+      </form>
+
+      <div class="text-center mt-4">
+        <p class="mb-0">¿No tienes cuenta? <a routerLink="/register" class="text-decoration-none">Regístrate</a></p>
       </div>
-
-      <button class="btn btn-primary w-100" type="submit" [disabled]="loading()">
-        @if (loading()) {Ingresando...} @else {Ingresar}
-      </button>
-    </form>
-
-    <div class="mt-4 text-center text-muted">
-      ¿No tienes cuenta? <a routerLink="/auth/register">Regístrate</a>
     </div>
   </div>
 </div>
-

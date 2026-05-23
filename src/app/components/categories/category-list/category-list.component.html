@@ -12,13 +12,13 @@
       <input type="radio" class="btn-check" name="catfilter" id="btnall" [checked]="currentFilter === 'all'" (click)="applyFilter('all')">
       <label class="btn btn-outline-primary" for="btnall">Todas</label>
 
-      <input type="radio" class="btn-check" name="catfilter" id="btnincome" [checked]="currentFilter === 'income'" (click)="applyFilter('income')">
+      <input type="radio" class="btn-check" name="catfilter" id="btnincome" [checked]="currentFilter === 'ingreso'" (click)="applyFilter('ingreso')">
       <label class="btn btn-outline-success" for="btnincome">Ingresos</label>
 
-      <input type="radio" class="btn-check" name="catfilter" id="btnexpense" [checked]="currentFilter === 'expense'" (click)="applyFilter('expense')">
+      <input type="radio" class="btn-check" name="catfilter" id="btnexpense" [checked]="currentFilter === 'gasto'" (click)="applyFilter('gasto')">
       <label class="btn btn-outline-danger" for="btnexpense">Gastos</label>
       
-      <input type="radio" class="btn-check" name="catfilter" id="btntransfer" [checked]="currentFilter === 'transfer'" (click)="applyFilter('transfer')">
+      <input type="radio" class="btn-check" name="catfilter" id="btntransfer" [checked]="currentFilter === 'transferencia'" (click)="applyFilter('transferencia')">
       <label class="btn btn-outline-secondary" for="btntransfer">Transferencias</label>
     </div>
   </div>

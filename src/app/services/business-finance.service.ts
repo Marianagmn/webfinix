@@ -1,74 +1,78 @@
-// src/app/services/business-finance.service.ts — C-02, B-03: tipos correctos, environment
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BusinessFinance, CreateBusinessFinanceRequest, UpdateBusinessFinanceRequest, ApiResponse } from '../models/transaction.model';
+import { BusinessFinance, CreateBusinessFinanceDto, UpdateBusinessFinanceDto, ApiResponse, PaginatedResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BusinessFinanceService {
-  private apiUrl = `${environment.apiUrl}/business-finance`;
+  private readonly http = inject(HttpClient);
+  private readonly base = `${environment.apiUrl}/business-finance`;
 
-  getTransactions(filter?: Record<string, any>): Observable<PaginatedResponse<BusinessTransaction[]>> {
-    let params = new HttpParams();
-    if (filter) {
-      Object.entries(filter).forEach(([k, v]) => {
-        if (v !== undefined && v !== null) params = params.set(k, String(v));
-      });
-    }
-    return this.http.get<PaginatedResponse<BusinessTransaction[]>>(this.base, { params });
+  getTransactions(params?: any): Observable<PaginatedResponse<BusinessFinance>> {
+    return this.http.get<PaginatedResponse<BusinessFinance>>(this.base, { params });
   }
 
-  getTransactionById(id: string): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.get<ApiResponse<BusinessTransaction>>(`${this.base}/${id}`);
+  /**
+   * Obtiene transacciones empresariales con paginación
+   * @param page - Número de página (default: 1)
+   * @param limit - Límite de items por página (default: 10)
+   * @param filters - Filtros opcionales (tipo, estado, fechaDesde, fechaHasta, etc.)
+   */
+  getTransactionsPaginated(page: number = 1, limit: number = 10, filters?: any): Observable<PaginatedResponse<BusinessFinance>> {
+    const params: any = { page, limit, ...filters };
+    return this.http.get<PaginatedResponse<BusinessFinance>>(this.base, { params });
   }
 
-  createTransaction(dto: CreateBusinessTransactionDto): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.post<ApiResponse<BusinessTransaction>>(this.base, dto);
+  getTransactionById(id: string): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.get<ApiResponse<BusinessFinance>>(`${this.base}/${id}`);
   }
 
-  updateTransaction(id: string, dto: UpdateBusinessTransactionDto): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.patch<ApiResponse<BusinessTransaction>>(`${this.base}/${id}`, dto);
+  createTransaction(data: CreateBusinessFinanceDto): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(this.base, data);
   }
 
-  deleteTransaction(id: string): Observable<ApiResponse<null>> {
-    return this.http.delete<ApiResponse<null>>(`${this.base}/${id}`);
+  updateTransaction(id: string, data: UpdateBusinessFinanceDto): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.put<ApiResponse<BusinessFinance>>(`${this.base}/${id}`, data);
   }
 
-  // B-03: tipado correcto en lugar de Observable<any>
-  submitForApproval(id: string): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.post<ApiResponse<BusinessTransaction>>(`${this.base}/${id}/submit`, {});
+  deleteTransaction(id: string): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`);
   }
 
-  approve(id: string): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.post<ApiResponse<BusinessTransaction>>(`${this.base}/${id}/approve`, {});
+  submitForApproval(id: string): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(`${this.base}/${id}/submit`, {});
   }
 
-  reject(id: string, motivo?: string): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.post<ApiResponse<BusinessTransaction>>(`${this.base}/${id}/reject`, { motivo });
+  approve(id: string, comentario?: string): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(`${this.base}/${id}/approve`, { comentario });
   }
 
-  post(id: string): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.post<ApiResponse<BusinessTransaction>>(`${this.base}/${id}/post`, {});
+  reject(id: string, motivo?: string): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(`${this.base}/${id}/reject`, { motivo });
   }
 
-  reverse(id: string): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.post<ApiResponse<BusinessTransaction>>(`${this.base}/${id}/reverse`, {});
+  post(id: string): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(`${this.base}/${id}/post`, {});
   }
 
-  applyPayment(id: string, dto: ApplyPaymentDto): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.post<ApiResponse<BusinessTransaction>>(`${this.base}/${id}/payments`, dto);
+  reverse(id: string, motivo?: string): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(`${this.base}/${id}/reverse`, { motivo });
   }
 
-  getPendingApprovals(): Observable<PaginatedResponse<BusinessTransaction[]>> {
-    return this.http.get<PaginatedResponse<BusinessTransaction[]>>(`${this.base}/approvals/pending`);
+  applyPayment(id: string, paymentData: { pagoId: string; monto: number }): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(`${this.base}/${id}/payments`, paymentData);
   }
 
-  getOverdue(tipo: BusinessTransactionTipo): Observable<PaginatedResponse<BusinessTransaction[]>> {
-    return this.http.get<PaginatedResponse<BusinessTransaction[]>>(`${this.base}/overdue/${tipo}`);
+  getPendingApprovals(params?: any): Observable<PaginatedResponse<BusinessFinance>> {
+    return this.http.get<PaginatedResponse<BusinessFinance>>(`${this.base}/approvals/pending`, { params });
   }
 
-  recalculateTaxes(id: string): Observable<ApiResponse<BusinessTransaction>> {
-    return this.http.post<ApiResponse<BusinessTransaction>>(`${this.base}/${id}/taxes/recalculate`, {});
+  getOverdue(tipo: 'cobrar' | 'pagar', params?: any): Observable<PaginatedResponse<BusinessFinance>> {
+    return this.http.get<PaginatedResponse<BusinessFinance>>(`${this.base}/overdue/${tipo}`, { params });
+  }
+
+  recalculateTaxes(id: string): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(`${this.base}/${id}/taxes/recalculate`, {});
   }
 }

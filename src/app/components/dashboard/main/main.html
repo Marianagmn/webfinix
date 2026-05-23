@@ -1,1 +1,87 @@
-<p>main works!</p>
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold m-0">Dashboard</h1>
+    <span class="text-muted">Bienvenido, {{ userName() }}</span>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center p-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <!-- Balance Summary -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-muted mb-2">Balance Total</h6>
+            <h3 class="fw-bold mb-0">{{ totalBalance() | currency }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-muted mb-2">Cuentas</h6>
+            <h3 class="fw-bold mb-0">{{ accounts().length }}</h3>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-muted mb-2">Transacciones Recientes</h6>
+            <h3 class="fw-bold mb-0">{{ recentTransactions().length }}</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="card shadow-sm border-0">
+      <div class="card-header bg-white border-0 pt-4 pb-0">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="fw-bold m-0">Transacciones Recientes</h5>
+          <a routerLink="/transactions" class="btn btn-sm btn-outline-primary">Ver todas</a>
+        </div>
+      </div>
+      <div class="card-body p-0 mt-3">
+        <div *ngIf="recentTransactions().length === 0" class="text-center p-5 text-muted">
+          <i class="bi bi-receipt fs-1"></i>
+          <p class="mt-2">No hay transacciones recientes.</p>
+        </div>
+        <div class="table-responsive" *ngIf="recentTransactions().length > 0">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Fecha</th>
+                <th>Descripción</th>
+                <th>Tipo</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let txn of recentTransactions()">
+                <td>{{ txn.fecha | date:'shortDate' }}</td>
+                <td class="fw-semibold">{{ txn.descripcion }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'bg-success': txn.tipo === 'ingreso',
+                    'bg-danger': txn.tipo === 'gasto',
+                    'bg-secondary': txn.tipo === 'transferencia'
+                  }">{{ txn.tipo }}</span>
+                </td>
+                <td class="fw-bold" [ngClass]="{
+                  'text-success': txn.tipo === 'ingreso',
+                  'text-danger': txn.tipo === 'gasto'
+                }">
+                  {{ txn.tipo === 'gasto' ? '-' : (txn.tipo === 'ingreso' ? '+' : '') }}${{ txn.monto }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -26,7 +26,7 @@ export class ApprovalListComponent implements OnInit {
     this.isLoading = true;
     this.businessService.getPendingApprovals().subscribe({
       next: (data) => {
-        this.approvals = data;
+        this.approvals = data.data;
         this.isLoading = false;
       },
       error: () => {

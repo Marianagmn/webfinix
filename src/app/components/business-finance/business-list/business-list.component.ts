@@ -26,7 +26,7 @@ export class BusinessListComponent implements OnInit {
     this.isLoading = true;
     this.businessService.getTransactions().subscribe({
       next: (data) => {
-        this.transactions = data;
+        this.transactions = data.data;
         this.isLoading = false;
       },
       error: () => {
