@@ -1,4 +1,5 @@
 import { CategoryTipo } from './category.model';
+import { MetodoPago, TransactionEstado } from './personal-finance.model';
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -28,10 +29,10 @@ export interface PersonalFinance {
   categoria: string;
   cuentaOrigenId: string;
   cuentaDestinoId: string;
-  metodoPago: string;
+  metodoPago: MetodoPago | null;
   descripcion: string;
   fecha: string;
-  estado: string;
+  estado: TransactionEstado;
   esAhorro: boolean;
   tags: string[];
   // Campos faltantes del backend - agregados para consistencia
@@ -166,7 +167,7 @@ export interface BusinessFinance {
   categoria: string;
   cuentaOrigenId?: string;
   cuentaDestinoId?: string;
-  metodoPago: string;
+  metodoPago: MetodoPago | null;
   descripcion: string;
   fecha: string;
   fechaContabilizacion?: string;

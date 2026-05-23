@@ -9,7 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../../services/auth';
+import { AuthService } from '../../../services/auth.service';
 import { RegisterDto } from '../../../models/auth.model';
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -55,7 +55,7 @@ export class Register {
     const payload = this.registerForm.value as RegisterDto;
 
     this.authService.register(payload).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.loading.set(false);
         if (response.success) {
           this.toastr.success('Registro exitoso');

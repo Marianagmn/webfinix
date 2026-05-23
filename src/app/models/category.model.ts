@@ -1,4 +1,4 @@
-import { ApiResponse } from './transaction.model';
+import { ApiResponse } from './api-response.model';
 
 export type CategoryTipo = 'ingreso' | 'gasto' | 'transferencia';
 

@@ -49,7 +49,7 @@ export class TransactionCreateComponent implements OnInit {
   }
 
   loadCategories(type: CategoryTipo) {
-    this.categoryService.getCategories(type).subscribe(cats => this.categories = cats.data);
+    this.categoryService.getCategories(type).subscribe(cats => this.categories = cats);
   }
 
   onSubmit() {

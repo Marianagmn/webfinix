@@ -19,8 +19,8 @@
         <input id="email" type="email" class="form-control" formControlName="email" placeholder="usuario@finix.com" />
         @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
           <div class="form-text text-danger">
-            @if (registerForm.controls.email.errors?.required) {El correo es obligatorio.}
-            @if (registerForm.controls.email.errors?.email) {Ingresa un correo válido.}
+            @if (registerForm.controls.email.errors?.['required']) {El correo es obligatorio.}
+            @if (registerForm.controls.email.errors?.['email']) {Ingresa un correo válido.}
           </div>
         }
       </div>
@@ -30,8 +30,8 @@
         <input id="password" type="password" class="form-control" formControlName="password" placeholder="••••••••" />
         @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
           <div class="form-text text-danger">
-            @if (registerForm.controls.password.errors?.required) {La contraseña es obligatoria.}
-            @if (registerForm.controls.password.errors?.minlength) {La contraseña debe tener al menos 6 caracteres.}
+            @if (registerForm.controls.password.errors?.['required']) {La contraseña es obligatoria.}
+            @if (registerForm.controls.password.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
           </div>
         }
       </div>
@@ -41,11 +41,11 @@
         <input id="passwordConfirm" type="password" class="form-control" formControlName="passwordConfirm" placeholder="••••••••" />
         @if (registerForm.controls.passwordConfirm.touched && registerForm.controls.passwordConfirm.invalid) {
           <div class="form-text text-danger">
-            @if (registerForm.controls.passwordConfirm.errors?.required) {La confirmación de contraseña es obligatoria.}
-            @if (registerForm.controls.passwordConfirm.errors?.minlength) {La contraseña debe tener al menos 6 caracteres.}
+            @if (registerForm.controls.passwordConfirm.errors?.['required']) {La confirmación de contraseña es obligatoria.}
+            @if (registerForm.controls.passwordConfirm.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
           </div>
         }
-        @if (registerForm.errors?.passwordMismatch && registerForm.touched) {
+        @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
           <div class="form-text text-danger">Las contraseñas no coinciden.</div>
         }
       </div>

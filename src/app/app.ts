@@ -12,6 +12,8 @@ import { AuthStore } from './store/auth.store';
 export class App implements OnInit {
   private readonly authStore = inject(AuthStore);
 
+  title = 'Finix';
+
   ngOnInit(): void {
     // M-02/D-05: restaurar usuario desde /auth/me al cargar la app
     this.authStore.init();

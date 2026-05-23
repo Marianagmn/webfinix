@@ -28,7 +28,7 @@ export class CategoryListComponent implements OnInit {
     this.isLoading = true;
     this.categoryService.getCategories().subscribe({
       next: (data) => {
-        this.categories = data.data;
+        this.categories = data;
         this.applyFilter(this.currentFilter);
         this.isLoading = false;
       },

@@ -39,8 +39,7 @@ export class CategoryEdit implements OnInit {
     this.categoryService.getCategoryById(this.categoryId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (r) => {
-          const c = r.data;
+        next: (c) => {
           this.form.patchValue({ nombre: c.nombre, tipo: c.tipo, color: c.color ?? '#6c757d', icono: c.icono ?? '' });
           this.loadingData.set(false);
         },
@@ -55,8 +54,8 @@ export class CategoryEdit implements OnInit {
     this.categoryService.updateCategory(this.categoryId, {
       nombre: raw.nombre!,
       tipo: raw.tipo!,
-      color: raw.color || undefined,
-      icono: raw.icono || undefined,
+      color: raw.color || '#6c757d',
+      icono: raw.icono || '',
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => { this.loading.set(false); this.toastr.success('Categoría actualizada'); this.router.navigate(['/categories']); },

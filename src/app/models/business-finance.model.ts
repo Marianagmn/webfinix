@@ -76,4 +76,4 @@ export interface ApplyPaymentDto {
   referencia?: string;
 }
 
-export { ApiResponse };
+export type { ApiResponse };

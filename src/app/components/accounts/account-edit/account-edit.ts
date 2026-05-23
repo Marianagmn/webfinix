@@ -48,7 +48,6 @@ export class AccountEdit implements OnInit {
             tipo: account.tipo,
             moneda: account.moneda,
             balance: account.balance,
-            descripcion: account.descripcion ?? '',
           });
           this.loadingData.set(false);
         },
@@ -68,7 +67,6 @@ export class AccountEdit implements OnInit {
       tipo: raw.tipo!,
       moneda: raw.moneda!,
       balance: raw.balance!,
-      descripcion: raw.descripcion || undefined,
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => { this.loading.set(false); this.toastr.success('Cuenta actualizada'); this.router.navigate(['/accounts']); },

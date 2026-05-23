@@ -49,19 +49,19 @@
           <tbody>
             @for (transaction of filteredTransactions(); track transaction.id) {
               <tr>
-                <td>{{ transaction.date | date:'shortDate' }}</td>
-                <td>{{ transaction.description || '—' }}</td>
+                <td>{{ transaction.fecha | date:'shortDate' }}</td>
+                <td>{{ transaction.descripcion || '—' }}</td>
                 <td>
-                  <span class="badge badge-type badge-{{ transaction.type }}">
-                    {{ transaction.type }}</span>
+                  <span class="badge badge-type badge-{{ transaction.tipo }}">
+                    {{ transaction.tipo }}</span>
                 </td>
-                <td>{{ transaction.accountId || 'Sin cuenta' }}</td>
-                <td class="text-end">{{ formatAmount(transaction.amount) }}</td>
+                <td>{{ transaction.cuentaOrigenId || 'Sin cuenta' }}</td>
+                <td class="text-end">{{ formatAmount(transaction.monto, transaction.moneda) }}</td>
                 <td>
-                  <span class="badge badge-state">{{ transaction.isRecurring ? 'Recurrente' : 'Normal' }}</span>
+                  <span class="badge badge-state">{{ transaction.esAhorro ? 'Ahorro' : 'Normal' }}</span>
                 </td>
                 <td class="text-end">
-                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteTransaction(transaction.id)">
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="requestDelete(transaction.id)">
                     <i class="bi bi-trash"></i> Eliminar
                   </button>
                 </td>

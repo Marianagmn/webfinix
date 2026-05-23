@@ -6,9 +6,9 @@ export const CATEGORIES_ROUTES: Routes = [
     path: '',
     canActivate: [authGuard],
     children: [
-      { path: '', loadComponent: () => import('../../components/categories/category-list/category-list.ts').then(m => m.CategoryList) },
-      { path: 'create', loadComponent: () => import('../../components/categories/category-create/category-create.ts').then(m => m.CategoryCreate) },
-      { path: ':id/edit', loadComponent: () => import('../../components/categories/category-edit/category-edit.ts').then(m => m.CategoryEdit) },
+      { path: '', loadComponent: () => import('../../components/categories/category-list/category-list').then(m => m.CategoryList) },
+      { path: 'create', loadComponent: () => import('../../components/categories/category-create/category-create').then(m => m.CategoryCreate) },
+      { path: ':id/edit', loadComponent: () => import('../../components/categories/category-edit/category-edit').then(m => m.CategoryEdit) },
     ],
   },
 ];

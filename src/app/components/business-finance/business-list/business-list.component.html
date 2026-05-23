@@ -32,12 +32,12 @@
           <tbody>
             <tr *ngFor="let txn of transactions">
               <td class="fw-semibold">
-                {{ txn.clienteId }}
+                {{ txn.terceroId }}
                 <div class="small text-muted">ID: {{ txn.id }}</div>
               </td>
               <td><span class="badge bg-secondary">{{ txn.tipo }}</span></td>
               <td class="fw-bold text-dark">${{ txn.monto }}</td>
-              <td>{{ txn.fechaVencimiento | date:'shortDate' }}</td>
+              <td>{{ txn.vencimiento?.fechaVencimiento | date:'shortDate' }}</td>
               <td>
                 <span class="badge" [ngClass]="{
                   'bg-secondary': txn.estado === 'borrador',
