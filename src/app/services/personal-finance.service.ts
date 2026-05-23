@@ -15,6 +15,17 @@ export class PersonalFinanceService {
     return this.http.get<PaginatedResponse<PersonalFinance>>(this.base, { params });
   }
 
+  /**
+   * Obtiene transacciones con paginación
+   * @param page - Número de página (default: 1)
+   * @param limit - Límite de items por página (default: 10)
+   * @param filters - Filtros opcionales (tipo, estado, fechaDesde, fechaHasta, etc.)
+   */
+  getTransactionsPaginated(page: number = 1, limit: number = 10, filters?: any): Observable<PaginatedResponse<PersonalFinance>> {
+    const params: any = { page, limit, ...filters };
+    return this.http.get<PaginatedResponse<PersonalFinance>>(this.base, { params });
+  }
+
   getTransactionById(id: string): Observable<ApiResponse<PersonalFinance>> {
     return this.http.get<ApiResponse<PersonalFinance>>(`${this.base}/${id}`);
   }

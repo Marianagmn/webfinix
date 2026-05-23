@@ -14,9 +14,9 @@ export class CategoryService {
   private readonly base = `${environment.apiUrl}/categories`;
 
   getCategories(params?: any): Observable<Category[]> {
-    return this.http.get<PaginatedResponse<Category>>(this.base, { params }).pipe(
-      map(response => response.data)
-    );
+    // Backend devuelve array directo en ApiResponse.success(), no PaginatedResponse
+    // Agregamos soporte para filtro por tipo (ingreso, gasto, transferencia)
+    return this.http.get<Category[]>(this.base, { params });
   }
 
   getCategoryById(id: string): Observable<Category> {

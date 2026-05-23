@@ -15,6 +15,17 @@ export class BusinessFinanceService {
     return this.http.get<PaginatedResponse<BusinessFinance>>(this.base, { params });
   }
 
+  /**
+   * Obtiene transacciones empresariales con paginación
+   * @param page - Número de página (default: 1)
+   * @param limit - Límite de items por página (default: 10)
+   * @param filters - Filtros opcionales (tipo, estado, fechaDesde, fechaHasta, etc.)
+   */
+  getTransactionsPaginated(page: number = 1, limit: number = 10, filters?: any): Observable<PaginatedResponse<BusinessFinance>> {
+    const params: any = { page, limit, ...filters };
+    return this.http.get<PaginatedResponse<BusinessFinance>>(this.base, { params });
+  }
+
   getTransactionById(id: string): Observable<ApiResponse<BusinessFinance>> {
     return this.http.get<ApiResponse<BusinessFinance>>(`${this.base}/${id}`);
   }

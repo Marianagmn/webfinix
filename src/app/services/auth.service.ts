@@ -74,7 +74,7 @@ export class AuthService {
   private saveTokens(accessToken: string, refreshToken?: string): void {
     localStorage.setItem('accessToken', accessToken);
     // Refresh token is stored in httpOnly cookie by backend, not in localStorage
-    // If refreshToken is provided (for backward compatibility), don't store it
+    // Never store refresh token in localStorage for security (XSS vulnerability)
   }
 
   getAccessToken(): string | null {
@@ -82,7 +82,8 @@ export class AuthService {
   }
 
   getRefreshToken(): string | null {
-    return localStorage.getItem('refreshToken');
+    // Refresh token should only be in httpOnly cookie, never in localStorage
+    return null;
   }
 
   getToken(): string | null {
@@ -91,7 +92,7 @@ export class AuthService {
 
   private clearTokens(): void {
     localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    // No need to remove refreshToken from localStorage as it should never be there
   }
 
   removeToken(): void {

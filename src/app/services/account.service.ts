@@ -14,9 +14,8 @@ export class AccountService {
   private readonly base = `${environment.apiUrl}/accounts`;
 
   getAccounts(params?: any): Observable<Account[]> {
-    return this.http.get<PaginatedResponse<Account>>(this.base, { params }).pipe(
-      map(response => response.data)
-    );
+    // Backend devuelve array directo en ApiResponse.success(), no PaginatedResponse
+    return this.http.get<Account[]>(this.base, { params });
   }
 
   getAccountById(id: string): Observable<Account> {

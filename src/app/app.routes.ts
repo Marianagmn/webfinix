@@ -47,13 +47,13 @@ export const routes: Routes = [
         path: 'business',
         component: BusinessListComponent,
         canActivate: [RoleGuard],
-        data: { roles: ['user', 'admin', 'aprobador', 'contador'] }
+        data: { roles: ['user', 'admin', 'aprobador', 'contador'], requireBusinessId: true }
       },
       {
         path: 'business/approvals',
         component: ApprovalListComponent,
         canActivate: [RoleGuard],
-        data: { roles: ['admin', 'aprobador'] }
+        data: { roles: ['admin', 'aprobador'], requireBusinessId: true }
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]

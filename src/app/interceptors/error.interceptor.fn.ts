@@ -19,8 +19,30 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         return throwError(() => error);
       }
 
-      if (error.error?.message) {
-        errorMessage = error.error.message;
+      // Mapear códigos de error específicos del backend
+      if (error.error?.code) {
+        switch (error.error.code) {
+          case 'TOO_MANY_REQUESTS':
+            errorMessage = 'Demasiadas solicitudes. Intenta nuevamente en unos minutos.';
+            break;
+          case 'ANALYSIS_ERROR':
+            errorMessage = 'Error en el análisis financiero. Verifica los datos.';
+            break;
+          case 'PREDICTION_ERROR':
+            errorMessage = 'Error en la predicción. No hay suficientes datos.';
+            break;
+          case 'SIMULATION_ERROR':
+            errorMessage = 'Error en la simulación. Verifica los parámetros.';
+            break;
+          case 'NOT_FOUND':
+            errorMessage = 'Recurso no encontrado.';
+            break;
+          case 'FORBIDDEN':
+            errorMessage = 'No tienes permisos para esta acción.';
+            break;
+          default:
+            errorMessage = error.error.message || errorMessage;
+        }
       } else if (error.status === 401) {
         errorMessage = 'No autorizado. Inicia sesión nuevamente.';
         router.navigate(['/login']);
@@ -38,6 +60,8 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         errorMessage = 'Error del servidor. Contacta al soporte.';
       } else if (error.status === 503) {
         errorMessage = 'Servicio no disponible. Intenta nuevamente más tarde.';
+      } else if (error.error?.message) {
+        errorMessage = error.error.message;
       }
 
       toastr.error(errorMessage, 'Error');

@@ -34,6 +34,38 @@ export interface PersonalFinance {
   estado: string;
   esAhorro: boolean;
   tags: string[];
+  // Campos faltantes del backend - agregados para consistencia
+  location?: {
+    type: 'Point';
+    coordinates: [number, number];
+    address?: string;
+  };
+  source: 'manual' | 'ia' | 'importado';
+  aiMetadata?: {
+    clasificacion?: {
+      categoriaSugerida?: string;
+      confianza?: number;
+    };
+    analisis?: {
+      patronDetectado?: string;
+      alerta?: string;
+    };
+    predicciones?: {
+      gastoMensual?: number;
+    };
+  };
+  historialCambios?: Array<{
+    campo: string;
+    valorAnterior: any;
+    valorNuevo: any;
+    modificadoPor?: string;
+    fecha: string;
+  }>;
+  createdBy?: string;
+  updatedBy?: string;
+  esTransferenciaInterna: boolean;
+  transferenciaId?: string;
+  notaTransaccion?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -154,6 +186,12 @@ export interface BusinessFinance {
   facturaElectronica: boolean;
   numeroDocumento?: string;
   tipoDocumento?: string;
+  documentosSoporte?: Array<{
+    nombre: string;
+    url: string;
+    tipo: string;
+    fechaSubida: string;
+  }>;
   // Terceros
   terceroId?: string;
   tipoTercero?: 'proveedor' | 'cliente' | 'empleado' | 'accionista' | 'entidad_publica' | 'otro';
@@ -162,24 +200,69 @@ export interface BusinessFinance {
   departamentoId?: string;
   proyectoId?: string;
   porcentajeAsignacion: number;
+  // Presupuesto
+  presupuesto?: {
+    presupuestoId: string;
+    lineaPresupuestalId?: string;
+    montoPresupuestado: number;
+    montoEjecutado: number;
+    variacion: number;
+    porcentajeEjecucion: number;
+  };
   // Aprobación
   cadenaAprobacion: AprobacionStep[];
   nivelAprobacionRequerido: number;
   nivelAprobacionActual: number;
+  // Recurrencia
+  esRecurrente: boolean;
+  recurrencia?: {
+    frecuencia: 'diaria' | 'semanal' | 'quincenal' | 'mensual' | 'bimestral' | 'trimestral' | 'semestral' | 'anual';
+    diaCiclo?: number;
+    fechaInicio: string;
+    fechaFin?: string;
+    totalOcurrencias?: number;
+    ocurrenciasEjecutadas: number;
+    proximaEjecucion?: string;
+    activa: boolean;
+    transaccionesGeneradas: string[];
+  };
+  transaccionOrigenId?: string;
   // A/R A/P
   esCuentaPorCobrar: boolean;
   esCuentaPorPagar: boolean;
   vencimiento?: Vencimiento;
-  pagosAplicados: any[];
+  pagosAplicados: Array<{
+    pagoId: string;
+    monto: number;
+    fecha: string;
+  }>;
   saldoPendiente: number;
-  // Recurrencia
-  esRecurrente: boolean;
-  transaccionOrigenId?: string;
+  // Activos fijos
+  activoFijo?: {
+    fase: 'adquisicion' | 'en_uso' | 'depreciando' | 'dado_de_baja';
+    codigoActivo?: string;
+    vidaUtilAnios?: number;
+    metodoDepreciacion: 'linea_recta' | 'saldo_decreciente' | 'unidades_produccion';
+    valorResidual: number;
+    depreciacionAcumulada: number;
+    fechaAdquisicion?: string;
+    fechaBajaActivo?: string;
+    valorBaja?: number;
+    proveedorId?: string;
+    ubicacion?: string;
+    numeroSerie?: string;
+  };
   // Flags
   esTransferenciaInterna: boolean;
   transferenciaId?: string;
   esAhorro: boolean;
-  // AI Metadata
+  // Location
+  location?: {
+    type: 'Point';
+    coordinates: [number, number];
+    address?: string;
+  };
+  // AI Metadata extendido
   aiMetadata?: {
     clasificacion?: {
       categoriaSugerida?: string;
@@ -194,11 +277,32 @@ export interface BusinessFinance {
       gastoMensual?: number;
       riesgoLiquidez?: number;
     };
+    conciliacion?: {
+      matchBancario?: boolean;
+      idExtractoId?: string;
+      fechaConciliacion?: string;
+    };
   };
   // Reversal
   transaccionReversadaId?: string;
   esReverso: boolean;
   motivoAnulacion?: string;
+  // Audit trail
+  historialCambios?: Array<{
+    campo: string;
+    valorAnterior: any;
+    valorNuevo: any;
+    modificadoPor?: string;
+    razonCambio?: string;
+    ipOrigen?: string;
+    fecha: string;
+  }>;
+  createdBy?: string;
+  updatedBy?: string;
+  deletedBy?: string;
+  isDeleted: boolean;
+  deletedAt?: string;
+  notaTransaccion?: string;
   createdAt: string;
   updatedAt: string;
 }

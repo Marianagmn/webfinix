@@ -5,12 +5,13 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, throwError, of } from 'rxjs';
-import { catchError, switchMap, filter, take } from 'rxjs/operators';
+import { Observable, throwError, of, Subject } from 'rxjs';
+import { catchError, switchMap, filter, take, finalize } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { environment } from '../../environments/environment';
 
 let isRefreshing = false;
+let refreshTokenSubject: Subject<any> = new Subject<any>();
 
 export const authInterceptor: HttpInterceptorFn = (req, next): Observable<HttpEvent<unknown>> => {
   const authService = inject(AuthService);
@@ -49,6 +50,7 @@ function handle401Error(
 ): Observable<HttpEvent<unknown>> {
   if (!isRefreshing) {
     isRefreshing = true;
+    refreshTokenSubject.next(null);
 
     // Try to get refresh token from cookie first (backend uses httpOnly cookies)
     const refreshToken = getCookie('refreshToken') || authService.getRefreshToken();
@@ -58,6 +60,7 @@ function handle401Error(
         switchMap(() => {
           isRefreshing = false;
           const newToken = authService.getAccessToken();
+          refreshTokenSubject.next(newToken);
           return next(req.clone({
             setHeaders: {
               Authorization: `Bearer ${newToken}`
@@ -69,16 +72,30 @@ function handle401Error(
           authService.logout();
           router.navigate(['/login']);
           return throwError(() => error);
+        }),
+        finalize(() => {
+          isRefreshing = false;
         })
       );
     } else {
+      isRefreshing = false;
       authService.logout();
       router.navigate(['/login']);
       return throwError(() => new Error('No refresh token available'));
     }
+  } else {
+    // Si ya está refrescando, esperar a que termine y reintentar
+    return refreshTokenSubject.pipe(
+      take(1),
+      switchMap((token) => {
+        return next(req.clone({
+          setHeaders: {
+            Authorization: `Bearer ${token}`
+          }
+        })) as Observable<HttpEvent<unknown>>;
+      })
+    );
   }
-
-  return next(req) as Observable<HttpEvent<unknown>>;
 }
 
 function getCookie(name: string): string | null {
