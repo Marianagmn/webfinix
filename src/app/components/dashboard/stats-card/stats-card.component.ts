@@ -13,7 +13,7 @@ import { CommonModule } from '@angular/common';
         </div>
         <div class="ms-3">
           <h6 class="text-muted mb-1">{{ title }}</h6>
-          <h3 class="mb-0 fw-bold">{{ value }}</h3>
+          <h3 class="mb-0 fw-bold">{{ displayValue }}</h3>
         </div>
       </div>
     </div>
@@ -21,7 +21,17 @@ import { CommonModule } from '@angular/common';
 })
 export class StatsCardComponent {
   @Input() title: string = '';
-  @Input() value: string = '';
+  @Input() value: string | number = '';
   @Input() icon: string = 'info-circle';
   @Input() color: string = 'primary';
+
+  get displayValue(): string {
+    if (typeof this.value === 'number') {
+      return new Intl.NumberFormat('es-CO', {
+        style: 'currency',
+        currency: 'COP'
+      }).format(this.value);
+    }
+    return this.value;
+  }
 }

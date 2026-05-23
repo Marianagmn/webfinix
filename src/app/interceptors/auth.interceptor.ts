@@ -10,6 +10,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -24,7 +25,8 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
-    if (request.url.includes('/api/auth')) {
+    // Skip auth for auth endpoints
+    if (request.url.includes(`${environment.apiUrl}/auth`)) {
       return next.handle(request);
     }
 
@@ -52,11 +54,24 @@ export class AuthInterceptor implements HttpInterceptor {
     });
   }
 
+  private getCookie(name: string): string | null {
+    if (typeof document === 'undefined') {
+      return null;
+    }
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+      return parts.pop()?.split(';').shift() || null;
+    }
+    return null;
+  }
+
   private handle401Error(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
 
-      const refreshToken = this.authService.getRefreshToken();
+      // Try to get refresh token from cookie first (backend uses httpOnly cookies)
+      const refreshToken = this.getCookie('refreshToken') || this.authService.getRefreshToken();
 
       if (refreshToken) {
         return this.authService.refreshToken(refreshToken).pipe(

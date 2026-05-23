@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { PersonalFinance, CreatePersonalFinanceRequest, UpdatePersonalFinanceRequest, ApiResponse } from '../models/transaction.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PersonalFinanceService {
-  private apiUrl = '/api/personal-finance';
+  private apiUrl = `${environment.apiUrl}/personal-finance`;
 
   constructor(private http: HttpClient) { }
 
@@ -27,8 +28,8 @@ export class PersonalFinanceService {
     return this.http.put<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`, data);
   }
 
-  deleteTransaction(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  deleteTransaction(id: string): Observable<ApiResponse<void>> {
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
   }
 
   getAnalysis(): Observable<any> {

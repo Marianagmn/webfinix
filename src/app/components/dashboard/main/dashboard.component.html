@@ -58,27 +58,27 @@
               <div class="d-flex align-items-center">
                 <div class="rounded-circle p-2 me-3 d-flex justify-content-center align-items-center"
                      [ngClass]="{
-                       'bg-danger bg-opacity-10 text-danger': txn.type === 'expense',
-                       'bg-success bg-opacity-10 text-success': txn.type === 'income',
-                       'bg-secondary bg-opacity-10 text-secondary': txn.type === 'transfer'
+                       'bg-danger bg-opacity-10 text-danger': txn.tipo === 'gasto',
+                       'bg-success bg-opacity-10 text-success': txn.tipo === 'ingreso',
+                       'bg-secondary bg-opacity-10 text-secondary': txn.tipo === 'transferencia'
                      }"
                      style="width: 40px; height: 40px;">
                   <i class="bi" [ngClass]="{
-                    'bi-arrow-down-right': txn.type === 'expense',
-                    'bi-arrow-up-right': txn.type === 'income',
-                    'bi-arrow-left-right': txn.type === 'transfer'
+                    'bi-arrow-down-right': txn.tipo === 'gasto',
+                    'bi-arrow-up-right': txn.tipo === 'ingreso',
+                    'bi-arrow-left-right': txn.tipo === 'transferencia'
                   }"></i>
                 </div>
                 <div>
-                  <h6 class="mb-0 fw-semibold">{{ txn.description }}</h6>
-                  <small class="text-muted">{{ txn.date }}</small>
+                  <h6 class="mb-0 fw-semibold">{{ txn.descripcion }}</h6>
+                  <small class="text-muted">{{ txn.fecha | date:'shortDate' }}</small>
                 </div>
               </div>
               <div class="fw-bold" [ngClass]="{
-                'text-danger': txn.type === 'expense',
-                'text-success': txn.type === 'income'
+                'text-danger': txn.tipo === 'gasto',
+                'text-success': txn.tipo === 'ingreso'
               }">
-                {{ txn.type === 'expense' ? '-' : (txn.type === 'income' ? '+' : '') }}${{ txn.amount }}
+                {{ txn.tipo === 'gasto' ? '-' : (txn.tipo === 'ingreso' ? '+' : '') }}{{ formatCurrency(txn.monto) }}
               </div>
             </div>
           </div>

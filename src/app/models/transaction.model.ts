@@ -7,39 +7,56 @@ export interface ApiResponse<T> {
 
 export interface PersonalFinance {
   id: string;
-  amount: number;
-  type: CategoryType;
-  categoryId: string;
-  accountId: string;
-  date: string;
-  description: string;
+  userId: string;
+  tipo: CategoryType; // Cambiado de 'type' a 'tipo' para coincidir con backend
+  monto: number; // Cambiado de 'amount' a 'monto'
+  moneda: string;
+  tasaCambio: number;
+  categoria: string; // Cambiado de 'categoryId' a 'categoria' (ObjectId en backend)
+  cuentaOrigenId: string; // Cambiado de 'accountId' a 'cuentaOrigenId'
+  cuentaDestinoId: string;
+  metodoPago: string;
+  descripcion: string;
+  fecha: string; // Cambiado de 'date' a 'fecha'
+  estado: string;
+  esAhorro: boolean;
   tags: string[];
-  isRecurring: boolean;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreatePersonalFinanceDTO {
-  amount: number;
-  type: CategoryType;
-  categoryId: string;
-  accountId: string;
-  date: string;
-  description: string;
-  tags: string[];
-  isRecurring: boolean;
+  tipo: CategoryType;
+  monto: number;
+  moneda?: string;
+  tasaCambio?: number;
+  categoria: string;
+  cuentaOrigenId?: string;
+  cuentaDestinoId?: string;
+  metodoPago?: string;
+  descripcion: string;
+  fecha?: string;
+  estado?: string;
+  esAhorro?: boolean;
+  tags?: string[];
 }
 
 export interface UpdatePersonalFinanceDTO extends Partial<CreatePersonalFinanceDTO> {}
 
 export interface CreatePersonalFinanceRequest {
-  amount: number;
-  type: CategoryType;
-  categoryId: string;
-  accountId: string;
-  date: string;
-  description: string;
-  tags: string[];
-  isRecurring: boolean;
+  tipo: CategoryType;
+  monto: number;
+  moneda?: string;
+  tasaCambio?: number;
+  categoria: string;
+  cuentaOrigenId?: string;
+  cuentaDestinoId?: string;
+  metodoPago?: string;
+  descripcion: string;
+  fecha?: string;
+  estado?: string;
+  esAhorro?: boolean;
+  tags?: string[];
 }
 
 export interface UpdatePersonalFinanceRequest extends Partial<CreatePersonalFinanceRequest> {}
@@ -48,6 +65,7 @@ export type BusinessFinanceStatus = 'borrador' | 'pendiente' | 'aprobada' | 'con
 
 export interface BusinessFinance {
   id: string;
+  businessId: string; // Agregado para coincidir con backend
   tipo: 'cobrar' | 'pagar';
   monto: number;
   estado: BusinessFinanceStatus;
@@ -57,6 +75,7 @@ export interface BusinessFinance {
 }
 
 export interface CreateBusinessFinanceRequest {
+  businessId: string; // Agregado para coincidir con backend
   tipo: 'cobrar' | 'pagar';
   monto: number;
   clienteId: string;
@@ -66,6 +85,7 @@ export interface CreateBusinessFinanceRequest {
 export interface UpdateBusinessFinanceRequest extends Partial<CreateBusinessFinanceRequest> {}
 
 export interface CreateBusinessFinanceDTO {
+  businessId: string; // Agregado para coincidir con backend
   tipo: 'cobrar' | 'pagar';
   monto: number;
   clienteId: string;

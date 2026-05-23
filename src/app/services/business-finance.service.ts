@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BusinessFinance, CreateBusinessFinanceRequest, UpdateBusinessFinanceRequest, ApiResponse } from '../models/transaction.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BusinessFinanceService {
-  private apiUrl = '/api/business-finance';
+  private apiUrl = `${environment.apiUrl}/business-finance`;
 
   constructor(private http: HttpClient) { }
 

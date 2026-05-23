@@ -1,6 +1,6 @@
 import { ApiResponse } from './transaction.model';
 
-export type CategoryType = 'income' | 'expense' | 'transfer';
+export type CategoryType = 'ingreso' | 'gasto' | 'transferencia'; // Cambiado a español para coincidir con backend
 
 export interface Category {
   id: string;
@@ -29,4 +29,4 @@ export interface CreateCategoryRequest {
 
 export interface UpdateCategoryRequest extends Partial<CreateCategoryRequest> {}
 
-export { ApiResponse };
+export type { ApiResponse };
