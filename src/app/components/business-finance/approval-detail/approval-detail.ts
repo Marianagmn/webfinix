@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BusinessFinanceService } from '../../../services/business-finance.service';
-import { BusinessFinance } from '../../../models/transaction.model';
+import { BusinessFinance } from '../../../models/business-finance.model';
 
 @Component({
   selector: 'app-approval-detail',

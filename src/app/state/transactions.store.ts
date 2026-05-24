@@ -41,7 +41,7 @@ export class TransactionsStore {
     this._error.set(null);
 
     this.http
-      .get<PaginatedResponse<PersonalFinance[]>>(`${environment.apiUrl}/personal-finance`, {
+      .get<PaginatedResponse<PersonalFinance>>(`${environment.apiUrl}/personal-finance`, {
         withCredentials: true,
         params: filters,
       })

@@ -26,7 +26,7 @@ export class AccountsStore {
     this._error.set(null);
 
     this.http
-      .get<PaginatedResponse<Account[]>>(`${environment.apiUrl}/accounts`, { withCredentials: true })
+      .get<PaginatedResponse<Account>>(`${environment.apiUrl}/accounts`, { withCredentials: true })
       .subscribe({
         next: (res) => {
           this._accounts.set(res.data);

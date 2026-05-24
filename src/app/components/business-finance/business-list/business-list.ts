@@ -13,7 +13,7 @@ type BusinessFinanceStatus = BusinessTransactionEstado;
 @Component({
   selector: 'app-business-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, CurrencyPipe, DatePipe],
+  imports: [CommonModule],
   templateUrl: './business-list.html',
   styleUrl: './business-list.css',
 })

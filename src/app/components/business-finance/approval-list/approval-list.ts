@@ -1,16 +1,16 @@
 import { Component, inject, signal, computed, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BusinessFinanceService } from '../../../services/business-finance.service';
-import { BusinessFinance, BusinessFinanceStatus } from '../../../models/transaction.model';
+import { BusinessFinance, BusinessTransactionEstado } from '../../../models/business-finance.model';
+
+type BusinessFinanceStatus = BusinessTransactionEstado;
 
 @Component({
   selector: 'app-approval-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, CurrencyPipe, DatePipe],
+  imports: [CommonModule],
   templateUrl: './approval-list.html',
   styleUrl: './approval-list.css',
 })

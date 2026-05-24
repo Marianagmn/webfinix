@@ -1,6 +1,5 @@
 import { Component, inject, signal, OnInit, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CurrencyPipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
@@ -9,7 +8,7 @@ import { PredictionData } from '../../../models/analytics.model';
 @Component({
   selector: 'app-prediction-view',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe],
+  imports: [CommonModule],
   templateUrl: './prediction-view.html',
   styleUrl: './prediction-view.css',
 })
