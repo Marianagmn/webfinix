@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BusinessFinance, CreateBusinessFinanceDto, UpdateBusinessFinanceDto, ApiResponse, PaginatedResponse } from '../models/transaction.model';
+import { BusinessFinance, CreateBusinessFinanceDto, UpdateBusinessFinanceDto } from '../models/business-finance.model';
+import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })

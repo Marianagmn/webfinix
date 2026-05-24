@@ -20,6 +20,7 @@ export const routes: Routes = [
       { path: 'accounts', loadChildren: () => import('./features/accounts/accounts.routes').then(m => m.ACCOUNTS_ROUTES) },
       { path: 'categories', loadChildren: () => import('./features/categories/categories.routes').then(m => m.CATEGORIES_ROUTES) },
       { path: 'user', loadChildren: () => import('./features/user/user.routes').then(m => m.USER_ROUTES) },
+      { path: 'admin', loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES) },
     ],
   },
   { path: '**', redirectTo: 'auth' },

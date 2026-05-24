@@ -6,7 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { BusinessFinanceService } from '../../../services/business-finance.service';
-import { BusinessFinance, BusinessFinanceStatus } from '../../../models/transaction.model';
+import { BusinessFinance, BusinessTransactionEstado } from '../../../models/business-finance.model';
+
+type BusinessFinanceStatus = BusinessTransactionEstado;
 
 @Component({
   selector: 'app-business-list',
@@ -23,6 +25,9 @@ export class BusinessList implements OnInit {
   readonly transactions = signal<BusinessFinance[]>([]);
   readonly pagination = signal<{ page: number; limit: number; total: number; totalPages: number } | null>(null);
   readonly isLoading = signal(false);
+  readonly loadingDelete = signal<string | null>(null);
+  readonly loadingApprove = signal<string | null>(null);
+  readonly loadingReject = signal<string | null>(null);
   readonly hasError = signal(false);
   readonly filter = signal<{ page: number; limit: number; tipo?: string; estado?: BusinessFinanceStatus }>({ page: 1, limit: 20 });
   readonly deleteTargetId = signal<string | null>(null);
@@ -40,10 +45,11 @@ export class BusinessList implements OnInit {
     this.isLoading.set(true);
     this.hasError.set(false);
 
-    this.service.getTransactionsPaginated(this.filter().page, this.filter().limit, {
-      tipo: this.filter().tipo,
-      estado: this.filter().estado
-    })
+    const filters: any = {};
+    if (this.filter().tipo) filters.tipo = this.filter().tipo;
+    if (this.filter().estado) filters.estado = this.filter().estado;
+
+    this.service.getTransactionsPaginated(this.filter().page, this.filter().limit, filters)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -76,17 +82,20 @@ export class BusinessList implements OnInit {
     const id = this.deleteTargetId();
     if (!id) return;
 
+    this.loadingDelete.set(id);
     this.service.deleteTransaction(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
           this.toastr.success('Transacción eliminada');
           this.deleteTargetId.set(null);
+          this.loadingDelete.set(null);
           this.loadTransactions();
         },
         error: () => {
           this.toastr.error('No se pudo eliminar la transacción');
           this.deleteTargetId.set(null);
+          this.loadingDelete.set(null);
         },
       });
   }

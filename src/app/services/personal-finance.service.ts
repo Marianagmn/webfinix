@@ -10,7 +10,9 @@ export class PersonalFinanceService {
   private readonly base = `${environment.apiUrl}/personal-finance`;
 
   getTransactions(params?: any): Observable<PaginatedResponse<PersonalFinance>> {
-    return this.http.get<PaginatedResponse<PersonalFinance>>(this.base, { params });
+    const defaultParams = { page: 1, limit: 20 };
+    const finalParams = params ? { ...defaultParams, ...params } : defaultParams;
+    return this.http.get<PaginatedResponse<PersonalFinance>>(this.base, { params: finalParams });
   }
 
   /**

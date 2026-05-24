@@ -1,23 +1,8 @@
 import { CategoryTipo } from './category.model';
 import { MetodoPago, TransactionEstado } from './personal-finance.model';
+import { ApiResponse, PaginatedResponse } from './api-response.model';
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-  meta?: any;
-}
-
-export interface PaginatedResponse<T> {
-  success: boolean;
-  data: T[];
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
+export type { ApiResponse, PaginatedResponse };
 
 export interface PersonalFinance {
   id: string;

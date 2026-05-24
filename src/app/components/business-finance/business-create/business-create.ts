@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { BusinessFinanceService } from '../../../services/business-finance.service';
-import { CreateBusinessFinanceDto, BusinessFinance } from '../../../models/transaction.model';
+import { CreateBusinessFinanceDto, BusinessFinance } from '../../../models/business-finance.model';
 
 @Component({
   selector: 'app-business-create',
@@ -32,6 +32,14 @@ export class BusinessCreate implements OnInit {
     descripcion: ['', [Validators.required, Validators.minLength(3)]],
     fecha: ['', Validators.required],
     terceroId: [''],
+    esRecurrente: [false],
+    recurrencia: this.fb.group({
+      frecuencia: ['mensual'],
+      diaCiclo: [null],
+      fechaInicio: ['', Validators.required],
+      fechaFin: [''],
+      totalOcurrencias: [null],
+    }),
   });
 
   ngOnInit(): void {
@@ -57,6 +65,8 @@ export class BusinessCreate implements OnInit {
       descripcion: raw.descripcion,
       fecha: raw.fecha,
       terceroId: raw.terceroId || undefined,
+      esRecurrente: raw.esRecurrente,
+      recurrencia: raw.esRecurrente ? raw.recurrencia : undefined,
     };
 
     this.service.createTransaction(payload)

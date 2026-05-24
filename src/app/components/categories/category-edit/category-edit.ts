@@ -35,7 +35,13 @@ export class CategoryEdit implements OnInit {
   });
 
   ngOnInit() {
-    this.categoryId = this.route.snapshot.paramMap.get('id')!;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.toastr.error('ID de categoría no proporcionado');
+      this.router.navigate(['/categories']);
+      return;
+    }
+    this.categoryId = id;
     this.categoryService.getCategoryById(this.categoryId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
