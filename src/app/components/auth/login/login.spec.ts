@@ -10,7 +10,7 @@ describe('Login', () => {
   let fixture: ComponentFixture<Login>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [Login, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [Login, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Login);

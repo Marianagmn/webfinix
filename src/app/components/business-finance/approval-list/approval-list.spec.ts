@@ -10,7 +10,7 @@ describe('ApprovalList', () => {
   let fixture: ComponentFixture<ApprovalList>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [ApprovalList, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [ApprovalList, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ApprovalList);

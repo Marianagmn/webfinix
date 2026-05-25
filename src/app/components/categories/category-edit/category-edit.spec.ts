@@ -10,7 +10,7 @@ describe('CategoryEdit', () => {
   let fixture: ComponentFixture<CategoryEdit>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [CategoryEdit, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [CategoryEdit, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CategoryEdit);

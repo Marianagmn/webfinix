@@ -10,7 +10,7 @@ describe('ChangePassword', () => {
   let fixture: ComponentFixture<ChangePassword>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [ChangePassword, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [ChangePassword, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChangePassword);

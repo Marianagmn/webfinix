@@ -10,7 +10,7 @@ describe('BusinessEdit', () => {
   let fixture: ComponentFixture<BusinessEdit>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [BusinessEdit, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [BusinessEdit, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BusinessEdit);

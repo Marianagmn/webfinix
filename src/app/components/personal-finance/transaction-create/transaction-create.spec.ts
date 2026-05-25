@@ -10,7 +10,7 @@ describe('TransactionCreate', () => {
   let fixture: ComponentFixture<TransactionCreate>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [TransactionCreate, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [TransactionCreate, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TransactionCreate);

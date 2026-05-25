@@ -10,7 +10,7 @@ describe('AnalysisView', () => {
   let fixture: ComponentFixture<AnalysisView>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [AnalysisView, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [AnalysisView, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AnalysisView);

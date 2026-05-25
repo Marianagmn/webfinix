@@ -10,7 +10,7 @@ describe('AccountList', () => {
   let fixture: ComponentFixture<AccountList>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [AccountList, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [AccountList, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AccountList);
