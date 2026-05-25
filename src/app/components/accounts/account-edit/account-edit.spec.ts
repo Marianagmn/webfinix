@@ -10,7 +10,7 @@ describe('AccountEdit', () => {
   let fixture: ComponentFixture<AccountEdit>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [AccountEdit, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [AccountEdit, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AccountEdit);
@@ -22,3 +22,4 @@ describe('AccountEdit', () => {
     expect(component).toBeTruthy();
   });
 });
+

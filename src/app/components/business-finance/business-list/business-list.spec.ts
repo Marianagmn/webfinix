@@ -10,7 +10,7 @@ describe('BusinessList', () => {
   let fixture: ComponentFixture<BusinessList>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [BusinessList, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [BusinessList, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BusinessList);
@@ -22,3 +22,4 @@ describe('BusinessList', () => {
     expect(component).toBeTruthy();
   });
 });
+

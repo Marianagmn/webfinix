@@ -10,7 +10,7 @@ describe('Profile', () => {
   let fixture: ComponentFixture<Profile>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [Profile, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [Profile, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Profile);
@@ -22,3 +22,4 @@ describe('Profile', () => {
     expect(component).toBeTruthy();
   });
 });
+

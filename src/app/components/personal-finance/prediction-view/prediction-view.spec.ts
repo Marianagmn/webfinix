@@ -10,7 +10,7 @@ describe('PredictionView', () => {
   let fixture: ComponentFixture<PredictionView>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [PredictionView, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [PredictionView, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PredictionView);
@@ -22,3 +22,4 @@ describe('PredictionView', () => {
     expect(component).toBeTruthy();
   });
 });
+

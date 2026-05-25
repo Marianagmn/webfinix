@@ -10,7 +10,7 @@ describe('ApprovalDetail', () => {
   let fixture: ComponentFixture<ApprovalDetail>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({    imports: [ApprovalDetail, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot(), RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
+    await TestBed.configureTestingModule({    imports: [ApprovalDetail, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ApprovalDetail);
@@ -22,3 +22,4 @@ describe('ApprovalDetail', () => {
     expect(component).toBeTruthy();
   });
 });
+
