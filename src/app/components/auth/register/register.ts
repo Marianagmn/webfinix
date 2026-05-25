@@ -35,14 +35,26 @@ export class Register {
 
   readonly loading = signal(false);
 
+  passwordComplexityValidator = (control: AbstractControl): ValidationErrors | null => {
+    const password = control.get('password')?.value;
+    if (!password) return null;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+      return { passwordComplexity: true };
+    }
+    return null;
+  };
+
   readonly registerForm = this.fb.group(
     {
       name: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      passwordConfirm: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      passwordConfirm: ['', [Validators.required, Validators.minLength(8)]],
     },
-    { validators: passwordMatchValidator }
+    { validators: [passwordMatchValidator, this.passwordComplexityValidator] }
   );
 
   onSubmit(): void {

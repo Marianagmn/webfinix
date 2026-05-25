@@ -28,11 +28,15 @@
       <div class="mb-3">
         <label for="password" class="form-label">Contraseña</label>
         <input id="password" type="password" class="form-control" formControlName="password" placeholder="••••••••" />
+        <div class="form-text text-muted">Mínimo 8 caracteres, mayúscula, minúscula y número.</div>
         @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
           <div class="form-text text-danger">
             @if (registerForm.get('password')?.errors?.['required']) {La contraseña es obligatoria.}
-            @if (registerForm.get('password')?.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
+            @if (registerForm.get('password')?.errors?.['minlength']) {La contraseña debe tener al menos 8 caracteres.}
           </div>
+        }
+        @if (registerForm.errors?.['passwordComplexity'] && registerForm.get('password')?.touched) {
+          <div class="form-text text-danger">Debe incluir mayúscula, minúscula y número.</div>
         }
       </div>
 
@@ -42,7 +46,7 @@
         @if (registerForm.get('passwordConfirm')?.touched && registerForm.get('passwordConfirm')?.invalid) {
           <div class="form-text text-danger">
             @if (registerForm.get('passwordConfirm')?.errors?.['required']) {La confirmación de contraseña es obligatoria.}
-            @if (registerForm.get('passwordConfirm')?.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
+            @if (registerForm.get('passwordConfirm')?.errors?.['minlength']) {La contraseña debe tener al menos 8 caracteres.}
           </div>
         }
       </div>
