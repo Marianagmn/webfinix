@@ -1,6 +1,5 @@
-// src/app/services/personal-finance.service.ts — C-02: usa environment + modelos correctos + paginación
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
 import {
@@ -28,6 +27,7 @@ export class PersonalFinanceService {
     return this.http.get<PaginatedResponse<PersonalFinance[]>>(this.apiUrl, { params });
   }
 
+
   getTransactionById(id: string): Observable<ApiResponse<PersonalFinance>> {
     return this.http.get<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`);
   }
@@ -41,7 +41,7 @@ export class PersonalFinanceService {
   }
 
   deleteTransaction(id: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`);
   }
 
   getAnalysis(): Observable<ApiResponse<any>> {

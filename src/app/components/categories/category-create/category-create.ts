@@ -38,8 +38,8 @@ export class CategoryCreate {
     this.categoryService.createCategory({
       nombre: raw.nombre!,
       tipo: raw.tipo!,
-      color: raw.color || undefined,
-      icono: raw.icono || undefined,
+      color: raw.color || '#6c757d',
+      icono: raw.icono || '',
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => { this.loading.set(false); this.toastr.success('Categoría creada'); this.router.navigate(['/categories']); },

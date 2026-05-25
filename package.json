@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "generate-dtos": "ts-node scripts/generate-dtos.ts"
   },
   "private": true,
   "packageManager": "npm@11.14.1",
@@ -30,8 +31,11 @@
     "@angular/build": "^21.2.11",
     "@angular/cli": "^21.2.11",
     "@angular/compiler-cli": "^21.2.0",
+    "@playwright/test": "^1.60.0",
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
+    "swagger-typescript-api": "^13.10.0",
+    "ts-node": "^10.9.2",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"
   }

@@ -46,6 +46,7 @@
           </div>
         }
         @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
+        @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
           <div class="form-text text-danger">Las contraseñas no coinciden.</div>
         }
       </div>

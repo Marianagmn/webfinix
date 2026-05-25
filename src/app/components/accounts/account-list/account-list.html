@@ -44,9 +44,6 @@
               <h5 class="fw-semibold mb-1">{{ account.nombre }}</h5>
               <p class="text-muted small text-capitalize mb-2">{{ account.tipo }}</p>
               <p class="fs-5 fw-bold mb-3">{{ formatBalance(account.balance, account.moneda) }}</p>
-              @if (account.descripcion) {
-                <p class="text-muted small mb-3">{{ account.descripcion }}</p>
-              }
               <div class="d-flex gap-2">
                 <a [routerLink]="[account.id, 'edit']" class="btn btn-outline-primary btn-sm flex-fill">Editar</a>
                 <button class="btn btn-outline-danger btn-sm flex-fill" (click)="requestDelete(account.id)">Eliminar</button>

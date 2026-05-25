@@ -38,7 +38,13 @@ export class AccountEdit implements OnInit {
   });
 
   ngOnInit() {
-    this.accountId = this.route.snapshot.paramMap.get('id')!;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (!id) {
+      this.toastr.error('ID de cuenta no proporcionado');
+      this.router.navigate(['/accounts']);
+      return;
+    }
+    this.accountId = id;
     this.accountService.getAccountById(this.accountId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -48,7 +54,6 @@ export class AccountEdit implements OnInit {
             tipo: account.tipo,
             moneda: account.moneda,
             balance: account.balance,
-            descripcion: account.descripcion ?? '',
           });
           this.loadingData.set(false);
         },
@@ -68,7 +73,6 @@ export class AccountEdit implements OnInit {
       tipo: raw.tipo!,
       moneda: raw.moneda!,
       balance: raw.balance!,
-      descripcion: raw.descripcion || undefined,
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => { this.loading.set(false); this.toastr.success('Cuenta actualizada'); this.router.navigate(['/accounts']); },

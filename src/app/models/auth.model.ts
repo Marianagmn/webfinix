@@ -1,7 +1,17 @@
 // src/app/models/auth.model.ts — limpio, sin duplicados
 import { User } from './user.model';
 
-export interface LoginDto {
+export interface LoginResponse {
+  success: boolean;
+  data: {
+    accessToken: string;
+    refreshToken?: string; // Optional since it comes in httpOnly cookie
+    user: User;
+  };
+  message?: string;
+}
+
+export interface LoginRequest {
   email: string;
   password: string;
 }
@@ -13,15 +23,17 @@ export interface RegisterDto {
   passwordConfirm: string;
 }
 
-export interface AuthResponse {
-  accessToken: string;
-  user: User;
+export interface RefreshTokenRequest {
+  refreshToken?: string; // Optional since backend reads from cookie
 }
 
+// JWT payload structure for token decoding
 export interface JwtPayload {
   userId: string;
+  email: string;
   roles: string[];
-  iat?: number;
-  exp?: number;
   type: 'access' | 'refresh';
+  iat: number;
+  exp: number;
+  iss?: string;
 }

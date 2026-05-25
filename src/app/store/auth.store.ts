@@ -1,4 +1,6 @@
-// src/app/store/auth.store.ts — con init() para restaurar usuario al cargar (D-05, M-02)
+// src/app/store/auth.store.ts — Angular Signals store for authentication
+// PHASE 3 FIX: Removed localStorage for token storage (XSS vulnerability)
+// Access token is kept in memory only; refresh token is in httpOnly cookie
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../models/user.model';
@@ -6,13 +8,12 @@ import { JwtPayload } from '../models/auth.model';
 import { ApiResponse } from '../models/api-response.model';
 import { environment } from '../../environments/environment';
 
-const TOKEN_KEY = 'finix_access_token';
-
 @Injectable({ providedIn: 'root' })
 export class AuthStore {
   private readonly http = inject(HttpClient);
 
-  private readonly _token = signal<string | null>(this._loadToken());
+  // Access token stored in memory only (no localStorage - XSS protection)
+  private readonly _token = signal<string | null>(null);
   readonly token = computed(() => this._token());
 
   private readonly _user = signal<User | null>(null);
@@ -36,29 +37,10 @@ export class AuthStore {
     }
   }
 
-  private _loadToken(): string | null {
-    try {
-      return localStorage.getItem(TOKEN_KEY);
-    } catch {
-      return null;
-    }
-  }
-
-  private _saveToken(token: string | null): void {
-    try {
-      if (token) {
-        localStorage.setItem(TOKEN_KEY, token);
-      } else {
-        localStorage.removeItem(TOKEN_KEY);
-      }
-    } catch {
-      // ignore en entornos sin localStorage
-    }
-  }
-
   setToken(token: string | null): void {
     this._token.set(token);
-    this._saveToken(token);
+    // SECURITY FIX: No longer saving to localStorage (XSS vulnerability)
+    // Token is kept in memory only; refresh token is in httpOnly cookie
   }
 
   setUser(user: User | null): void {

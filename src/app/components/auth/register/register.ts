@@ -55,7 +55,7 @@ export class Register {
     const payload = this.registerForm.value as RegisterDto;
 
     this.authService.register(payload).subscribe({
-      next: (response) => {
+      next: (response: any) => {
         this.loading.set(false);
         if (response.success) {
           this.toastr.success('Registro exitoso');

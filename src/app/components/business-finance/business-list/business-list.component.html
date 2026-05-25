@@ -38,6 +38,7 @@
               <td><span class="badge bg-secondary">{{ txn.tipo }}</span></td>
               <td class="fw-bold text-dark">${{ txn.monto }}</td>
               <td>{{ txn.vencimiento?.fechaVencimiento | date:'shortDate' }}</td>
+              <td>{{ txn.vencimiento?.fechaVencimiento | date:'shortDate' }}</td>
               <td>
                 <span class="badge" [ngClass]="{
                   'bg-secondary': txn.estado === 'borrador',

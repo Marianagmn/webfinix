@@ -1,0 +1,6 @@
+<div class="empty-state">
+  <div *ngIf="icon" class="icon">{{ icon }}</div>
+  <h3 class="title">{{ title }}</h3>
+  <p *ngIf="description" class="description">{{ description }}</p>
+  <button *ngIf="showAction && actionText" class="action-button">{{ actionText }}</button>
+</div>

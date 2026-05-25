@@ -3,7 +3,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Account, CreateAccountDTO, UpdateAccountDTO } from '../models/account.model';
+import { Account, CreateAccountDto, UpdateAccountDto } from '../models/account.model';
+import { ApiResponse, PaginatedResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
 
 interface ApiResponse<T> {
@@ -49,7 +50,7 @@ export class AccountService {
   }
 
   deleteAccount(id: string): Observable<void> {
-    return this.http.delete(`${this.apiUrl}/${id}`).pipe(
+    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(
       map(() => undefined)
     );
   }

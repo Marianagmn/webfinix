@@ -1,9 +1,13 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
 import { LayoutComponent } from './layout/layout.component';
+import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
-  { path: 'auth', loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES) },
+  {
+    path: 'auth',
+    loadChildren: () => import('./features/auth/auth.routes').then(m => m.AUTH_ROUTES)
+  },
   {
     path: '',
     component: LayoutComponent,
@@ -16,6 +20,7 @@ export const routes: Routes = [
       { path: 'accounts', loadChildren: () => import('./features/accounts/accounts.routes').then(m => m.ACCOUNTS_ROUTES) },
       { path: 'categories', loadChildren: () => import('./features/categories/categories.routes').then(m => m.CATEGORIES_ROUTES) },
       { path: 'user', loadChildren: () => import('./features/user/user.routes').then(m => m.USER_ROUTES) },
+      { path: 'admin', loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES) },
     ],
   },
   { path: '**', redirectTo: 'auth' },

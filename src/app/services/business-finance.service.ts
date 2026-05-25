@@ -1,6 +1,5 @@
-// src/app/services/business-finance.service.ts — C-02, B-03: tipos correctos, environment
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
 import {

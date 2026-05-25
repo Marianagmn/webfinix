@@ -1,32 +1,31 @@
 // src/app/models/api-response.model.ts
-// Contrato de respuesta del backend Finix — NO modificar sin sincronizar con el backend
+// Contrato de respuesta del backend Finix — Fuente única de verdad
+// NO modificar sin sincronizar con el backend
 
 export interface ApiResponse<T> {
-  success: true;
+  success: boolean;
   data: T;
   message?: string;
-  meta: ApiMeta;
+  meta?: ApiMeta;
 }
 
 export interface PaginatedResponse<T> {
-  success: true;
-  data: T;
-  message?: string;
-  meta: ApiMeta & { pagination: PaginationMeta };
+  success: boolean;
+  data: T[];
+  meta: PaginationMeta;
 }
 
 export interface ApiMeta {
-  timestamp: string;
+  timestamp?: string;
   requestId?: string;
   [key: string]: unknown;
 }
 
 export interface PaginationMeta {
-  type: 'offset' | 'cursor';
-  total?: number;
-  limit?: number;
-  offset?: number;
-  nextCursor?: string;
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
 }
 
 export interface ApiError {

@@ -3,11 +3,14 @@ export type CategoryTipo = CategoryType;
 
 export interface Category {
   id: string;
+  userId: string;
   nombre: string;
   tipo: CategoryType;
   color?: string | null;
   icono?: string | null;
   isDefault: boolean;
+  isDeleted: boolean;
+  deletedAt?: string;
   createdAt: string;
   updatedAt: string;
 }

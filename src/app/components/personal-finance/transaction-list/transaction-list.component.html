@@ -49,11 +49,16 @@
                   'bg-danger': txn.tipo === 'gasto',
                   'bg-secondary': txn.tipo === 'transferencia'
                 }">{{ txn.tipo }}</span>
+                  'bg-success': txn.tipo === 'ingreso',
+                  'bg-danger': txn.tipo === 'gasto',
+                  'bg-secondary': txn.tipo === 'transferencia'
+                }">{{ txn.tipo }}</span>
               </td>
               <td class="fw-bold" [ngClass]="{
                 'text-danger': txn.tipo === 'gasto',
                 'text-success': txn.tipo === 'ingreso'
               }">
+                {{ txn.tipo === 'gasto' ? '-' : (txn.tipo === 'ingreso' ? '+' : '') }}${{ txn.monto }}
                 {{ txn.tipo === 'gasto' ? '-' : (txn.tipo === 'ingreso' ? '+' : '') }}${{ txn.monto }}
               </td>
               <td>

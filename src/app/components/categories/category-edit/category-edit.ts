@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CategoryService } from '../../../services/category.service';
@@ -10,6 +11,7 @@ import { CategoryTipo } from '../../../models/category.model';
 @Component({
   selector: 'app-category-edit',
   standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './category-edit.html',
   styleUrl: './category-edit.css',
@@ -46,8 +48,7 @@ export class CategoryEdit implements OnInit {
     this.categoryService.getCategoryById(this.categoryId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (r) => {
-          const c = r.data;
+        next: (c) => {
           this.form.patchValue({ nombre: c.nombre, tipo: c.tipo, color: c.color ?? '#6c757d', icono: c.icono ?? '' });
           this.loadingData.set(false);
         },
@@ -62,8 +63,8 @@ export class CategoryEdit implements OnInit {
     this.categoryService.updateCategory(this.categoryId, {
       nombre: raw.nombre!,
       tipo: raw.tipo!,
-      color: raw.color || undefined,
-      icono: raw.icono || undefined,
+      color: raw.color || '#6c757d',
+      icono: raw.icono || '',
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => { this.loading.set(false); this.toastr.success('Categoría actualizada'); this.router.navigate(['/categories']); },

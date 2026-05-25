@@ -53,6 +53,7 @@ export class TransactionCreate implements OnInit {
       .getCategories()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: (categories) => this.categories.set(categories) });
+      .subscribe({ next: (categories) => this.categories.set(categories) });
 
     this.accountService
       .getAccounts()
@@ -85,7 +86,7 @@ export class TransactionCreate implements OnInit {
       categoriaId: raw.categoriaId as string,
       cuentaOrigenId: raw.cuentaOrigenId || undefined,
       cuentaDestinoId: raw.cuentaDestinoId || undefined,
-      descripcion: raw.descripcion || undefined,
+      descripcion: raw.descripcion || '',
       fecha: raw.fecha || undefined,
       metodoPago: (raw.metodoPago as MetodoPago) || 'efectivo',
       tags: tagsArray,
