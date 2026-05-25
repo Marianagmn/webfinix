@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
 import {
@@ -15,7 +15,7 @@ export class PersonalFinanceService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/personal-finance`;
 
-  getTransactions(filter?: TransactionFilter): Observable<PaginatedResponse<PersonalFinance[]>> {
+  getTransactions(filter?: TransactionFilter): Observable<PaginatedResponse<PersonalFinance>> {
     let params = new HttpParams();
     if (filter) {
       Object.entries(filter).forEach(([k, v]) => {
@@ -24,7 +24,7 @@ export class PersonalFinanceService {
         }
       });
     }
-    return this.http.get<PaginatedResponse<PersonalFinance[]>>(this.apiUrl, { params });
+    return this.http.get<PaginatedResponse<PersonalFinance>>(this.apiUrl, { params });
   }
 
 
@@ -41,7 +41,7 @@ export class PersonalFinanceService {
   }
 
   deleteTransaction(id: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`);
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
   }
 
   getAnalysis(): Observable<ApiResponse<any>> {

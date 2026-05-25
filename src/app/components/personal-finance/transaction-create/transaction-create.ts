@@ -53,7 +53,6 @@ export class TransactionCreate implements OnInit {
       .getCategories()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: (categories) => this.categories.set(categories) });
-      .subscribe({ next: (categories) => this.categories.set(categories) });
 
     this.accountService
       .getAccounts()

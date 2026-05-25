@@ -25,7 +25,7 @@ export const sessionInitializer = () => {
 
   // Attempt to refresh tokens using the httpOnly cookie
   return firstValueFrom(
-    authService.refreshToken().pipe(
+    authService.refresh().pipe(
       catchError((error) => {
         // If refresh fails (expired, invalid, etc.), clear any stale data
         authStore.clear();

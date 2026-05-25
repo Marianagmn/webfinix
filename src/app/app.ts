@@ -7,13 +7,11 @@ import { AuthStore } from './store/auth.store';
   selector: 'app-root',
   imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrls: ['./app.css'],
 })
 export class App implements OnInit {
   private readonly authStore = inject(AuthStore);
   readonly title = signal('Finix');
-
-  title = 'Finix';
 
   ngOnInit(): void {
     // M-02/D-05: restaurar usuario desde /auth/me al cargar la app

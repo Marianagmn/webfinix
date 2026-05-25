@@ -24,4 +24,4 @@ export interface CreateAccountDto {
   balance?: number;
 }
 
-export type UpdateAccountDTO = Partial<CreateAccountDTO>;
+export type UpdateAccountDto = Partial<CreateAccountDto>;

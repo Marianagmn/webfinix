@@ -1,13 +1,15 @@
 // src/app/models/auth.model.ts — limpio, sin duplicados
 import { User } from './user.model';
 
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken?: string; // Optional since it comes in httpOnly cookie
+  user: User;
+}
+
 export interface LoginResponse {
   success: boolean;
-  data: {
-    accessToken: string;
-    refreshToken?: string; // Optional since it comes in httpOnly cookie
-    user: User;
-  };
+  data: AuthResponse;
   message?: string;
 }
 

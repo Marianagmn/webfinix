@@ -297,15 +297,15 @@ export interface CreateBusinessFinanceDto {
   impuestos?: Impuesto[];
 }
 
-export type UpdateBusinessTransactionDto = Partial<CreateBusinessTransactionDto>;
+export type UpdateBusinessFinanceDto = Partial<CreateBusinessFinanceDto>;
 
-export type BusinessFinance = BusinessTransaction;
-export type CreateBusinessFinanceRequest = CreateBusinessTransactionDto;
-export type UpdateBusinessFinanceRequest = UpdateBusinessTransactionDto;
+export type CreateBusinessFinanceRequest = CreateBusinessFinanceDto;
+export type UpdateBusinessFinanceRequest = UpdateBusinessFinanceDto;
 
 export interface ApplyPaymentDto {
+  pagoId?: string;
   monto: number;
   fecha?: string;
-  metodoPago: string;
+  metodoPago?: string;
   referencia?: string;
 }

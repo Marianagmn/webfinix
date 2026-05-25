@@ -7,12 +7,6 @@ import { Account, CreateAccountDto, UpdateAccountDto } from '../models/account.m
 import { ApiResponse, PaginatedResponse } from '../models/transaction.model';
 import { environment } from '../../environments/environment';
 
-interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-}
-
 @Injectable({ providedIn: 'root' })
 export class AccountService {
   private readonly http = inject(HttpClient);
@@ -37,20 +31,20 @@ export class AccountService {
     );
   }
 
-  createAccount(data: CreateAccountDTO): Observable<Account> {
+  createAccount(data: CreateAccountDto): Observable<Account> {
     return this.http.post<ApiResponse<Account>>(this.apiUrl, data).pipe(
       map((response) => this.normalizeId(response.data))
     );
   }
 
-  updateAccount(id: string, data: UpdateAccountDTO): Observable<Account> {
+  updateAccount(id: string, data: UpdateAccountDto): Observable<Account> {
     return this.http.put<ApiResponse<Account>>(`${this.apiUrl}/${id}`, data).pipe(
       map((response) => this.normalizeId(response.data))
     );
   }
 
   deleteAccount(id: string): Observable<void> {
-    return this.http.delete<ApiResponse<void>>(`${this.base}/${id}`).pipe(
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`).pipe(
       map(() => undefined)
     );
   }

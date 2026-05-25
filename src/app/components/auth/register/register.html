@@ -45,11 +45,11 @@
             @if (registerForm.get('passwordConfirm')?.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
           </div>
         }
-        @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
-        @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
-          <div class="form-text text-danger">Las contraseñas no coinciden.</div>
-        }
       </div>
+
+      @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
+        <div class="form-text text-danger">Las contraseñas no coinciden.</div>
+      }
 
       <button class="btn btn-primary w-100" type="submit" [disabled]="loading()">
         @if (loading()) {Registrando...} @else {Crear cuenta}

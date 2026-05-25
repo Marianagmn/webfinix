@@ -2,7 +2,6 @@ import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Router, ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CategoryService } from '../../../services/category.service';
@@ -12,9 +11,8 @@ import { CategoryTipo } from '../../../models/category.model';
   selector: 'app-category-edit',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './category-edit.html',
-  styleUrl: './category-edit.css',
+  styleUrls: ['./category-edit.css'],
 })
 export class CategoryEdit implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -48,7 +46,8 @@ export class CategoryEdit implements OnInit {
     this.categoryService.getCategoryById(this.categoryId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (c) => {
+        next: (response) => {
+          const c = response.data;
           this.form.patchValue({ nombre: c.nombre, tipo: c.tipo, color: c.color ?? '#6c757d', icono: c.icono ?? '' });
           this.loadingData.set(false);
         },

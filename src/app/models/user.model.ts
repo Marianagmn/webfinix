@@ -16,6 +16,17 @@ export interface User {
   businessId?: string; // Required for business finance operations
 }
 
+export interface UpdateProfileDto {
+  name?: string;
+  email?: string;
+}
+
+export interface ChangePasswordDto {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword?: string;
+}
+
 // Helper function to check if user has business finance access
 export function hasBusinessFinanceAccess(user: User | null): boolean {
   return !!user && !!user.businessId;

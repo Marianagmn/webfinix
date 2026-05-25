@@ -51,9 +51,9 @@ export class ApprovalList implements OnInit {
       });
   }
 
-  approve(id: string, comentario?: string): void {
+  approve(id: string): void {
     this.processingId.set(id);
-    this.service.approve(id, comentario)
+    this.service.approve(id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

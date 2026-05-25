@@ -3,7 +3,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../app/services/auth.service';
 import { environment } from '../../environments/environment';
 
 describe('AuthService Integration Tests', () => {
@@ -53,7 +53,7 @@ describe('AuthService Integration Tests', () => {
       },
     };
 
-    service.refreshToken().subscribe(response => {
+    service.refresh().subscribe(response => {
       expect(response.success).toBe(true);
       expect(response.data.accessToken).toBe('new-token');
     });

@@ -1,16 +1,15 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../../services/auth.service';
-import { LoginDto } from '../../../models/auth.model';
+import { LoginRequest } from '../../../models/auth.model';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
@@ -34,7 +33,7 @@ export class Login {
       return;
     }
 
-    this.authService.login(this.loginForm.value).subscribe({
+    this.authService.login(this.loginForm.value as LoginRequest).subscribe({
       next: () => {
         const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
         this.router.navigate([returnUrl]);

@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { ToastrModule } from 'ngx-toastr';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { ChangePassword } from './change-password';
 
 describe('ChangePassword', () => {
@@ -7,8 +10,7 @@ describe('ChangePassword', () => {
   let fixture: ComponentFixture<ChangePassword>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ChangePassword],
+    await TestBed.configureTestingModule({    imports: [ChangePassword, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChangePassword);

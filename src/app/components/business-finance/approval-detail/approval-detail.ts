@@ -62,7 +62,7 @@ export class ApprovalDetail implements OnInit {
     this.isProcessing.set(true);
     const comentario = this.commentForm.value.comentario;
 
-    this.service.approve(this.transactionId(), comentario)
+    this.service.approve(this.transactionId())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

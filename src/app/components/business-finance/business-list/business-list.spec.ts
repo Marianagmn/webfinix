@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { ToastrModule } from 'ngx-toastr';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BusinessList } from './business-list';
 
 describe('BusinessList', () => {
@@ -7,8 +10,7 @@ describe('BusinessList', () => {
   let fixture: ComponentFixture<BusinessList>;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [BusinessList],
+    await TestBed.configureTestingModule({    imports: [BusinessList, RouterTestingModule, HttpClientTestingModule, ToastrModule.forRoot()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BusinessList);

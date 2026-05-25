@@ -4,7 +4,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { ApiResponse, ApiResult } from '../models/api-response.model';
-import { AuthResponse, LoginDto, RegisterDto } from '../models/auth.model';
+import { LoginRequest, AuthResponse, RegisterDto } from '../models/auth.model';
 import { ChangePasswordDto, UpdateProfileDto, User } from '../models/user.model';
 import { AuthStore } from '../store/auth.store';
 import { environment } from '../../environments/environment';
@@ -19,7 +19,7 @@ export class AuthService {
     return this.authStore.user;
   }
 
-  login(dto: LoginDto): Observable<ApiResponse<AuthResponse>> {
+  login(dto: LoginRequest): Observable<ApiResponse<AuthResponse>> {
     return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login`, dto, {
       withCredentials: true,
     }).pipe(

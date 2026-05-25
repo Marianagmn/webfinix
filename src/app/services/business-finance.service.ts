@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
 import {
@@ -16,14 +16,14 @@ export class BusinessFinanceService {
   private readonly http = inject(HttpClient);
   private readonly apiUrl = `${environment.apiUrl}/business-finance`;
 
-  getTransactions(filter?: Record<string, any>): Observable<PaginatedResponse<BusinessFinance[]>> {
+  getTransactions(filter?: Record<string, any>): Observable<PaginatedResponse<BusinessFinance>> {
     let params = new HttpParams();
     if (filter) {
       Object.entries(filter).forEach(([k, v]) => {
         if (v !== undefined && v !== null) params = params.set(k, String(v));
       });
     }
-    return this.http.get<PaginatedResponse<BusinessFinance[]>>(this.apiUrl, { params });
+    return this.http.get<PaginatedResponse<BusinessFinance>>(this.apiUrl, { params });
   }
 
   getTransactionById(id: string): Observable<ApiResponse<BusinessFinance>> {
@@ -66,15 +66,20 @@ export class BusinessFinanceService {
     return this.http.post<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}/payments`, dto);
   }
 
-  getPendingApprovals(): Observable<PaginatedResponse<BusinessFinance[]>> {
-    return this.http.get<PaginatedResponse<BusinessFinance[]>>(`${this.apiUrl}/approvals/pending`);
+  getPendingApprovals(): Observable<PaginatedResponse<BusinessFinance>> {
+    return this.http.get<PaginatedResponse<BusinessFinance>>(`${this.apiUrl}/approvals/pending`);
   }
 
-  getOverdue(tipo: BusinessTransactionTipo): Observable<PaginatedResponse<BusinessFinance[]>> {
-    return this.http.get<PaginatedResponse<BusinessFinance[]>>(`${this.apiUrl}/overdue/${tipo}`);
+  getOverdue(tipo: BusinessTransactionTipo): Observable<PaginatedResponse<BusinessFinance>> {
+    return this.http.get<PaginatedResponse<BusinessFinance>>(`${this.apiUrl}/overdue/${tipo}`);
   }
 
   recalculateTaxes(id: string): Observable<ApiResponse<BusinessFinance>> {
     return this.http.post<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}/taxes/recalculate`, {});
+  }
+
+  getTransactionsPaginated(page: number = 1, limit: number = 10, filters?: Record<string, any>): Observable<PaginatedResponse<BusinessFinance>> {
+    const params: Record<string, any> = { page, limit, ...filters };
+    return this.getTransactions(params);
   }
 }

@@ -15,7 +15,7 @@ export class NavbarComponent {
   private router = inject(Router);
   private authStore = inject(AuthStore);
 
-  currentUser = this.authStore.user;
+  currentUser$ = this.authStore.user;
 
   logout() {
     this.authService.logout().subscribe(() => {
