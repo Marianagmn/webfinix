@@ -35,7 +35,7 @@ export class BusinessFinanceService {
   }
 
   updateTransaction(id: string, dto: UpdateBusinessFinanceRequest): Observable<ApiResponse<BusinessFinance>> {
-    return this.http.patch<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}`, dto);
+    return this.http.put<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}`, dto);
   }
 
   deleteTransaction(id: string): Observable<ApiResponse<null>> {

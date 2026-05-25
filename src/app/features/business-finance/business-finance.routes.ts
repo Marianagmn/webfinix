@@ -9,7 +9,10 @@ export const BUSINESS_FINANCE_ROUTES: Routes = [
     canActivate: [authGuard, businessGuard],
     children: [
       { path: '', loadComponent: () => import('../../components/business-finance/business-list/business-list').then(m => m.BusinessList) },
+      { path: 'create', loadComponent: () => import('../../components/business-finance/business-create/business-create').then(m => m.BusinessCreate) },
+      { path: 'edit/:id', loadComponent: () => import('../../components/business-finance/business-edit/business-edit').then(m => m.BusinessEdit) },
       { path: 'approvals', canActivate: [roleGuard('aprobador')], loadComponent: () => import('../../components/business-finance/approval-list/approval-list').then(m => m.ApprovalList) },
+      { path: 'approvals/:id', canActivate: [roleGuard('aprobador')], loadComponent: () => import('../../components/business-finance/approval-detail/approval-detail').then(m => m.ApprovalDetail) },
     ],
   },
 ];

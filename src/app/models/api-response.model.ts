@@ -22,10 +22,19 @@ export interface ApiMeta {
 }
 
 export interface PaginationMeta {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
+  pagination: {
+    type: 'offset' | 'cursor';
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+    nextPage: number | null;
+    prevPage: number | null;
+  };
+  timestamp?: string;
+  requestId?: string;
 }
 
 export interface ApiError {

@@ -25,7 +25,7 @@ export interface CreatePersonalFinanceDto {
   tipo: TransactionTipo;
   monto: number;
   moneda?: string;
-  categoriaId?: string;
+  categoria?: string;
   cuentaOrigenId?: string;
   cuentaDestinoId?: string;
   metodoPago?: MetodoPago;
@@ -40,11 +40,52 @@ export type UpdatePersonalFinanceDto = Partial<CreatePersonalFinanceDto>;
 
 export interface TransactionFilter {
   page?: number;
-  perPage?: number;
-  from?: string;
-  to?: string;
+  limit?: number;
+  fechaDesde?: string;
+  fechaHasta?: string;
   tipo?: TransactionTipo | TransactionTipo[];
-  categoriaId?: string;
+  categoria?: string;
   cuentaOrigenId?: string;
-  order?: 'asc' | 'desc';
+  sort?: string;
+  estado?: TransactionEstado;
+}
+
+// Interfaces para respuestas de análisis/predicción/simulación (MED-19)
+export interface AnalysisResponse {
+  totalIngresos: number;
+  totalGastos: number;
+  balance: number;
+  gastosPorCategoria: Array<{ categoria: string; monto: number; porcentaje: number }>;
+  tendencias: Array<{ mes: string; ingresos: number; gastos: number }>;
+  proyeccion: { mes: string; montoEstimado: number }[];
+}
+
+export interface PredictionResponse {
+  predicciones: Array<{
+    fecha: string;
+    tipo: TransactionTipo;
+    montoEstimado: number;
+    confianza: number;
+  }>;
+  resumen: {
+    totalEstimado: number;
+    tendencia: 'creciente' | 'decreciente' | 'estable';
+  };
+}
+
+export interface SimulationResponse {
+  escenarios: Array<{
+    nombre: string;
+    descripcion: string;
+    resultado: {
+      balanceFinal: number;
+      ahorro: number;
+      mesesParaMeta?: number;
+    };
+  }>;
+  parametros: {
+    ingresoMensual: number;
+    gastoMensual: number;
+    tasaAhorro: number;
+  };
 }

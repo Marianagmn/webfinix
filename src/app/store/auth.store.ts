@@ -25,17 +25,6 @@ export class AuthStore {
   readonly roles = computed(() => this._user()?.roles ?? []);
   readonly hasRole = (role: string) => computed(() => this.roles().includes(role as any));
 
-  // M-02: restaurar usuario desde el backend al arrancar la app
-  init(): void {
-    if (this._token()) {
-      this.http
-        .get<ApiResponse<User>>(`${environment.apiUrl}/auth/me`, { withCredentials: true })
-        .subscribe({
-          next: (res) => this._user.set(res.data),
-          error: () => this.clear(), // token inválido o expirado — limpiar
-        });
-    }
-  }
 
   setToken(token: string | null): void {
     this._token.set(token);
@@ -59,6 +48,11 @@ export class AuthStore {
       const parts = token.split('.');
       if (parts.length !== 3) return null;
       const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      // Validate expiration
+      if (payload.exp && payload.exp * 1000 < Date.now()) {
+        this.clear();
+        return null;
+      }
       return payload as JwtPayload;
     } catch {
       return null;

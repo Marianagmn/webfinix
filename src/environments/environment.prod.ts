@@ -1,6 +1,8 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.your-production-domain.com/api', // Replace with actual production backend URL
+  // TODO: Configure with actual production backend URL before deployment
+  // Example: 'https://api.finix.com/api' or your actual production domain
+  apiUrl: 'https://api.your-production-domain.com/api',
   useProxy: false, // In production, make direct requests to backend (no proxy)
   
   // Feature flags

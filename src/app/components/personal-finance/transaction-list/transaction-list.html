@@ -69,6 +69,28 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Pagination Controls -->
+  @if (totalPages() > 1) {
+    <nav class="mt-4" aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage() === 1">
+          <button class="page-link" (click)="onPrevPage()" [disabled]="currentPage() === 1">Anterior</button>
+        </li>
+        @for (i of [].constructor(totalPages()); track i; let pageIndex = $index) {
+          <li class="page-item" [class.active]="currentPage() === pageIndex + 1">
+            <button class="page-link" (click)="onPageChange(pageIndex + 1)">{{ pageIndex + 1 }}</button>
+          </li>
+        }
+        <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+          <button class="page-link" (click)="onNextPage()" [disabled]="currentPage() === totalPages()">Siguiente</button>
+        </li>
+      </ul>
+      <div class="text-center text-muted small mt-2">
+        Mostrando página {{ currentPage() }} de {{ totalPages() }} ({{ totalItems() }} registros totales)
+      </div>
+    </nav>
+  }
 </section>
 
 <!-- Confirmation Modal -->

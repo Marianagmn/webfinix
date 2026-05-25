@@ -27,6 +27,12 @@ export class TransactionList implements OnInit {
   // B-02: estado para modal de confirmación en lugar de confirm() nativo
   readonly confirmDeleteId = signal<string | null>(null);
   searchTerm = '';
+  
+  // Pagination state
+  readonly currentPage = signal(1);
+  readonly totalPages = signal(1);
+  readonly totalItems = signal(0);
+  readonly pageSize = signal(20);
 
   ngOnInit() {
     this.loadTransactions();
@@ -36,7 +42,7 @@ export class TransactionList implements OnInit {
     this.isLoading.set(true);
     // M-04: takeUntilDestroyed evita memory leaks
     this.financeService
-      .getTransactions()
+      .getTransactions({ page: this.currentPage(), limit: this.pageSize() })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
@@ -44,6 +50,14 @@ export class TransactionList implements OnInit {
           const data = res.data ?? [];
           this.transactions.set(data);
           this.filteredTransactions.set(data);
+          
+          // Update pagination from meta
+          if (res.meta?.pagination) {
+            this.currentPage.set(res.meta.pagination.page);
+            this.totalPages.set(res.meta.pagination.totalPages);
+            this.totalItems.set(res.meta.pagination.total);
+          }
+          
           this.isLoading.set(false);
         },
         error: () => {
@@ -96,6 +110,23 @@ export class TransactionList implements OnInit {
           this.toastr.error('No se pudo eliminar la transacción.');
         },
       });
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+    this.loadTransactions();
+  }
+
+  onNextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.onPageChange(this.currentPage() + 1);
+    }
+  }
+
+  onPrevPage() {
+    if (this.currentPage() > 1) {
+      this.onPageChange(this.currentPage() - 1);
+    }
   }
 
   formatAmount(amount: number, moneda = 'COP') {

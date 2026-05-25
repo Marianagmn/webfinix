@@ -77,7 +77,7 @@ export class AuthService {
   }
 
   updateProfile(dto: UpdateProfileDto): Observable<ApiResponse<User>> {
-    return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/me`, dto, {
+    return this.http.patch<ApiResponse<User>>(`${environment.apiUrl}/users/me`, dto, {
       withCredentials: true,
     }).pipe(
       tap((res) => {

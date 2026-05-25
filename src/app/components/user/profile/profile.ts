@@ -1,6 +1,7 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../../../services/user.service';
 import { AuthStore } from '../../../store/auth.store';
 import { ToastrService } from 'ngx-toastr';
@@ -18,9 +19,11 @@ export class Profile implements OnInit {
   private readonly userService = inject(UserService);
   private readonly authStore = inject(AuthStore);
   private readonly toastr = inject(ToastrService);
+  private readonly route = inject(ActivatedRoute);
 
   readonly isLoading = signal(true);
   readonly isSaving = signal(false);
+  readonly businessRequiredMessage = signal<string | null>(null);
 
   profileForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
@@ -28,6 +31,13 @@ export class Profile implements OnInit {
   });
 
   ngOnInit(): void {
+    // Check for business_required query param from guard
+    this.route.queryParams.subscribe(params => {
+      if (params['message'] === 'business_required') {
+        this.businessRequiredMessage.set('Necesitas configurar una empresa para acceder a las funciones de finanzas empresariales.');
+      }
+    });
+
     this.userService.getMe().subscribe({
       next: (user: User) => {
         this.profileForm.patchValue({

@@ -7,6 +7,9 @@ import {
   CreatePersonalFinanceDto,
   UpdatePersonalFinanceDto,
   TransactionFilter,
+  AnalysisResponse,
+  PredictionResponse,
+  SimulationResponse,
 } from '../models/personal-finance.model';
 import { environment } from '../../environments/environment';
 
@@ -37,22 +40,22 @@ export class PersonalFinanceService {
   }
 
   updateTransaction(id: string, dto: UpdatePersonalFinanceDto): Observable<ApiResponse<PersonalFinance>> {
-    return this.http.patch<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`, dto);
+    return this.http.put<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`, dto);
   }
 
   deleteTransaction(id: string): Observable<ApiResponse<void>> {
     return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
   }
 
-  getAnalysis(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/analysis`);
+  getAnalysis(): Observable<ApiResponse<AnalysisResponse>> {
+    return this.http.get<ApiResponse<AnalysisResponse>>(`${this.apiUrl}/analysis`);
   }
 
-  getPrediction(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/prediction`);
+  getPrediction(): Observable<ApiResponse<PredictionResponse>> {
+    return this.http.get<ApiResponse<PredictionResponse>>(`${this.apiUrl}/prediction`);
   }
 
-  getSimulation(): Observable<ApiResponse<any>> {
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/simulation`);
+  getSimulation(): Observable<ApiResponse<SimulationResponse>> {
+    return this.http.get<ApiResponse<SimulationResponse>>(`${this.apiUrl}/simulation`);
   }
 }

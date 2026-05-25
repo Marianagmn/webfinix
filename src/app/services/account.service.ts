@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Account, CreateAccountDto, UpdateAccountDto } from '../models/account.model';
-import { ApiResponse, PaginatedResponse } from '../models/transaction.model';
+import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })

@@ -13,7 +13,7 @@ type BusinessFinanceStatus = BusinessTransactionEstado;
 @Component({
   selector: 'app-business-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './business-list.html',
   styleUrl: './business-list.css',
 })
@@ -23,7 +23,7 @@ export class BusinessList implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly transactions = signal<BusinessFinance[]>([]);
-  readonly pagination = signal<{ page: number; limit: number; total: number; totalPages: number } | null>(null);
+  readonly pagination = signal<PaginationMeta | null>(null);
   readonly isLoading = signal(false);
   readonly loadingDelete = signal<string | null>(null);
   readonly loadingApprove = signal<string | null>(null);
@@ -32,9 +32,9 @@ export class BusinessList implements OnInit {
   readonly filter = signal<{ page: number; limit: number; tipo?: string; estado?: BusinessFinanceStatus }>({ page: 1, limit: 20 });
   readonly deleteTargetId = signal<string | null>(null);
 
-  readonly totalItems = computed(() => this.pagination()?.total ?? 0);
-  readonly currentPage = computed(() => this.filter().page ?? 1);
-  readonly totalPages = computed(() => this.pagination()?.totalPages ?? 1);
+  readonly totalItems = computed(() => this.pagination()?.pagination?.total ?? 0);
+  readonly currentPage = computed(() => this.pagination()?.pagination?.page ?? 1);
+  readonly totalPages = computed(() => this.pagination()?.pagination?.totalPages ?? 1);
   readonly showDeleteModal = computed(() => !!this.deleteTargetId());
 
   ngOnInit(): void {
@@ -54,7 +54,7 @@ export class BusinessList implements OnInit {
       .subscribe({
         next: (res) => {
           this.transactions.set(res.data);
-          this.pagination.set(res.meta as { page: number; limit: number; total: number; totalPages: number } || null);
+          this.pagination.set(res.meta || null);
           this.isLoading.set(false);
         },
         error: () => {
