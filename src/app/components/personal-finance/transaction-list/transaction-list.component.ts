@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
-import { PersonalFinance } from '../../../models/transaction.model';
+import { PersonalFinance } from '../../../models/personal-finance.model';
 import { ToastrService } from 'ngx-toastr';
 import { FormsModule } from '@angular/forms';
 
@@ -44,13 +44,15 @@ export class TransactionListComponent implements OnInit {
   filterTransactions() {
     if (!this.searchTerm) {
       this.filteredTransactions = this.transactions;
-    } else {
-      const term = this.searchTerm.toLowerCase();
-      this.filteredTransactions = this.transactions.filter(t => 
-        t.descripcion.toLowerCase().includes(term) ||
-        t.tipo.toLowerCase().includes(term)
-      );
+      return;
     }
+
+    const term = this.searchTerm.toLowerCase();
+    this.filteredTransactions = this.transactions.filter((t) =>
+      [t.descripcion, t.tipo]
+        .filter(Boolean)
+        .some((value) => value!.toString().toLowerCase().includes(term))
+    );
   }
 
   deleteTransaction(id: string) {

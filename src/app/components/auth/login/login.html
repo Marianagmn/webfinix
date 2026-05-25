@@ -15,10 +15,10 @@
           formControlName="email"
           placeholder="usuario@finix.com"
         />
-        @if (loginForm.controls.email.touched && loginForm.controls.email.invalid) {
+        @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
           <div class="form-text text-danger">
-            @if (loginForm.controls.email.errors?.required) {El correo es obligatorio.}
-            @if (loginForm.controls.email.errors?.email) {Ingresa un correo válido.}
+            @if (loginForm.get('email')?.errors?.['required']) {El correo es obligatorio.}
+            @if (loginForm.get('email')?.errors?.['email']) {Ingresa un correo válido.}
           </div>
         }
       </div>
@@ -32,10 +32,10 @@
           formControlName="password"
           placeholder="••••••••"
         />
-        @if (loginForm.controls.password.touched && loginForm.controls.password.invalid) {
+        @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
           <div class="form-text text-danger">
-            @if (loginForm.controls.password.errors?.required) {La contraseña es obligatoria.}
-            @if (loginForm.controls.password.errors?.minlength) {La contraseña debe tener al menos 6 caracteres.}
+            @if (loginForm.get('password')?.errors?.['required']) {La contraseña es obligatoria.}
+            @if (loginForm.get('password')?.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
           </div>
         }
       </div>

@@ -1,5 +1,5 @@
 // src/app/app.ts — D-05: llama authStore.init() al arrancar para restaurar usuario tras F5
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthStore } from './store/auth.store';
 
@@ -11,6 +11,7 @@ import { AuthStore } from './store/auth.store';
 })
 export class App implements OnInit {
   private readonly authStore = inject(AuthStore);
+  readonly title = signal('Finix');
 
   ngOnInit(): void {
     // M-02/D-05: restaurar usuario desde /auth/me al cargar la app

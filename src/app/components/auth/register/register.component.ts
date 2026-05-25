@@ -39,7 +39,9 @@ export class RegisterComponent {
     }
 
     this.isLoading = true;
-    this.authService.register(this.registerForm.value).subscribe({
+    const payload = this.registerForm.value as { name: string; email: string; password: string; passwordConfirm: string };
+
+    this.authService.register(payload).subscribe({
       next: () => {
         this.toastr.success('Cuenta creada exitosamente', 'Registro');
         this.router.navigate(['/login']);

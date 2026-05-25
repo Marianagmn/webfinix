@@ -9,7 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../../services/auth';
+import { AuthService } from '../../../services/auth.service';
 import { RegisterDto } from '../../../models/auth.model';
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -64,9 +64,14 @@ export class Register {
           this.toastr.error(response.message || 'No se pudo completar el registro.');
         }
       },
-      error: () => {
+      error: (err) => {
         this.loading.set(false);
-        this.toastr.error('No se pudo completar el registro.');
+        const message =
+          (err.error as any)?.message ||
+          (err.error as any)?.data?.message ||
+          err.message ||
+          'No se pudo completar el registro.';
+        this.toastr.error(message);
       },
     });
   }

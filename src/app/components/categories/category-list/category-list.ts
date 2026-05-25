@@ -29,7 +29,7 @@ export class CategoryList implements OnInit {
     this.categoryService.getCategories()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (r) => { this.categories.set(r.data); this.isLoading.set(false); },
+        next: (categories) => { this.categories.set(categories); this.isLoading.set(false); },
         error: () => { this.toastr.error('No se pudieron cargar las categorías.'); this.isLoading.set(false); },
       });
   }

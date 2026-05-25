@@ -8,7 +8,7 @@ export const DASHBOARD_ROUTES: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('../../components/dashboard/main/main.ts').then(m => m.Main),
+        loadComponent: () => import('../../components/dashboard/main/main').then(m => m.Main),
       },
     ],
   },

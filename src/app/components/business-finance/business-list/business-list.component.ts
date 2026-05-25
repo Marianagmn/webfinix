@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { BusinessFinanceService } from '../../../services/business-finance.service';
-import { BusinessFinance } from '../../../models/transaction.model';
+import { BusinessFinance } from '../../../models/business-finance.model';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -25,8 +25,8 @@ export class BusinessListComponent implements OnInit {
   loadTransactions() {
     this.isLoading = true;
     this.businessService.getTransactions().subscribe({
-      next: (data) => {
-        this.transactions = data;
+      next: (response) => {
+        this.transactions = response.data;
         this.isLoading = false;
       },
       error: () => {

@@ -2,20 +2,27 @@
 // usa environment.apiUrl, AuthStore, withCredentials via interceptor
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
-import { LoginRequest, RegisterRequest, LoginResponse, RefreshTokenRequest } from '../models/auth.model';
-import { User } from '../models/user.model';
+import { Observable, tap } from 'rxjs';
+import { ApiResponse, ApiResult } from '../models/api-response.model';
+import { AuthResponse, LoginDto, RegisterDto } from '../models/auth.model';
+import { ChangePasswordDto, UpdateProfileDto, User } from '../models/user.model';
+import { AuthStore } from '../store/auth.store';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/auth`;
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  currentUser$ = this.currentUserSubject.asObservable();
+  private readonly http = inject(HttpClient);
+  private readonly authStore = inject(AuthStore);
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
+
+  get currentUser$() {
+    return this.authStore.user;
+  }
 
   login(dto: LoginDto): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(`${this.base}/login`, dto).pipe(
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/login`, dto, {
+      withCredentials: true,
+    }).pipe(
       tap((res) => {
         if (res.success) {
           this.authStore.setToken(res.data.accessToken);
@@ -25,8 +32,10 @@ export class AuthService {
     );
   }
 
-  register(dto: RegisterDto): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(`${this.base}/register`, dto).pipe(
+  register(dto: RegisterDto): Observable<ApiResult<AuthResponse>> {
+    return this.http.post<ApiResult<AuthResponse>>(`${this.apiUrl}/register`, dto, {
+      withCredentials: true,
+    }).pipe(
       tap((res) => {
         if (res.success) {
           this.authStore.setToken(res.data.accessToken);
@@ -37,14 +46,17 @@ export class AuthService {
   }
 
   logout(): Observable<ApiResponse<null>> {
-    return this.http.post<ApiResponse<null>>(`${this.base}/logout`, {}).pipe(
+    return this.http.post<ApiResponse<null>>(`${this.apiUrl}/logout`, {}, {
+      withCredentials: true,
+    }).pipe(
       tap(() => this.authStore.clear())
     );
   }
 
-  // C-01: refresh sin body — el cookie httpOnly viaja automáticamente con withCredentials
   refresh(): Observable<ApiResponse<AuthResponse>> {
-    return this.http.post<ApiResponse<AuthResponse>>(`${this.base}/refresh`, {}).pipe(
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/refresh`, {}, {
+      withCredentials: true,
+    }).pipe(
       tap((res) => {
         if (res.success) {
           this.authStore.setToken(res.data.accessToken);
@@ -55,7 +67,9 @@ export class AuthService {
   }
 
   me(): Observable<ApiResponse<User>> {
-    return this.http.get<ApiResponse<User>>(`${this.base}/me`).pipe(
+    return this.http.get<ApiResponse<User>>(`${this.apiUrl}/me`, {
+      withCredentials: true,
+    }).pipe(
       tap((res) => {
         if (res.success) this.authStore.setUser(res.data);
       })
@@ -63,7 +77,9 @@ export class AuthService {
   }
 
   updateProfile(dto: UpdateProfileDto): Observable<ApiResponse<User>> {
-    return this.http.patch<ApiResponse<User>>(`${this.base}/me`, dto).pipe(
+    return this.http.patch<ApiResponse<User>>(`${this.apiUrl}/me`, dto, {
+      withCredentials: true,
+    }).pipe(
       tap((res) => {
         if (res.success) this.authStore.setUser(res.data);
       })
@@ -71,6 +87,8 @@ export class AuthService {
   }
 
   changePassword(dto: ChangePasswordDto): Observable<ApiResponse<null>> {
-    return this.http.patch<ApiResponse<null>>(`${this.base}/me/password`, dto);
+    return this.http.patch<ApiResponse<null>>(`${this.apiUrl}/me/password`, dto, {
+      withCredentials: true,
+    });
   }
 }

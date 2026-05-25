@@ -9,7 +9,7 @@
       <div class="mb-3">
         <label for="name" class="form-label">Nombre completo</label>
         <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre completo" />
-        @if (registerForm.controls.name.touched && registerForm.controls.name.invalid) {
+        @if (registerForm.get('name')?.touched && registerForm.get('name')?.invalid) {
           <div class="form-text text-danger">El nombre es obligatorio.</div>
         }
       </div>
@@ -17,10 +17,10 @@
       <div class="mb-3">
         <label for="email" class="form-label">Correo electrónico</label>
         <input id="email" type="email" class="form-control" formControlName="email" placeholder="usuario@finix.com" />
-        @if (registerForm.controls.email.touched && registerForm.controls.email.invalid) {
+        @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
           <div class="form-text text-danger">
-            @if (registerForm.controls.email.errors?.required) {El correo es obligatorio.}
-            @if (registerForm.controls.email.errors?.email) {Ingresa un correo válido.}
+            @if (registerForm.get('email')?.errors?.['required']) {El correo es obligatorio.}
+            @if (registerForm.get('email')?.errors?.['email']) {Ingresa un correo válido.}
           </div>
         }
       </div>
@@ -28,10 +28,10 @@
       <div class="mb-3">
         <label for="password" class="form-label">Contraseña</label>
         <input id="password" type="password" class="form-control" formControlName="password" placeholder="••••••••" />
-        @if (registerForm.controls.password.touched && registerForm.controls.password.invalid) {
+        @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
           <div class="form-text text-danger">
-            @if (registerForm.controls.password.errors?.required) {La contraseña es obligatoria.}
-            @if (registerForm.controls.password.errors?.minlength) {La contraseña debe tener al menos 6 caracteres.}
+            @if (registerForm.get('password')?.errors?.['required']) {La contraseña es obligatoria.}
+            @if (registerForm.get('password')?.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
           </div>
         }
       </div>
@@ -39,13 +39,13 @@
       <div class="mb-3">
         <label for="passwordConfirm" class="form-label">Confirmar contraseña</label>
         <input id="passwordConfirm" type="password" class="form-control" formControlName="passwordConfirm" placeholder="••••••••" />
-        @if (registerForm.controls.passwordConfirm.touched && registerForm.controls.passwordConfirm.invalid) {
+        @if (registerForm.get('passwordConfirm')?.touched && registerForm.get('passwordConfirm')?.invalid) {
           <div class="form-text text-danger">
-            @if (registerForm.controls.passwordConfirm.errors?.required) {La confirmación de contraseña es obligatoria.}
-            @if (registerForm.controls.passwordConfirm.errors?.minlength) {La contraseña debe tener al menos 6 caracteres.}
+            @if (registerForm.get('passwordConfirm')?.errors?.['required']) {La confirmación de contraseña es obligatoria.}
+            @if (registerForm.get('passwordConfirm')?.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
           </div>
         }
-        @if (registerForm.errors?.passwordMismatch && registerForm.touched) {
+        @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
           <div class="form-text text-danger">Las contraseñas no coinciden.</div>
         }
       </div>

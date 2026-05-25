@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
 import { PersonalFinance } from '../../../models/personal-finance.model';
-import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner.ts';
+import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner';
 
 @Component({
   selector: 'app-transaction-list',

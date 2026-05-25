@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
@@ -14,7 +14,7 @@ import { TransactionTipo, MetodoPago } from '../../../models/personal-finance.mo
 @Component({
   selector: 'app-transaction-create',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './transaction-create.html',
   styleUrl: './transaction-create.css',
 })
@@ -52,7 +52,7 @@ export class TransactionCreate implements OnInit {
     this.categoryService
       .getCategories()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (r) => this.categories.set(r.data) });
+      .subscribe({ next: (categories) => this.categories.set(categories) });
 
     this.accountService
       .getAccounts()
@@ -82,7 +82,7 @@ export class TransactionCreate implements OnInit {
       tipo: raw.tipo!,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
-      categoriaId: raw.categoriaId || undefined,
+      categoriaId: raw.categoriaId as string,
       cuentaOrigenId: raw.cuentaOrigenId || undefined,
       cuentaDestinoId: raw.cuentaDestinoId || undefined,
       descripcion: raw.descripcion || undefined,

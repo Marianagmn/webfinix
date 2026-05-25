@@ -51,7 +51,7 @@
       <div class="user-info">
         @if (authStore.user()) {
           <span class="user-name">{{ authStore.user()?.name }}</span>
-          <span class="user-role">{{ authStore.user()?.role }}</span>
+          <span class="user-role">{{ authStore.user()?.roles?.[0] }}</span>
         }
       </div>
     </header>

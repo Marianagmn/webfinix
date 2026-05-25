@@ -7,12 +7,12 @@ export const AUTH_ROUTES: Routes = [
     children: [
       {
         path: 'login',
-        loadComponent: () => import('../../components/auth/login/login.ts').then(m => m.Login),
+        loadComponent: () => import('../../components/auth/login/login').then(m => m.Login),
         canActivate: [publicGuard],
       },
       {
         path: 'register',
-        loadComponent: () => import('../../components/auth/register/register.ts').then(m => m.Register),
+        loadComponent: () => import('../../components/auth/register/register').then(m => m.Register),
         canActivate: [publicGuard],
       },
       { path: '', redirectTo: 'login', pathMatch: 'full' },

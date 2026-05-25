@@ -7,8 +7,8 @@ export const BUSINESS_FINANCE_ROUTES: Routes = [
     path: '',
     canActivate: [authGuard],
     children: [
-      { path: '', loadComponent: () => import('../../components/business-finance/business-list/business-list.ts').then(m => m.BusinessList) },
-      { path: 'approvals', canActivate: [roleGuard('aprobador')], loadComponent: () => import('../../components/business-finance/approval-list/approval-list.ts').then(m => m.ApprovalList) },
+      { path: '', loadComponent: () => import('../../components/business-finance/business-list/business-list').then(m => m.BusinessList) },
+      { path: 'approvals', canActivate: [roleGuard('aprobador')], loadComponent: () => import('../../components/business-finance/approval-list/approval-list').then(m => m.ApprovalList) },
     ],
   },
 ];

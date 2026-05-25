@@ -41,20 +41,20 @@
           </thead>
           <tbody>
             <tr *ngFor="let txn of filteredTransactions">
-              <td>{{ txn.date | date:'shortDate' }}</td>
-              <td class="fw-semibold">{{ txn.description }} <i *ngIf="txn.isRecurring" class="bi bi-arrow-repeat text-muted ms-1" title="Recurrente"></i></td>
+              <td>{{ txn.fecha | date:'shortDate' }}</td>
+              <td class="fw-semibold">{{ txn.descripcion || '—' }}</td>
               <td>
                 <span class="badge" [ngClass]="{
-                  'bg-success': txn.type === 'income',
-                  'bg-danger': txn.type === 'expense',
-                  'bg-secondary': txn.type === 'transfer'
-                }">{{ txn.type }}</span>
+                  'bg-success': txn.tipo === 'ingreso',
+                  'bg-danger': txn.tipo === 'gasto',
+                  'bg-secondary': txn.tipo === 'transferencia'
+                }">{{ txn.tipo }}</span>
               </td>
               <td class="fw-bold" [ngClass]="{
-                'text-success': txn.type === 'income',
-                'text-danger': txn.type === 'expense'
+                'text-danger': txn.tipo === 'gasto',
+                'text-success': txn.tipo === 'ingreso'
               }">
-                {{ txn.type === 'expense' ? '-' : (txn.type === 'income' ? '+' : '') }}${{ txn.amount }}
+                {{ txn.tipo === 'gasto' ? '-' : (txn.tipo === 'ingreso' ? '+' : '') }}${{ txn.monto }}
               </td>
               <td>
                 <span class="badge bg-light text-dark border me-1" *ngFor="let tag of txn.tags">{{ tag }}</span>

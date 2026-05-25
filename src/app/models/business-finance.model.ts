@@ -69,11 +69,13 @@ export interface CreateBusinessTransactionDto {
 
 export type UpdateBusinessTransactionDto = Partial<CreateBusinessTransactionDto>;
 
+export type BusinessFinance = BusinessTransaction;
+export type CreateBusinessFinanceRequest = CreateBusinessTransactionDto;
+export type UpdateBusinessFinanceRequest = UpdateBusinessTransactionDto;
+
 export interface ApplyPaymentDto {
   monto: number;
   fecha?: string;
   metodoPago: string;
   referencia?: string;
 }
-
-export { ApiResponse };

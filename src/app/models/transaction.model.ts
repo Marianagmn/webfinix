@@ -1,17 +1,7 @@
-<<<<<<< HEAD
 // src/app/models/transaction.model.ts
-// Re-exporta desde personal-finance.model.ts para compatibilidad con componentes existentes
-export type {
-  TransactionTipo,
-  TransactionEstado,
-  MetodoPago,
-  PersonalFinance,
-  CreatePersonalFinanceDto,
-  UpdatePersonalFinanceDto,
-  TransactionFilter,
-} from './personal-finance.model';
-=======
 import { CategoryType } from './category.model';
+
+export type TransactionTipo = CategoryType;
 
 export interface ApiResponse<T> {
   success: boolean;
@@ -21,16 +11,16 @@ export interface ApiResponse<T> {
 export interface PersonalFinance {
   id: string;
   userId: string;
-  tipo: CategoryType; // Cambiado de 'type' a 'tipo' para coincidir con backend
-  monto: number; // Cambiado de 'amount' a 'monto'
+  tipo: CategoryType;
+  monto: number;
   moneda: string;
   tasaCambio: number;
-  categoria: string; // Cambiado de 'categoryId' a 'categoria' (ObjectId en backend)
-  cuentaOrigenId: string; // Cambiado de 'accountId' a 'cuentaOrigenId'
+  categoria: string;
+  cuentaOrigenId: string;
   cuentaDestinoId: string;
   metodoPago: string;
   descripcion: string;
-  fecha: string; // Cambiado de 'date' a 'fecha'
+  fecha: string;
   estado: string;
   esAhorro: boolean;
   tags: string[];
@@ -47,7 +37,7 @@ export interface CreatePersonalFinanceDTO {
   cuentaOrigenId?: string;
   cuentaDestinoId?: string;
   metodoPago?: string;
-  descripcion: string;
+  descripcion?: string;
   fecha?: string;
   estado?: string;
   esAhorro?: boolean;
@@ -61,11 +51,11 @@ export interface CreatePersonalFinanceRequest {
   monto: number;
   moneda?: string;
   tasaCambio?: number;
-  categoria: string;
+  categoria?: string;
   cuentaOrigenId?: string;
   cuentaDestinoId?: string;
   metodoPago?: string;
-  descripcion: string;
+  descripcion?: string;
   fecha?: string;
   estado?: string;
   esAhorro?: boolean;
@@ -74,11 +64,22 @@ export interface CreatePersonalFinanceRequest {
 
 export interface UpdatePersonalFinanceRequest extends Partial<CreatePersonalFinanceRequest> {}
 
+export interface TransactionFilter {
+  page?: number;
+  perPage?: number;
+  from?: string;
+  to?: string;
+  tipo?: CategoryType | CategoryType[];
+  categoriaId?: string;
+  cuentaOrigenId?: string;
+  order?: 'asc' | 'desc';
+}
+
 export type BusinessFinanceStatus = 'borrador' | 'pendiente' | 'aprobada' | 'contabilizada' | 'rechazada';
 
 export interface BusinessFinance {
   id: string;
-  businessId: string; // Agregado para coincidir con backend
+  businessId: string;
   tipo: 'cobrar' | 'pagar';
   monto: number;
   estado: BusinessFinanceStatus;
@@ -88,7 +89,7 @@ export interface BusinessFinance {
 }
 
 export interface CreateBusinessFinanceRequest {
-  businessId: string; // Agregado para coincidir con backend
+  businessId: string;
   tipo: 'cobrar' | 'pagar';
   monto: number;
   clienteId: string;
@@ -98,7 +99,7 @@ export interface CreateBusinessFinanceRequest {
 export interface UpdateBusinessFinanceRequest extends Partial<CreateBusinessFinanceRequest> {}
 
 export interface CreateBusinessFinanceDTO {
-  businessId: string; // Agregado para coincidir con backend
+  businessId: string;
   tipo: 'cobrar' | 'pagar';
   monto: number;
   clienteId: string;
@@ -106,4 +107,3 @@ export interface CreateBusinessFinanceDTO {
 }
 
 export interface UpdateBusinessFinanceDTO extends Partial<CreateBusinessFinanceDTO> {}
->>>>>>> Mariana-Gordillo

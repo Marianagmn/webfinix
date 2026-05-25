@@ -25,7 +25,7 @@ export class TransactionCreateComponent implements OnInit {
 
   txnForm: FormGroup = this.fb.group({
     amount: [null, [Validators.required, Validators.min(0.01)]],
-    type: ['expense', Validators.required],
+    type: ['gasto', Validators.required],
     categoryId: ['', Validators.required],
     accountId: ['', Validators.required],
     date: [new Date().toISOString().substring(0, 10), Validators.required],
@@ -40,7 +40,7 @@ export class TransactionCreateComponent implements OnInit {
 
   ngOnInit() {
     this.accountService.getAccounts().subscribe(accs => this.accounts = accs);
-    this.loadCategories('expense');
+    this.loadCategories('gasto');
 
     this.txnForm.get('type')?.valueChanges.subscribe(type => {
       this.loadCategories(type as CategoryType);
@@ -65,8 +65,20 @@ export class TransactionCreateComponent implements OnInit {
       formValue.tags = [];
     }
 
+    const payload = {
+      tipo: formValue.type,
+      monto: formValue.amount,
+      moneda: 'COP',
+      categoriaId: formValue.categoryId,
+      cuentaOrigenId: formValue.accountId || undefined,
+      descripcion: formValue.description || undefined,
+      fecha: formValue.date,
+      tags: formValue.tags,
+      esAhorro: formValue.isRecurring ?? false,
+    };
+
     this.isLoading = true;
-    this.financeService.createTransaction(formValue).subscribe({
+    this.financeService.createTransaction(payload).subscribe({
       next: () => {
         this.toastr.success('Transacción guardada');
         this.router.navigate(['/transactions']);
