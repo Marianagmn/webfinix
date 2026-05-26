@@ -60,6 +60,7 @@ export class Register {
   onSubmit(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
+      this.toastr.error('Por favor completa todos los campos correctamente');
       return;
     }
 
@@ -83,6 +84,7 @@ export class Register {
           (err.error as any)?.data?.message ||
           err.message ||
           'No se pudo completar el registro.';
+        console.error('Registration error:', err);
         this.toastr.error(message);
       },
     });

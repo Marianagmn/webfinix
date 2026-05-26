@@ -46,8 +46,10 @@ export class Profile implements OnInit {
         });
         this.isLoading.set(false);
       },
-      error: () => {
-        this.toastr.error('Error al cargar perfil');
+      error: (err) => {
+        const message = (err.error as any)?.message || err.message || 'Error al cargar perfil';
+        console.error('Profile load error:', err);
+        this.toastr.error(message);
         this.isLoading.set(false);
       },
     });

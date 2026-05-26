@@ -47,7 +47,7 @@
 
 ##### Testing:
 - [ ] Navegar a /personal-finance
-- [ ] Crear una transacción (debe funcionar)
+- [ x ] Crear una transacción (debe funcionar)
 - [ ] Editar esa transacción → cambiar categoría
 - [ ] Guardar → Debe retornar 200 (no 422)
 - [ ] Verificar en DB que categoria se actualizó

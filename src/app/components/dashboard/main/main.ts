@@ -36,9 +36,10 @@ export class Main implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ transactions, accounts }) => {
+          const accountList = accounts.data ?? [];
           this.recentTransactions.set(transactions.data?.slice(0, 5) || []);
-          this.accounts.set(accounts);
-          this.totalBalance.set(accounts.reduce((sum, a) => sum + a.balance, 0));
+          this.accounts.set(accountList);
+          this.totalBalance.set(accountList.reduce((sum: number, a) => sum + a.balance, 0));
           this.isLoading.set(false);
         },
         error: () => this.isLoading.set(false),

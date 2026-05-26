@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
-import { PersonalFinance } from '../../../models/personal-finance.model';
+import { PersonalFinance, TransactionTipo } from '../../../models/personal-finance.model';
 import { PaginatedResponse } from '../../../models/api-response.model';
 
 @Component({
@@ -29,7 +29,7 @@ export class TransactionTrash implements OnInit {
   readonly pageSize = signal(20);
   readonly totalItems = signal(0);
   readonly searchQuery = signal('');
-  readonly selectedTipo = signal('');
+  readonly selectedTipo = signal<TransactionTipo | ''>('');
   readonly confirmRestoreId = signal<string | null>(null);
   readonly confirmPermanentDeleteId = signal<string | null>(null);
 
@@ -68,8 +68,9 @@ export class TransactionTrash implements OnInit {
     this.loadDeletedTransactions();
   }
 
-  onTypeFilter(tipo: string): void {
-    this.selectedTipo.set(tipo === this.selectedTipo() ? '' : tipo);
+  onTypeFilter(tipo: TransactionTipo | string): void {
+    const tipoValue = tipo as TransactionTipo;
+    this.selectedTipo.set(tipoValue === this.selectedTipo() ? '' : tipoValue);
     this.currentPage.set(1);
     this.loadDeletedTransactions();
   }

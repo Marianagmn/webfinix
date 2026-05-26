@@ -52,12 +52,12 @@ export class TransactionCreate implements OnInit {
     this.categoryService
       .getCategories()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (categories) => this.categories.set(categories) });
+      .subscribe({ next: (categories) => this.categories.set(categories.data ?? []) });
 
     this.accountService
       .getAccounts()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (data) => this.accounts.set(data) });
+      .subscribe({ next: (data) => this.accounts.set(data.data ?? []) });
   }
 
   get tipoValue(): TransactionTipo {
@@ -67,8 +67,15 @@ export class TransactionCreate implements OnInit {
   onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.toastr.error('Por favor completa todos los campos requeridos');
       return;
     }
+
+    if (!this.form.get('categoriaId')?.value) {
+      this.toastr.error('Debes seleccionar una categoría');
+      return;
+    }
+
     this.loading.set(true);
     const raw = this.form.value;
     const tagsArray = raw.tags
@@ -82,10 +89,10 @@ export class TransactionCreate implements OnInit {
       tipo: raw.tipo!,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
-      categoria: raw.categoriaId as string,
+      categoria: raw.categoriaId || undefined,
       cuentaOrigenId: raw.cuentaOrigenId || undefined,
       cuentaDestinoId: raw.cuentaDestinoId || undefined,
-      descripcion: raw.descripcion || '',
+      descripcion: raw.descripcion || undefined,
       fecha: raw.fecha ? new Date(raw.fecha).toISOString() : undefined,
       metodoPago: (raw.metodoPago as MetodoPago) || 'efectivo',
       tags: tagsArray,
@@ -101,8 +108,10 @@ export class TransactionCreate implements OnInit {
           this.toastr.success('Transacción creada correctamente');
           this.router.navigate(['/personal-finance']);
         },
-        error: () => {
+        error: (err) => {
           this.loading.set(false);
+          const message = (err.error as any)?.message || 'Error al crear transacción';
+          this.toastr.error(message);
         },
       });
   }

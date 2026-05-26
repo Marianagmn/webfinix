@@ -39,7 +39,7 @@ export class TransactionCreateComponent implements OnInit {
   accounts: Account[] = [];
 
   ngOnInit() {
-    this.accountService.getAccounts().subscribe(accs => this.accounts = accs);
+    this.accountService.getAccounts().subscribe(accs => this.accounts = accs.data ?? []);
     this.loadCategories('gasto');
 
     this.txnForm.get('type')?.valueChanges.subscribe(type => {
@@ -49,12 +49,18 @@ export class TransactionCreateComponent implements OnInit {
   }
 
   loadCategories(type: CategoryType) {
-    this.categoryService.getCategories(type).subscribe(cats => this.categories = cats);
+    this.categoryService.getCategories(type).subscribe(cats => this.categories = cats.data ?? []);
   }
 
   onSubmit() {
     if (this.txnForm.invalid) {
       this.txnForm.markAllAsTouched();
+      this.toastr.error('Por favor completa todos los campos requeridos');
+      return;
+    }
+
+    if (!this.txnForm.get('categoryId')?.value) {
+      this.toastr.error('Debes seleccionar una categoría');
       return;
     }
 
@@ -69,7 +75,7 @@ export class TransactionCreateComponent implements OnInit {
       tipo: formValue.type,
       monto: formValue.amount,
       moneda: 'COP',
-      categoriaId: formValue.categoryId,
+      categoria: formValue.categoryId,
       cuentaOrigenId: formValue.accountId || undefined,
       descripcion: formValue.description || undefined,
       fecha: formValue.date,
@@ -83,8 +89,9 @@ export class TransactionCreateComponent implements OnInit {
         this.toastr.success('Transacción guardada');
         this.router.navigate(['/transactions']);
       },
-      error: () => {
-        this.toastr.error('Error al guardar');
+      error: (err) => {
+        const message = (err.error as any)?.message || 'Error al guardar transacción';
+        this.toastr.error(message);
         this.isLoading = false;
       }
     });

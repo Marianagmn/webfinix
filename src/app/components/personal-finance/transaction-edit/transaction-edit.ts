@@ -54,7 +54,7 @@ export class TransactionEdit implements OnInit {
 
     this.accountService.getAccounts()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(accs => this.accounts.set(accs || []));
+      .subscribe(accs => this.accounts.set(accs.data ?? []));
 
     this.route.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -109,7 +109,7 @@ export class TransactionEdit implements OnInit {
     this.categoryService.getCategories(tipo)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(cats => {
-      this.categories.set(cats || []);
+      this.categories.set(cats.data ?? []);
     });
   }
 
