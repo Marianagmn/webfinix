@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
-import { PredictionData } from '../../../models/analytics.model';
+import { PredictionResponse } from '../../../models/personal-finance.model';
 
 @Component({
   selector: 'app-prediction-view',
@@ -19,7 +19,7 @@ export class PredictionView implements OnInit {
 
   readonly isLoading = signal(false);
   readonly hasError = signal(false);
-  readonly predictionData = signal<PredictionData | null>(null);
+  readonly predictionData = signal<PredictionResponse | null>(null);
 
   ngOnInit(): void {
     this.loadPrediction();
@@ -45,9 +45,11 @@ export class PredictionView implements OnInit {
   }
 
   getConfidenceClass(): string {
-    const confianza = this.predictionData()?.confianza ?? 0;
-    if (confianza >= 80) return 'text-success';
-    if (confianza >= 50) return 'text-warning';
+    // PredictionResponse no tiene confianza directa
+    // Usamos la tendencia como indicador
+    const tendencia = this.predictionData()?.resumen?.tendencia;
+    if (tendencia === 'creciente') return 'text-success';
+    if (tendencia === 'estable') return 'text-warning';
     return 'text-danger';
   }
 }

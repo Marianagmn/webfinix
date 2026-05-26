@@ -131,7 +131,7 @@ export class TransactionEdit implements OnInit {
       tipo: raw.tipo!,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
-      categoriaId: raw.categoriaId || undefined,
+      categoria: raw.categoriaId || undefined,
       cuentaOrigenId: raw.cuentaOrigenId || undefined,
       cuentaDestinoId: raw.cuentaDestinoId || undefined,
       descripcion: raw.descripcion || undefined,

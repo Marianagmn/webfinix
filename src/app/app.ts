@@ -15,6 +15,6 @@ export class App implements OnInit {
 
   ngOnInit(): void {
     // M-02/D-05: restaurar usuario desde /auth/me al cargar la app
-    this.authStore.init();
+    // User es restaurado por el auth interceptor, no necesita init aquí
   }
 }

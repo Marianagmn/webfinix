@@ -1,0 +1,100 @@
+<div class="trash-container">
+  <div class="header">
+    <h1>Papelera de Transacciones</h1>
+    <button (click)="goBack()" class="btn btn-secondary">
+      ← Volver a Transacciones
+    </button>
+  </div>
+
+  <div class="filters">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Buscar por descripción o tags..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch()"
+        class="form-control"
+      />
+      <button (click)="onSearch()" class="btn btn-primary">Buscar</button>
+    </div>
+
+    <div class="tipo-filters">
+      <button
+        *ngFor="let tipo of ['ingreso', 'gasto', 'transferencia']"
+        (click)="onTypeFilter(tipo)"
+        [class.active]="selectedTipo() === tipo"
+        class="btn btn-sm"
+      >
+        {{ tipo }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading()" class="loading">
+    <p>Cargando transacciones eliminadas...</p>
+  </div>
+
+  <div *ngIf="!isLoading() && deletedTransactions().length === 0" class="empty-state">
+    <p>No hay transacciones eliminadas</p>
+  </div>
+
+  <div *ngIf="!isLoading() && deletedTransactions().length > 0" class="transactions-list">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Tipo</th>
+          <th>Descripción</th>
+          <th>Monto</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let txn of deletedTransactions()">
+          <td>{{ txn.fecha | date: 'dd/MM/yyyy' }}</td>
+          <td>
+            <span [class]="'badge badge-' + txn.tipo">
+              {{ txn.tipo }}
+            </span>
+          </td>
+          <td>{{ txn.descripcion }}</td>
+          <td class="amount">
+            {{ txn.monto | number: '1.2-2' }} {{ txn.moneda }}
+          </td>
+          <td>{{ txn.categoria || 'N/A' }}</td>
+          <td class="actions">
+            <button
+              (click)="restore(txn.id)"
+              [disabled]="isRestoring()"
+              class="btn btn-sm btn-success"
+              title="Restaurar"
+            >
+              ✓ Restaurar
+            </button>
+            <button
+              (click)="permanentlyDelete(txn.id)"
+              [disabled]="isDeleting()"
+              class="btn btn-sm btn-danger"
+              title="Eliminar permanentemente"
+            >
+              🗑️ Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button (click)="previousPage()" [disabled]="currentPage() === 1" class="btn btn-sm">
+        ← Anterior
+      </button>
+      <span class="page-info">
+        Página {{ currentPage() }} de {{ totalPages }} ({{ totalItems() }} total)
+      </span>
+      <button (click)="nextPage()" [disabled]="currentPage() === totalPages" class="btn btn-sm">
+        Siguiente →
+      </button>
+    </div>
+  </div>
+</div>

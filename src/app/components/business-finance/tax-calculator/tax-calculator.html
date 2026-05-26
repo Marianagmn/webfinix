@@ -1,0 +1,99 @@
+<div class="tax-calculator-container">
+  <div class="calculator-card">
+    <h3>Calculadora de Impuestos</h3>
+    <p class="subtitle">Recalcula los impuestos para el período especificado</p>
+
+    <form [formGroup]="form" (ngSubmit)="calculateTaxes()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="periodStart">Fecha Inicio <span class="text-danger">*</span></label>
+          <input
+            id="periodStart"
+            type="date"
+            formControlName="periodStart"
+            class="form-control"
+            [class.is-invalid]="form.get('periodStart')?.invalid && form.get('periodStart')?.touched"
+          />
+          <div class="invalid-feedback" *ngIf="form.get('periodStart')?.errors?.['required']">
+            La fecha de inicio es requerida
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="periodEnd">Fecha Fin <span class="text-danger">*</span></label>
+          <input
+            id="periodEnd"
+            type="date"
+            formControlName="periodEnd"
+            class="form-control"
+            [class.is-invalid]="form.get('periodEnd')?.invalid && form.get('periodEnd')?.touched"
+          />
+          <div class="invalid-feedback" *ngIf="form.get('periodEnd')?.errors?.['required']">
+            La fecha de fin es requerida
+          </div>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="isCalculating() || form.invalid"
+        class="btn btn-primary w-100"
+      >
+        <span *ngIf="!isCalculating()">Calcular Impuestos</span>
+        <span *ngIf="isCalculating()">
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          Calculando...
+        </span>
+      </button>
+    </form>
+
+    <!-- Resultados -->
+    <div *ngIf="taxResult()" class="results-section">
+      <h4>Resultados del Cálculo</h4>
+
+      <div class="result-grid">
+        <div class="result-item">
+          <span class="label">Ingresos</span>
+          <span class="value income">{{ formatCurrency(taxResult()?.income) }}</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">Gastos</span>
+          <span class="value expense">{{ formatCurrency(taxResult()?.expenses) }}</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">Ingresos Gravables</span>
+          <span class="value">{{ formatCurrency(taxResult()?.taxableIncome) }}</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">Impuesto Estimado</span>
+          <span class="value tax">{{ formatCurrency(taxResult()?.estimatedTax) }}</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">Tasa Efectiva</span>
+          <span class="value percent">{{ formatPercent(taxResult()?.effectiveRate) }}</span>
+        </div>
+
+        <div class="result-item">
+          <span class="label">Calculado en</span>
+          <span class="value" style="font-size: 0.9rem">
+            {{ taxResult()?.dateCalculated | date: 'dd/MM/yyyy HH:mm' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <strong>Nota:</strong> Este cálculo es estimado basado en los registros actuales. Consulte con
+        su asesor fiscal para validar los montos definitivos.
+      </div>
+    </div>
+
+    <!-- Estado vacío -->
+    <div *ngIf="!taxResult() && !isCalculating()" class="empty-state">
+      <p>Selecciona un período y haz clic en "Calcular Impuestos" para ver los resultados</p>
+    </div>
+  </div>
+</div>

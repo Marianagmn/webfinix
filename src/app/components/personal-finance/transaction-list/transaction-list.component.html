@@ -1,0 +1,56 @@
+<div class="transaction-list-container">
+  <div class="header">
+    <h1>Mis Transacciones</h1>
+    <a routerLink="/personal-finance/create" class="btn btn-primary">+ Nueva Transacción</a>
+  </div>
+
+  <div class="filters">
+    <input 
+      type="text" 
+      [(ngModel)]="searchTerm" 
+      placeholder="Buscar transacciones..."
+      class="form-control"
+    />
+  </div>
+
+  <div *ngIf="isLoading" class="loading">
+    <p>Cargando transacciones...</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredTransactions.length === 0" class="empty-state">
+    <p>No hay transacciones registradas</p>
+  </div>
+
+  <div *ngIf="!isLoading && filteredTransactions.length > 0" class="transactions-table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Descripción</th>
+          <th>Monto</th>
+          <th>Categoría</th>
+          <th>Tipo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let txn of filteredTransactions">
+          <td>{{ txn.fecha | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ txn.descripcion }}</td>
+          <td>{{ txn.monto | number: '1.2-2' }} {{ txn.moneda }}</td>
+          <td>{{ txn.categoria }}</td>
+          <td>
+            <span [class]="'badge badge-' + txn.tipo">
+              {{ txn.tipo }}
+            </span>
+          </td>
+          <td>
+            <a [routerLink]="['/personal-finance/edit', txn.id]" class="btn btn-sm btn-primary">
+              Editar
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

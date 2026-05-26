@@ -1,12 +1,14 @@
 import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { BusinessFinanceService } from '../../../services/business-finance.service';
 import { BusinessFinance, BusinessTransactionEstado } from '../../../models/business-finance.model';
+import { PaginationMeta } from '../../../models/api-response.model';
 
 type BusinessFinanceStatus = BusinessTransactionEstado;
 

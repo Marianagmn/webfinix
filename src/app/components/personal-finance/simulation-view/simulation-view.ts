@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
-import { SimulationData } from '../../../models/analytics.model';
+import { SimulationResponse } from '../../../models/personal-finance.model';
 
 @Component({
   selector: 'app-simulation-view',
@@ -19,7 +19,7 @@ export class SimulationView implements OnInit {
 
   readonly isLoading = signal(false);
   readonly hasError = signal(false);
-  readonly simulationData = signal<SimulationData | null>(null);
+  readonly simulationData = signal<SimulationResponse | null>(null);
 
   ngOnInit(): void {
     this.loadSimulation();

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
-import { AnalysisData } from '../../../models/analytics.model';
+import { AnalysisResponse } from '../../../models/personal-finance.model';
 
 @Component({
   selector: 'app-analysis-view',
@@ -19,7 +19,7 @@ export class AnalysisView implements OnInit {
 
   readonly isLoading = signal(false);
   readonly hasError = signal(false);
-  readonly analysisData = signal<AnalysisData | null>(null);
+  readonly analysisData = signal<AnalysisResponse | null>(null);
 
   ngOnInit(): void {
     this.loadAnalysis();
@@ -45,20 +45,24 @@ export class AnalysisView implements OnInit {
   }
 
   getTendenciaClass(): string {
-    const tendencia = this.analysisData()?.tendencia;
-    switch (tendencia) {
-      case 'positiva': return 'text-success';
-      case 'negativa': return 'text-danger';
-      default: return 'text-muted';
-    }
+    // AnalysisResponse no tiene tendencia directa, pero tiene tendencias[]
+    // Derivamos la tendencia del balance neto
+    const data = this.analysisData();
+    if (!data) return 'text-muted';
+    
+    const balance = data.balance;
+    if (balance > 0) return 'text-success';
+    if (balance < 0) return 'text-danger';
+    return 'text-muted';
   }
 
   getTendenciaIcon(): string {
-    const tendencia = this.analysisData()?.tendencia;
-    switch (tendencia) {
-      case 'positiva': return 'bi-arrow-up-circle-fill';
-      case 'negativa': return 'bi-arrow-down-circle-fill';
-      default: return 'bi-dash-circle-fill';
-    }
+    const data = this.analysisData();
+    if (!data) return 'bi-dash-circle';
+    
+    const balance = data.balance;
+    if (balance > 0) return 'bi-arrow-up-circle-fill';
+    if (balance < 0) return 'bi-arrow-down-circle-fill';
+    return 'bi-dash-circle';
   }
 }

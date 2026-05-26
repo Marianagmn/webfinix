@@ -45,9 +45,12 @@ export interface TransactionFilter {
   fechaHasta?: string;
   tipo?: TransactionTipo | TransactionTipo[];
   categoria?: string;
+  categoriaId?: string;
   cuentaOrigenId?: string;
+  cuentaId?: string;
   sort?: string;
   estado?: TransactionEstado;
+  search?: string;
 }
 
 // Interfaces para respuestas de análisis/predicción/simulación (MED-19)
