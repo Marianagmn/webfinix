@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Category, CategoryType, CreateCategoryRequest, UpdateCategoryRequest } from '../models/category.model';
-import { ApiResponse } from '../models/api-response.model';
+import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -18,13 +18,18 @@ export class CategoryService {
     } as T & { id: string };
   }
 
-  getCategories(tipo?: CategoryType): Observable<Category[]> {
+  getCategories(tipo?: CategoryType, page = 1, limit = 20): Observable<PaginatedResponse<Category>> {
     let params = new HttpParams();
     if (tipo) {
       params = params.set('tipo', tipo);
     }
-    return this.http.get<ApiResponse<Category[]>>(this.apiUrl, { params }).pipe(
-      map((response) => response.data.map((category) => this.normalizeId(category)))
+    params = params.set('page', page.toString());
+    params = params.set('limit', limit.toString());
+    return this.http.get<PaginatedResponse<Category>>(this.apiUrl, { params }).pipe(
+      map((response) => ({
+        ...response,
+        data: response.data.map((category) => this.normalizeId(category))
+      }))
     );
   }
 

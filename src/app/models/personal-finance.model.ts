@@ -45,9 +45,7 @@ export interface TransactionFilter {
   fechaHasta?: string;
   tipo?: TransactionTipo | TransactionTipo[];
   categoria?: string;
-  categoriaId?: string;
   cuentaOrigenId?: string;
-  cuentaId?: string;
   sort?: string;
   estado?: TransactionEstado;
   search?: string;

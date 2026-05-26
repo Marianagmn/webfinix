@@ -91,4 +91,12 @@ export class AuthService {
       withCredentials: true,
     });
   }
+
+  forgotPassword(email: string): Observable<ApiResponse<{ message: string; resetToken?: string }>> {
+    return this.http.post<ApiResponse<{ message: string; resetToken?: string }>>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, password: string): Observable<ApiResponse<{ message: string }>> {
+    return this.http.post<ApiResponse<{ message: string }>>(`${this.apiUrl}/reset-password`, { token, password });
+  }
 }

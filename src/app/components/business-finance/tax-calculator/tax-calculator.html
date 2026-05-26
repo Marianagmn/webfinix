@@ -1,51 +1,19 @@
 <div class="tax-calculator-container">
   <div class="calculator-card">
     <h3>Calculadora de Impuestos</h3>
-    <p class="subtitle">Recalcula los impuestos para el período especificado</p>
+    <p class="subtitle">Recalcula los impuestos del registro actual</p>
 
-    <form [formGroup]="form" (ngSubmit)="calculateTaxes()">
-      <div class="form-row">
-        <div class="form-group">
-          <label for="periodStart">Fecha Inicio <span class="text-danger">*</span></label>
-          <input
-            id="periodStart"
-            type="date"
-            formControlName="periodStart"
-            class="form-control"
-            [class.is-invalid]="form.get('periodStart')?.invalid && form.get('periodStart')?.touched"
-          />
-          <div class="invalid-feedback" *ngIf="form.get('periodStart')?.errors?.['required']">
-            La fecha de inicio es requerida
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="periodEnd">Fecha Fin <span class="text-danger">*</span></label>
-          <input
-            id="periodEnd"
-            type="date"
-            formControlName="periodEnd"
-            class="form-control"
-            [class.is-invalid]="form.get('periodEnd')?.invalid && form.get('periodEnd')?.touched"
-          />
-          <div class="invalid-feedback" *ngIf="form.get('periodEnd')?.errors?.['required']">
-            La fecha de fin es requerida
-          </div>
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        [disabled]="isCalculating() || form.invalid"
-        class="btn btn-primary w-100"
-      >
-        <span *ngIf="!isCalculating()">Calcular Impuestos</span>
-        <span *ngIf="isCalculating()">
-          <span class="spinner-border spinner-border-sm me-2"></span>
-          Calculando...
-        </span>
-      </button>
-    </form>
+    <button
+      (click)="calculateTaxes()"
+      [disabled]="isCalculating()"
+      class="btn btn-primary w-100"
+    >
+      <span *ngIf="!isCalculating()">Recalcular Impuestos</span>
+      <span *ngIf="isCalculating()">
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Calculando...
+      </span>
+    </button>
 
     <!-- Resultados -->
     <div *ngIf="taxResult()" class="results-section">

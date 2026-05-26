@@ -1,4 +1,4 @@
-import { Component, inject, signal, DestroyRef, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, DestroyRef, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -7,13 +7,12 @@ import { BusinessFinanceService } from '../../../services/business-finance.servi
 
 /**
  * Modal para revertir (reversear) un asiento contable.
- * 
+ *
  * Uso:
- *   <app-reverse-dialog 
- *     [visible]="showReverseModal()"
+ *   <app-reverse-dialog
  *     [recordId]="selectedRecordId()"
- *     (onSubmit)="handleReverse($event)"
- *     (onCancel)="showReverseModal.set(false)">
+ *     (onSuccess)="handleReverseSuccess()"
+ *     (onCancel)="handleReverseCancel()">
  *   </app-reverse-dialog>
  */
 @Component({
@@ -33,16 +32,14 @@ export class ReverseDialogComponent {
   readonly isLoading = signal(false);
   readonly isSaving = signal(false);
 
+  @Input() recordId!: string;
+  @Output() onSuccess = new EventEmitter<void>();
+  @Output() onCancel = new EventEmitter<void>();
+
   form: FormGroup = this.fb.group({
     motivo: ['', [Validators.required, Validators.minLength(10)]],
     referencia: [''],
   });
-
-  /**
-   * ID del asiento contable a revertir.
-   * Debe establecerse antes de abrir el modal.
-   */
-  recordId: string = '';
 
   /**
    * Envía la solicitud de reversión al backend.
@@ -72,6 +69,8 @@ export class ReverseDialogComponent {
         next: () => {
           this.toastr.success('Asiento revertido correctamente');
           this.isSaving.set(false);
+          this.form.reset();
+          this.onSuccess.emit();
         },
         error: () => {
           this.toastr.error('Error al revertir asiento');
@@ -85,5 +84,6 @@ export class ReverseDialogComponent {
    */
   dismiss(): void {
     this.form.reset();
+    this.onCancel.emit();
   }
 }

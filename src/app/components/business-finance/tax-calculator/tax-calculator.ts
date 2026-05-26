@@ -1,4 +1,4 @@
-import { Component, inject, signal, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, DestroyRef, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -16,7 +16,7 @@ interface TaxCalculationResult {
 
 /**
  * Componente para recalcular impuestos de un registro de finanzas empresariales.
- * 
+ *
  * Permite al usuario ver un resumen de ingresos, gastos y impuestos calculados,
  * y tiene la opción de recalcular los impuestos si ha habido cambios.
  */
@@ -36,44 +36,33 @@ export class TaxCalculatorComponent {
 
   readonly isLoading = signal(false);
   readonly isCalculating = signal(false);
-  readonly recordId = signal<string>('');
   readonly taxResult = signal<TaxCalculationResult | null>(null);
 
-  form: FormGroup = this.fb.group({
-    periodStart: ['', Validators.required],
-    periodEnd: ['', Validators.required],
-  });
+  @Input() recordId!: string;
+  @Output() onCalculationComplete = new EventEmitter<TaxCalculationResult>();
 
   /**
-   * Calcula los impuestos para el período especificado.
+   * Recalcula los impuestos del registro.
+   * El backend recalcula los impuestos basándose en el monto actual y las tarifas configuradas.
    */
   calculateTaxes(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    const recordId = this.recordId();
-    if (!recordId) {
+    if (!this.recordId) {
       this.toastr.error('ID del registro no especificado');
       return;
     }
 
     this.isCalculating.set(true);
 
-    const payload = {
-      periodStart: this.form.get('periodStart')?.value,
-      periodEnd: this.form.get('periodEnd')?.value,
-    };
-
     this.businessService
-      .recalculateTaxes(recordId, payload)
+      .recalculateTaxes(this.recordId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          this.taxResult.set(response.data as TaxCalculationResult);
+          const result = response.data as TaxCalculationResult;
+          this.taxResult.set(result);
           this.toastr.success('Impuestos recalculados correctamente');
           this.isCalculating.set(false);
+          this.onCalculationComplete.emit(result);
         },
         error: () => {
           this.toastr.error('Error al recalcular impuestos');

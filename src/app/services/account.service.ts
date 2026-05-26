@@ -1,6 +1,6 @@
 // src/app/services/account.service.ts — C-02, C-04: usa environment + map(r => r.data) + PUT correcto
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Account, CreateAccountDto, UpdateAccountDto } from '../models/account.model';
@@ -19,9 +19,15 @@ export class AccountService {
     } as T & { id: string };
   }
 
-  getAccounts(): Observable<Account[]> {
-    return this.http.get<ApiResponse<Account[]>>(this.apiUrl).pipe(
-      map((response) => response.data.map((account) => this.normalizeId(account)))
+  getAccounts(page = 1, limit = 20): Observable<PaginatedResponse<Account>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+    return this.http.get<PaginatedResponse<Account>>(this.apiUrl, { params }).pipe(
+      map((response) => ({
+        ...response,
+        data: response.data.map((account) => this.normalizeId(account))
+      }))
     );
   }
 

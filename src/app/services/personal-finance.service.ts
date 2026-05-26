@@ -64,12 +64,12 @@ export class PersonalFinanceService {
       params = params.set('fechaHasta', mergedFilter.fechaHasta);
     }
 
-    if (mergedFilter.cuentaId) {
-      params = params.set('cuentaId', mergedFilter.cuentaId);
+    if (mergedFilter.cuentaOrigenId) {
+      params = params.set('cuentaOrigenId', mergedFilter.cuentaOrigenId);
     }
 
-    if (mergedFilter.categoriaId) {
-      params = params.set('categoriaId', mergedFilter.categoriaId);
+    if (mergedFilter.categoria) {
+      params = params.set('categoria', mergedFilter.categoria);
     }
 
     if (mergedFilter.search) {

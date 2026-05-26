@@ -30,6 +30,8 @@ export class TransactionTrash implements OnInit {
   readonly totalItems = signal(0);
   readonly searchQuery = signal('');
   readonly selectedTipo = signal('');
+  readonly confirmRestoreId = signal<string | null>(null);
+  readonly confirmPermanentDeleteId = signal<string | null>(null);
 
   ngOnInit(): void {
     this.loadDeletedTransactions();
@@ -72,10 +74,18 @@ export class TransactionTrash implements OnInit {
     this.loadDeletedTransactions();
   }
 
-  restore(id: string): void {
-    if (!confirm('¿Restaurar esta transacción?')) {
-      return;
-    }
+  requestRestore(id: string): void {
+    this.confirmRestoreId.set(id);
+  }
+
+  cancelRestore(): void {
+    this.confirmRestoreId.set(null);
+  }
+
+  confirmRestore(): void {
+    const id = this.confirmRestoreId();
+    if (!id) return;
+    this.confirmRestoreId.set(null);
 
     this.isRestoring.set(true);
 
@@ -95,10 +105,18 @@ export class TransactionTrash implements OnInit {
       });
   }
 
-  permanentlyDelete(id: string): void {
-    if (!confirm('¿Eliminar permanentemente esta transacción? Esta acción no se puede deshacer.')) {
-      return;
-    }
+  requestPermanentDelete(id: string): void {
+    this.confirmPermanentDeleteId.set(id);
+  }
+
+  cancelPermanentDelete(): void {
+    this.confirmPermanentDeleteId.set(null);
+  }
+
+  confirmPermanentDelete(): void {
+    const id = this.confirmPermanentDeleteId();
+    if (!id) return;
+    this.confirmPermanentDeleteId.set(null);
 
     this.isDeleting.set(true);
 

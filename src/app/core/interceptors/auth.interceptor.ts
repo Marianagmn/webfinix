@@ -93,13 +93,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         }
       }
 
-      if (err.status >= 400 && err.status < 500 && err.status !== 401) {
-        const msg = (err.error as any)?.message || 'Error en la petición.';
-        toastr.error(msg);
-      } else if (err.status >= 500) {
-        toastr.error('Error del servidor. Intenta más tarde.');
-      }
-
+      // 4xx and 5xx errors are handled by error.interceptor.ts
       return throwError(() => err);
     })
   );

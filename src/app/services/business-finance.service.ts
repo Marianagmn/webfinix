@@ -58,17 +58,13 @@ export class BusinessFinanceService {
     return this.http.post<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}/post`, {});
   }
 
-  reverse(id: string): Observable<ApiResponse<BusinessFinance>> {
-    return this.http.post<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}/reverse`, {});
-  }
-
   /**
    * Revierte un registro contable.
    * @param id ID del registro a revertir
-   * @param payload Datos de la reversión (motivo, referencia)
+   * @param payload Datos de la reversión (motivo, referencia) - opcional
    */
-  reverseRecord(id: string, payload: { motivo: string; referencia?: string }): Observable<ApiResponse<BusinessFinance>> {
-    return this.http.post<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}/reverse`, payload);
+  reverseRecord(id: string, payload?: { motivo?: string; referencia?: string }): Observable<ApiResponse<BusinessFinance>> {
+    return this.http.post<ApiResponse<BusinessFinance>>(`${this.apiUrl}/${id}/reverse`, payload || {});
   }
 
   applyPayment(id: string, dto: ApplyPaymentDto): Observable<ApiResponse<BusinessFinance>> {
@@ -83,8 +79,8 @@ export class BusinessFinanceService {
     return this.http.get<PaginatedResponse<BusinessFinance>>(`${this.apiUrl}/overdue/${tipo}`);
   }
 
-  recalculateTaxes(id: string, payload?: { periodStart?: string; periodEnd?: string }): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${id}/taxes/recalculate`, payload || {});
+  recalculateTaxes(id: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${id}/taxes/recalculate`, {});
   }
 
   getTransactionsPaginated(page: number = 1, limit: number = 10, filters?: Record<string, any>): Observable<PaginatedResponse<BusinessFinance>> {

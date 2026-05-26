@@ -65,7 +65,7 @@
           <td>{{ txn.categoria || 'N/A' }}</td>
           <td class="actions">
             <button
-              (click)="restore(txn.id)"
+              (click)="requestRestore(txn.id)"
               [disabled]="isRestoring()"
               class="btn btn-sm btn-success"
               title="Restaurar"
@@ -73,7 +73,7 @@
               ✓ Restaurar
             </button>
             <button
-              (click)="permanentlyDelete(txn.id)"
+              (click)="requestPermanentDelete(txn.id)"
               [disabled]="isDeleting()"
               class="btn btn-sm btn-danger"
               title="Eliminar permanentemente"
@@ -97,4 +97,46 @@
       </button>
     </div>
   </div>
+
+  <!-- Restore Confirmation Modal -->
+  @if (confirmRestoreId()) {
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmar restauración</h5>
+            <button type="button" class="btn-close" (click)="cancelRestore()"></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Estás seguro de que deseas restaurar esta transacción?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cancelRestore()">Cancelar</button>
+            <button type="button" class="btn btn-success" (click)="confirmRestore()">Restaurar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Permanent Delete Confirmation Modal -->
+  @if (confirmPermanentDeleteId()) {
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirmar eliminación permanente</h5>
+            <button type="button" class="btn-close" (click)="cancelPermanentDelete()"></button>
+          </div>
+          <div class="modal-body">
+            <p>¿Estás seguro de que deseas eliminar permanentemente esta transacción? Esta acción no se puede deshacer.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="cancelPermanentDelete()">Cancelar</button>
+            <button type="button" class="btn btn-danger" (click)="confirmPermanentDelete()">Eliminar permanentemente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
 </div>

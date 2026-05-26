@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AccountService } from '../../../services/account.service';
 import { Account } from '../../../models/account.model';
+import { PaginatedResponse } from '../../../models/api-response.model';
 
 @Component({
   selector: 'app-account-list',
@@ -22,6 +23,12 @@ export class AccountList implements OnInit {
   readonly isLoading = signal(false);
   readonly confirmDeleteId = signal<string | null>(null);
 
+  // Pagination state
+  readonly currentPage = signal(1);
+  readonly totalPages = signal(1);
+  readonly totalItems = signal(0);
+  readonly pageSize = signal(20);
+
   ngOnInit() {
     this.loadAccounts();
   }
@@ -29,11 +36,20 @@ export class AccountList implements OnInit {
   loadAccounts() {
     this.isLoading.set(true);
     this.accountService
-      .getAccounts()
+      .getAccounts(this.currentPage(), this.pageSize())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (data) => {
+        next: (res: PaginatedResponse<Account>) => {
+          const data = res.data ?? [];
           this.accounts.set(data);
+          
+          // Update pagination from meta
+          if (res.meta?.pagination) {
+            this.currentPage.set(res.meta.pagination.page);
+            this.totalPages.set(res.meta.pagination.totalPages);
+            this.totalItems.set(res.meta.pagination.total);
+          }
+          
           this.isLoading.set(false);
         },
         error: () => {
@@ -72,5 +88,22 @@ export class AccountList implements OnInit {
       efectivo: '💵', ahorro: '🏦', corriente: '🏧', credito: '💳', inversion: '📈',
     };
     return map[tipo] ?? '💰';
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+    this.loadAccounts();
+  }
+
+  onNextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.onPageChange(this.currentPage() + 1);
+    }
+  }
+
+  onPrevPage() {
+    if (this.currentPage() > 1) {
+      this.onPageChange(this.currentPage() - 1);
+    }
   }
 }
