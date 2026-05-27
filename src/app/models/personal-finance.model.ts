@@ -1,7 +1,7 @@
 // src/app/models/personal-finance.model.ts — alineado exactamente con el backend Finix (C-03 D-02)
 export type TransactionTipo = 'ingreso' | 'gasto' | 'transferencia';
 export type TransactionEstado = 'pendiente' | 'completado' | 'cancelado';
-export type MetodoPago = 'efectivo' | 'transferencia' | 'tarjeta de credito' | 'tarjeta debito' | 'cheque' | 'otro';
+export type MetodoPago = 'efectivo' | 'transferencia' | 'tarjeta_credito' | 'tarjeta_debito' | 'cheque' | 'otro';
 
 export interface PersonalFinance {
   id: string;

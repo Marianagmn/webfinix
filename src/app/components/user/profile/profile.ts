@@ -48,8 +48,8 @@ export class Profile implements OnInit {
       .subscribe({
       next: (user: User) => {
         this.profileForm.patchValue({
-          name: user.name,
-          email: user.email,
+          name: user.name || '',
+          email: user.email || '',
           businessId: user.businessId || '',
         });
         this.isLoading.set(false);
