@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs/operators';
 import { AccountService } from '../../../services/account.service';
 import { Account } from '../../../models/account.model';
 
@@ -31,19 +32,27 @@ export class AccountList implements OnInit {
 
   loadAccounts() {
     this.isLoading.set(true);
+    console.log('Loading accounts page:', this.currentPage());
     this.accountService
       .getAccounts(this.currentPage(), 20)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          console.log('Accounts request finalized');
+          this.isLoading.set(false);
+        })
+      )
       .subscribe({
         next: (accounts: Account[]) => {
+          console.log('Accounts API response:', accounts);
+          console.log('Accounts count:', accounts?.length || 0);
           this.accounts.set(accounts ?? []);
           this.totalItems.set(accounts.length);
           this.totalPages.set(Math.ceil(accounts.length / 20));
-          this.isLoading.set(false);
         },
-        error: () => {
+        error: (err) => {
+          console.error('Accounts load error:', err);
           this.toastr.error('No se pudieron cargar las cuentas.');
-          this.isLoading.set(false);
         },
       });
   }
@@ -57,10 +66,20 @@ export class AccountList implements OnInit {
     this.confirmDeleteId.set(null);
     this.accountService
       .deleteAccount(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => console.log('Delete account request finalized'))
+      )
       .subscribe({
-        next: () => { this.toastr.success('Cuenta eliminada'); this.loadAccounts(); },
-        error: () => this.toastr.error('No se pudo eliminar la cuenta.'),
+        next: () => {
+          console.log('Account deleted successfully:', id);
+          this.toastr.success('Cuenta eliminada');
+          this.loadAccounts();
+        },
+        error: (err) => {
+          console.error('Delete account error:', err);
+          this.toastr.error('No se pudo eliminar la cuenta.');
+        },
       });
   }
 

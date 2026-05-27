@@ -21,54 +21,62 @@
 </section>
 
 <section class="transaction-table card shadow-sm p-3">
-  <div *ngIf="isLoading()" class="text-center py-5">
-    <app-loading-spinner [size]="3"></app-loading-spinner>
-  </div>
+  @if (isLoading()) {
+    <div class="text-center py-5">
+      <app-loading-spinner [size]="3"></app-loading-spinner>
+    </div>
+  }
 
-  <div *ngIf="!isLoading() && filteredTransactions().length === 0" class="text-center py-5 text-muted">
-    <h2 class="h5">No hay transacciones registradas</h2>
-    <p>Agrega tu primera transacción o ajusta los filtros para ver resultados.</p>
-    <a routerLink="create" class="btn btn-outline-primary">Agregar transacción</a>
-  </div>
+  @if (!isLoading() && filteredTransactions().length === 0) {
+    <div class="text-center py-5 text-muted">
+      <h2 class="h5">No hay transacciones registradas</h2>
+      <p>Agrega tu primera transacción o ajusta los filtros para ver resultados.</p>
+      <a routerLink="create" class="btn btn-outline-primary">Agregar transacción</a>
+    </div>
+  }
 
-  <div *ngIf="!isLoading() && filteredTransactions().length > 0" class="table-responsive">
-    <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
-        <tr>
-          <th>Fecha</th>
-          <th>Descripción</th>
-          <th>Tipo</th>
-          <th>Cuenta</th>
-          <th class="text-end">Monto</th>
-          <th>Estado</th>
-          <th class="text-end">Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let transaction of filteredTransactions()">
-          <td>{{ transaction.fecha | date:'shortDate' }}</td>
-          <td>{{ transaction.descripcion || '—' }}</td>
-          <td>
-            <span class="badge" [ngClass]="{
-              'bg-success': transaction.tipo === 'ingreso',
-              'bg-danger': transaction.tipo === 'gasto',
-              'bg-secondary': transaction.tipo === 'transferencia'
-            }">{{ transaction.tipo }}</span>
-          </td>
-          <td>{{ transaction.cuentaOrigenId || 'Sin cuenta' }}</td>
-          <td class="text-end">{{ formatAmount(transaction.monto, transaction.moneda) }}</td>
-          <td>
-            <span class="badge bg-secondary text-dark">{{ transaction.estado }}</span>
-          </td>
-          <td class="text-end">
-            <button type="button" class="btn btn-sm btn-outline-danger" (click)="requestDelete(transaction.id)">
-              <i class="bi bi-trash"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  @if (!isLoading() && filteredTransactions().length > 0) {
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Fecha</th>
+            <th>Descripción</th>
+            <th>Tipo</th>
+            <th>Cuenta</th>
+            <th class="text-end">Monto</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (transaction of filteredTransactions(); track transaction.id) {
+            <tr>
+              <td>{{ transaction.fecha | date:'shortDate' }}</td>
+              <td>{{ transaction.descripcion || '—' }}</td>
+              <td>
+                <span class="badge" [ngClass]="{
+                  'bg-success': transaction.tipo === 'ingreso',
+                  'bg-danger': transaction.tipo === 'gasto',
+                  'bg-secondary': transaction.tipo === 'transferencia'
+                }">{{ transaction.tipo }}</span>
+              </td>
+              <td>{{ transaction.cuentaOrigenId || 'Sin cuenta' }}</td>
+              <td class="text-end">{{ formatAmount(transaction.monto, transaction.moneda) }}</td>
+              <td>
+                <span class="badge bg-secondary text-dark">{{ transaction.estado }}</span>
+              </td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="requestDelete(transaction.id)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
 
   <!-- Pagination Controls -->
   @if (totalPages() > 1) {

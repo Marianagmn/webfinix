@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs/operators';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
 
@@ -29,16 +30,27 @@ export class CategoryList implements OnInit {
 
   loadCategories() {
     this.isLoading.set(true);
+    console.log('Loading categories page:', this.currentPage());
     this.categoryService.getCategories(undefined, this.currentPage(), 20)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          console.log('Categories request finalized');
+          this.isLoading.set(false);
+        })
+      )
       .subscribe({
         next: (categories: Category[]) => {
+          console.log('Categories API response:', categories);
+          console.log('Categories count:', categories?.length || 0);
           this.categories.set(categories ?? []);
           this.totalItems.set(categories.length);
           this.totalPages.set(Math.ceil(categories.length / 20));
-          this.isLoading.set(false);
         },
-        error: () => { this.toastr.error('No se pudieron cargar las categorías.'); this.isLoading.set(false); },
+        error: (err) => {
+          console.error('Categories load error:', err);
+          this.toastr.error('No se pudieron cargar las categorías.');
+        },
       });
   }
 
@@ -50,10 +62,20 @@ export class CategoryList implements OnInit {
     if (!id) return;
     this.confirmDeleteId.set(null);
     this.categoryService.deleteCategory(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => console.log('Delete category request finalized'))
+      )
       .subscribe({
-        next: () => { this.toastr.success('Categoría eliminada'); this.loadCategories(); },
-        error: () => this.toastr.error('No se pudo eliminar la categoría.'),
+        next: () => {
+          console.log('Category deleted successfully:', id);
+          this.toastr.success('Categoría eliminada');
+          this.loadCategories();
+        },
+        error: (err) => {
+          console.error('Delete category error:', err);
+          this.toastr.error('No se pudo eliminar la categoría.');
+        },
       });
   }
 

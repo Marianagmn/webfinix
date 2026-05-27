@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs/operators';
 import { UserService } from '../../../services/user.service';
 import { AuthStore } from '../../../store/auth.store';
 import { ToastrService } from 'ngx-toastr';
@@ -45,23 +46,36 @@ export class Profile implements OnInit {
 
     this.isLoading.set(true);
     console.log('Loading user profile...');
+    
+    // Add timeout to prevent infinite loading
     this.userService.getMe()
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          console.log('Profile request finalized');
+          console.log('Finalize executed - profile loading complete');
+          console.log('isLoading before set to false:', this.isLoading());
+          this.isLoading.set(false);
+          console.log('isLoading after set to false:', this.isLoading());
+        })
+      )
       .subscribe({
       next: (user: User) => {
-        console.log('User profile loaded:', user);
+        console.log('Profile API response:', user);
+        console.log('User data:', user);
         this.profileForm.patchValue({
           name: user.name || '',
           email: user.email || '',
           businessId: user.businessId || '',
         });
-        this.isLoading.set(false);
+        console.log('Profile form patched successfully');
       },
       error: (err) => {
         const message = (err.error as any)?.message || err.message || 'Error al cargar perfil';
         console.error('Profile load error:', err);
+        console.error('Error status:', err.status);
+        console.error('Error message:', err.message);
         this.toastr.error(message);
-        this.isLoading.set(false);
       },
     });
   }
@@ -74,16 +88,19 @@ export class Profile implements OnInit {
 
     this.isSaving.set(true);
     this.userService.updateMe(this.profileForm.value)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          this.isSaving.set(false);
+        })
+      )
       .subscribe({
       next: (user: User) => {
         this.toastr.success('Perfil actualizado');
         this.authStore.setUser(user);
-        this.isSaving.set(false);
       },
       error: () => {
         this.toastr.error('Error al actualizar perfil');
-        this.isSaving.set(false);
       },
     });
   }

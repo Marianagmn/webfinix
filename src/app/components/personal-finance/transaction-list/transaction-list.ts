@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs/operators';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
 import { PersonalFinance } from '../../../models/personal-finance.model';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner';
@@ -40,12 +41,20 @@ export class TransactionList implements OnInit {
 
   loadTransactions() {
     this.isLoading.set(true);
+    console.log('Loading transactions page:', this.currentPage());
     // M-04: takeUntilDestroyed evita memory leaks
     this.financeService
       .getTransactions({ page: this.currentPage(), limit: this.pageSize() })
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          console.log('Transactions request finalized');
+          this.isLoading.set(false);
+        })
+      )
       .subscribe({
         next: (res) => {
+          console.log('Transactions API response:', res);
           // C-04: la respuesta ya es PaginatedResponse<PersonalFinance[]>, datos en .data
           const data = res.data ?? [];
           this.transactions.set(data);
@@ -58,12 +67,12 @@ export class TransactionList implements OnInit {
             this.totalItems.set(res.meta.pagination.total);
           }
           
-          this.isLoading.set(false);
+          console.log('Transactions loaded successfully, count:', data.length);
         },
-        error: () => {
+        error: (err) => {
+          console.error('Transactions load error:', err);
           this.toastr.error('No se pudieron cargar las transacciones.');
           this.filteredTransactions.set([]);
-          this.isLoading.set(false);
         },
       });
   }
@@ -103,13 +112,18 @@ export class TransactionList implements OnInit {
 
     this.financeService
       .deleteTransaction(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => console.log('Delete transaction request finalized'))
+      )
       .subscribe({
         next: () => {
+          console.log('Transaction deleted successfully:', id);
           this.toastr.success('Transacción eliminada');
           this.loadTransactions();
         },
-        error: () => {
+        error: (err) => {
+          console.error('Delete transaction error:', err);
           this.toastr.error('No se pudo eliminar la transacción.');
         },
       });

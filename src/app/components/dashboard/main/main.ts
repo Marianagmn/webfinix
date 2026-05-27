@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal, computed, DestroyRef } from '@angula
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
 import { AccountService } from '../../../services/account.service';
@@ -29,27 +30,115 @@ export class Main implements OnInit {
   readonly accounts = signal<Account[]>([]);
   readonly totalBalance = signal(0);
   readonly userName = computed(() => this.authStore.user()?.name ?? 'Usuario');
+  
+  // Computed signals for stats cards
+  readonly incomeMonth = computed(() => {
+    const txns = this.recentTransactions();
+    return txns
+      .filter(t => t.tipo === 'ingreso')
+      .reduce((sum, t) => sum + (t.monto || 0), 0);
+  });
+  
+  readonly expenseMonth = computed(() => {
+    const txns = this.recentTransactions();
+    return txns
+      .filter(t => t.tipo === 'gasto')
+      .reduce((sum, t) => sum + (t.monto || 0), 0);
+  });
+  
+  readonly activeAccounts = computed(() => {
+    return this.accounts().filter(a => a.isActive).length;
+  });
+  
+  // Chart data
+  readonly pieChartData = computed(() => {
+    const txns = this.recentTransactions();
+    const expensesByCategory: Record<string, number> = {};
+    
+    txns
+      .filter(t => t.tipo === 'gasto')
+      .forEach(t => {
+        const category = t.categoria || 'Sin categoría';
+        expensesByCategory[category] = (expensesByCategory[category] || 0) + (t.monto || 0);
+      });
+    
+    return Object.values(expensesByCategory);
+  });
+  
+  readonly pieChartType = 'pie' as const;
+  
+  readonly pieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+  };
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+    }).format(amount || 0);
+  }
 
   ngOnInit(): void {
     this.isLoading.set(true);
     console.log('Loading dashboard data...');
-    forkJoin({
-      transactions: this.financeService.getTransactions({ page: 1, limit: 5 }),
-      accounts: this.accountService.getAccounts(),
-    })
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    
+    // Load accounts first with finalize
+    this.accountService.getAccounts()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => {
+          console.log('Accounts request finalized');
+          console.log('Finalize executed - accounts loading complete');
+        })
+      )
       .subscribe({
-        next: ({ transactions, accounts }) => {
-          console.log('Dashboard data loaded:', { transactions, accounts });
-          this.recentTransactions.set((transactions.data || []).slice(0, 5));
-          this.accounts.set(accounts || []);
-          this.totalBalance.set((accounts || []).reduce((sum: number, a: Account) => sum + (a.balance || 0), 0));
-          this.isLoading.set(false);
+        next: (accounts) => {
+          console.log('Accounts API response:', accounts);
+          console.log('Accounts array length:', accounts?.length || 0);
+          this.accounts.set(accounts ?? []);
+          this.totalBalance.set((accounts ?? []).reduce((sum: number, a: Account) => sum + (a.balance || 0), 0));
+          console.log('Total balance calculated:', this.totalBalance());
+          
+          // Then load transactions with finalize
+          this.financeService.getTransactions({ page: 1, limit: 5 })
+            .pipe(
+              takeUntilDestroyed(this.destroyRef),
+              finalize(() => {
+                console.log('Transactions request finalized');
+                console.log('Finalize executed - transactions loading complete');
+                console.log('isLoading before set to false:', this.isLoading());
+                this.isLoading.set(false);
+                console.log('isLoading after set to false:', this.isLoading());
+              })
+            )
+            .subscribe({
+              next: (transactions) => {
+                console.log('Transactions API response:', transactions);
+                console.log('Transactions data array:', transactions?.data);
+                console.log('Transactions data length:', transactions?.data?.length || 0);
+                this.recentTransactions.set((transactions?.data ?? []).slice(0, 5));
+                console.log('Recent transactions set:', this.recentTransactions());
+              },
+              error: (err) => {
+                console.error('Transactions load error:', err);
+                console.error('Error status:', err.status);
+                console.error('Error message:', err.message);
+                this.toastr.error('Error al cargar las transacciones');
+              },
+            });
         },
         error: (err) => {
-          console.error('Dashboard load error:', err);
-          this.toastr.error('Error al cargar el dashboard');
+          console.error('Accounts load error:', err);
+          console.error('Error status:', err.status);
+          console.error('Error message:', err.message);
+          this.toastr.error('Error al cargar las cuentas');
           this.isLoading.set(false);
+          console.log('isLoading set to false due to accounts error');
         },
       });
   }

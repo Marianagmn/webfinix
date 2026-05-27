@@ -42,8 +42,8 @@
 
       <div class="d-grid gap-2">
         <button type="submit" class="btn btn-primary" [disabled]="isLoading">
-          <span *ngIf="!isLoading">Iniciar Sesión</span>
-          <span *ngIf="isLoading" class="spinner-border spinner-border-sm"></span>
+          @if (!isLoading) { Iniciar Sesión }
+          @if (isLoading) { <span class="spinner-border spinner-border-sm"></span> }
         </button>
       </div>
     </form>

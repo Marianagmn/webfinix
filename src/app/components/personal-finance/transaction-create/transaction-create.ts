@@ -100,7 +100,8 @@ export class TransactionCreate implements OnInit {
       return;
     }
 
-    if (!this.form.get('categoria')?.value) {
+    const categoriaValue = this.form.get('categoria')?.value;
+    if (!categoriaValue || categoriaValue.trim() === '') {
       this.toastr.error('Debes seleccionar una categoría');
       return;
     }
@@ -116,12 +117,11 @@ export class TransactionCreate implements OnInit {
 
     const tipo = raw.tipo as TransactionTipo;
     
-    // Build clean payload without undefined values
+    // Build clean payload - only include fields with valid values
     const payload: any = {
       tipo: tipo,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
-      categoria: raw.categoria,
       descripcion: raw.descripcion || undefined,
       fecha: raw.fecha ? new Date(raw.fecha).toISOString() : undefined,
       metodoPago: (raw.metodoPago as MetodoPago) || 'efectivo',
@@ -129,14 +129,27 @@ export class TransactionCreate implements OnInit {
       esAhorro: raw.esAhorro ?? false,
     };
 
+    // Only include categoria if it has a valid value (not empty string)
+    if (raw.categoria && raw.categoria.trim() !== '') {
+      payload.categoria = raw.categoria;
+    }
+
     // Only include account fields based on transaction type
     if (tipo === 'transferencia') {
-      if (raw.cuentaOrigenId) payload.cuentaOrigenId = raw.cuentaOrigenId;
-      if (raw.cuentaDestinoId) payload.cuentaDestinoId = raw.cuentaDestinoId;
+      if (raw.cuentaOrigenId && raw.cuentaOrigenId.trim() !== '') {
+        payload.cuentaOrigenId = raw.cuentaOrigenId;
+      }
+      if (raw.cuentaDestinoId && raw.cuentaDestinoId.trim() !== '') {
+        payload.cuentaDestinoId = raw.cuentaDestinoId;
+      }
     } else if (tipo === 'ingreso') {
-      if (raw.cuentaOrigenId) payload.cuentaOrigenId = raw.cuentaOrigenId;
+      if (raw.cuentaOrigenId && raw.cuentaOrigenId.trim() !== '') {
+        payload.cuentaOrigenId = raw.cuentaOrigenId;
+      }
     } else if (tipo === 'gasto') {
-      if (raw.cuentaOrigenId) payload.cuentaOrigenId = raw.cuentaOrigenId;
+      if (raw.cuentaOrigenId && raw.cuentaOrigenId.trim() !== '') {
+        payload.cuentaOrigenId = raw.cuentaOrigenId;
+      }
     }
 
     console.log('Creating transaction with payload:', payload);
