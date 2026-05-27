@@ -3,13 +3,12 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
 import { AccountService } from '../../../services/account.service';
 import { AuthStore } from '../../../store/auth.store';
 import { PersonalFinance } from '../../../models/transaction.model';
 import { Account } from '../../../models/account.model';
-import { ToastrService } from 'ngx-toastr';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 
 @Component({
   selector: 'app-main',
@@ -23,7 +22,7 @@ export class Main implements OnInit {
   private readonly accountService = inject(AccountService);
   private readonly authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
-  private readonly toastr = inject(ToastrService);
+  private readonly errorHandler = inject(ErrorHandlerService);
 
   readonly isLoading = signal(true);
   readonly recentTransactions = signal<PersonalFinance[]>([]);
@@ -117,7 +116,7 @@ export class Main implements OnInit {
             });
         },
         error: (err) => {
-          this.toastr.error('Error al cargar las cuentas');
+          this.errorHandler.handleHttpError(err, 'Dashboard - load accounts');
           this.isLoading.set(false);
         },
       });

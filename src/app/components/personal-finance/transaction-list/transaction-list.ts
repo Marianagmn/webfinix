@@ -2,12 +2,12 @@ import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
 import { PersonalFinance } from '../../../models/personal-finance.model';
 import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-spinner';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 
 @Component({
   selector: 'app-transaction-list',
@@ -18,7 +18,7 @@ import { LoadingSpinnerComponent } from '../../shared/loading-spinner/loading-sp
 })
 export class TransactionList implements OnInit {
   private readonly financeService = inject(PersonalFinanceService);
-  private readonly toastr = inject(ToastrService);
+  private readonly errorHandler = inject(ErrorHandlerService);
   // M-04: DestroyRef para takeUntilDestroyed y evitar memory leaks
   private readonly destroyRef = inject(DestroyRef);
 
@@ -41,21 +41,16 @@ export class TransactionList implements OnInit {
 
   loadTransactions() {
     this.isLoading.set(true);
-    console.log('Loading transactions page:', this.currentPage());
-    // M-04: takeUntilDestroyed evita memory leaks
     this.financeService
       .getTransactions({ page: this.currentPage(), limit: this.pageSize() })
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
-          console.log('Transactions request finalized');
           this.isLoading.set(false);
         })
       )
       .subscribe({
         next: (res) => {
-          console.log('Transactions API response:', res);
-          // C-04: la respuesta ya es PaginatedResponse<PersonalFinance[]>, datos en .data
           const data = res.data ?? [];
           this.transactions.set(data);
           this.filteredTransactions.set(data);
@@ -66,12 +61,9 @@ export class TransactionList implements OnInit {
             this.totalPages.set(res.meta.pagination.totalPages);
             this.totalItems.set(res.meta.pagination.total);
           }
-          
-          console.log('Transactions loaded successfully, count:', data.length);
         },
         error: (err) => {
-          console.error('Transactions load error:', err);
-          this.toastr.error('No se pudieron cargar las transacciones.');
+          this.errorHandler.handleHttpError(err, 'TransactionList - load transactions');
           this.filteredTransactions.set([]);
         },
       });
@@ -114,17 +106,15 @@ export class TransactionList implements OnInit {
       .deleteTransaction(id)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => console.log('Delete transaction request finalized'))
+        finalize(() => {})
       )
       .subscribe({
         next: () => {
-          console.log('Transaction deleted successfully:', id);
-          this.toastr.success('Transacción eliminada');
+          this.errorHandler.handleSuccess('Transacción eliminada');
           this.loadTransactions();
         },
         error: (err) => {
-          console.error('Delete transaction error:', err);
-          this.toastr.error('No se pudo eliminar la transacción.');
+          this.errorHandler.handleHttpError(err, 'TransactionList - delete transaction');
         },
       });
   }

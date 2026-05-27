@@ -45,37 +45,24 @@ export class Profile implements OnInit {
     });
 
     this.isLoading.set(true);
-    console.log('Loading user profile...');
     
-    // Add timeout to prevent infinite loading
     this.userService.getMe()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
-          console.log('Profile request finalized');
-          console.log('Finalize executed - profile loading complete');
-          console.log('isLoading before set to false:', this.isLoading());
           this.isLoading.set(false);
-          console.log('isLoading after set to false:', this.isLoading());
         })
       )
       .subscribe({
       next: (user: User) => {
-        console.log('Profile API response:', user);
-        console.log('User data:', user);
         this.profileForm.patchValue({
           name: user.name || '',
           email: user.email || '',
           businessId: user.businessId || '',
         });
-        console.log('Profile form patched successfully');
       },
       error: (err) => {
-        const message = (err.error as any)?.message || err.message || 'Error al cargar perfil';
-        console.error('Profile load error:', err);
-        console.error('Error status:', err.status);
-        console.error('Error message:', err.message);
-        this.toastr.error(message);
+        this.errorHandler.handleHttpError(err, 'Profile - load user');
       },
     });
   }

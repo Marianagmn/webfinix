@@ -1,11 +1,11 @@
 import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 import { AccountService } from '../../../services/account.service';
 import { Account } from '../../../models/account.model';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 
 @Component({
   selector: 'app-account-list',
@@ -32,27 +32,22 @@ export class AccountList implements OnInit {
 
   loadAccounts() {
     this.isLoading.set(true);
-    console.log('Loading accounts page:', this.currentPage());
     this.accountService
       .getAccounts(this.currentPage(), 20)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
-          console.log('Accounts request finalized');
           this.isLoading.set(false);
         })
       )
       .subscribe({
         next: (accounts: Account[]) => {
-          console.log('Accounts API response:', accounts);
-          console.log('Accounts count:', accounts?.length || 0);
           this.accounts.set(accounts ?? []);
           this.totalItems.set(accounts.length);
           this.totalPages.set(Math.ceil(accounts.length / 20));
         },
         error: (err) => {
-          console.error('Accounts load error:', err);
-          this.toastr.error('No se pudieron cargar las cuentas.');
+          this.errorHandler.handleHttpError(err, 'AccountList - load accounts');
         },
       });
   }
@@ -68,17 +63,15 @@ export class AccountList implements OnInit {
       .deleteAccount(id)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        finalize(() => console.log('Delete account request finalized'))
+        finalize(() => {})
       )
       .subscribe({
         next: () => {
-          console.log('Account deleted successfully:', id);
-          this.toastr.success('Cuenta eliminada');
+          this.errorHandler.handleSuccess('Cuenta eliminada');
           this.loadAccounts();
         },
         error: (err) => {
-          console.error('Delete account error:', err);
-          this.toastr.error('No se pudo eliminar la cuenta.');
+          this.errorHandler.handleHttpError(err, 'AccountList - delete account');
         },
       });
   }
