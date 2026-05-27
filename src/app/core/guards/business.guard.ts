@@ -40,7 +40,7 @@ export const businessGuard: CanActivateFn = (route, state) => {
     return router.createUrlTree(['/user/profile'], {
       queryParams: {
         tab: 'business',
-        message: 'setup_business_required'
+        message: 'business_required'
       }
     });
   }

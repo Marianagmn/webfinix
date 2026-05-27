@@ -38,7 +38,7 @@ export class TransactionCreate implements OnInit {
     tipo: ['ingreso' as TransactionTipo, Validators.required],
     monto: [null as number | null, [Validators.required, Validators.min(0.01)]],
     moneda: ['COP'],
-    categoriaId: ['', Validators.required],
+    categoria: ['', Validators.required],
     cuentaOrigenId: [''],
     cuentaDestinoId: [''],
     descripcion: [''],
@@ -78,7 +78,7 @@ export class TransactionCreate implements OnInit {
       return;
     }
 
-    if (!this.form.get('categoriaId')?.value) {
+    if (!this.form.get('categoria')?.value) {
       this.toastr.error('Debes seleccionar una categoría');
       return;
     }
@@ -96,7 +96,7 @@ export class TransactionCreate implements OnInit {
       tipo: raw.tipo!,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
-      categoria: raw.categoriaId || undefined,
+      categoria: raw.categoria || undefined,
       cuentaOrigenId: raw.cuentaOrigenId || undefined,
       cuentaDestinoId: raw.cuentaDestinoId || undefined,
       descripcion: raw.descripcion || undefined,

@@ -57,8 +57,8 @@
               <!-- Categoría -->
               <div class="col-md-6">
                 <label class="form-label fw-medium">Categoría <span class="text-danger">*</span></label>
-                <select class="form-select" formControlName="categoriaId"
-                  [class.is-invalid]="form.get('categoriaId')?.invalid && form.get('categoriaId')?.touched">
+                <select class="form-select" formControlName="categoria"
+                  [class.is-invalid]="form.get('categoria')?.invalid && form.get('categoria')?.touched">
                   <option value="">Seleccionar categoría…</option>
                   @if (categories().length === 0) {
                     <option disabled value="">No hay categorías — crea una primero</option>

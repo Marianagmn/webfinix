@@ -4,7 +4,7 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { catchError, switchMap, throwError, filter, take } from 'rxjs';
+import { catchError, switchMap, throwError, filter, take, timeout } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { AuthStore } from '../../store/auth.store';
 import { ApiResponse } from '../../models/api-response.model';
@@ -106,6 +106,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           return authStore.refreshToken$.pipe(
             filter(token => token !== null),
             take(1),
+            timeout(5000), // Timeout para evitar carga infinita
             switchMap(token => {
               const freshCsrfToken = getCsrfToken();
               const retryReq = req.clone({
@@ -116,6 +117,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 }
               });
               return next(retryReq);
+            }),
+            catchError((timeoutErr) => {
+              authStore.setRefreshing(false);
+              authStore.setRefreshToken(null);
+              authStore.clear();
+              router.navigate(['/auth/login']);
+              toastr.error('Tiempo de espera agotado. Por favor inicia sesión nuevamente.');
+              return throwError(() => timeoutErr);
             })
           );
         }

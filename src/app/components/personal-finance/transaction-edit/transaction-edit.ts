@@ -38,7 +38,7 @@ export class TransactionEdit implements OnInit {
     tipo: ['gasto' as TransactionTipo, Validators.required],
     monto: [null as number | null, [Validators.required, Validators.min(0.01)]],
     moneda: ['COP'],
-    categoriaId: ['', Validators.required],
+    categoria: ['', Validators.required],
     cuentaOrigenId: [''],
     cuentaDestinoId: [''],
     descripcion: [''],
@@ -73,7 +73,7 @@ export class TransactionEdit implements OnInit {
       )
       .subscribe(tipo => {
       this.loadCategories(tipo as 'ingreso' | 'gasto' | 'transferencia');
-      this.txnForm.patchValue({ categoriaId: '' });
+      this.txnForm.patchValue({ categoria: '' });
     });
 
     if (this.transactionId) {
@@ -90,7 +90,7 @@ export class TransactionEdit implements OnInit {
           tipo: txn.tipo,
           monto: txn.monto,
           moneda: txn.moneda ?? 'COP',
-          categoriaId: txn.categoria ?? '',
+          categoria: txn.categoria ?? '',
           cuentaOrigenId: txn.cuentaOrigenId ?? '',
           cuentaDestinoId: txn.cuentaDestinoId ?? '',
           descripcion: txn.descripcion ?? '',
@@ -135,7 +135,7 @@ export class TransactionEdit implements OnInit {
       tipo: raw.tipo!,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
-      categoria: raw.categoriaId || undefined,
+      categoria: raw.categoria || undefined,
       cuentaOrigenId: raw.cuentaOrigenId || undefined,
       cuentaDestinoId: raw.cuentaDestinoId || undefined,
       descripcion: raw.descripcion || undefined,

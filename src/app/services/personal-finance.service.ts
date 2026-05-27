@@ -77,25 +77,57 @@ export class PersonalFinanceService {
       params = params.set('search', mergedFilter.search);
     }
 
-    return this.http.get<PaginatedResponse<PersonalFinance>>(this.apiUrl, { params });
+    return this.http.get<PaginatedResponse<PersonalFinance>>(this.apiUrl, { params }).pipe(
+      map(response => {
+        // Normalizar _id a id para cada transacción
+        if (response.data && Array.isArray(response.data)) {
+          response.data = response.data.map(item => ({
+            ...item,
+            id: item._id || item.id
+          }));
+        }
+        return response;
+      })
+    );
   }
 
 
   getTransactionById(id: string): Observable<PersonalFinance> {
     return this.http.get<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`).pipe(
-      map(response => response.data)
+      map(response => {
+        // Normalizar _id a id
+        const data = response.data;
+        return {
+          ...data,
+          id: data._id || data.id
+        };
+      })
     );
   }
 
   createTransaction(dto: CreatePersonalFinanceDto): Observable<PersonalFinance> {
     return this.http.post<ApiResponse<PersonalFinance>>(this.apiUrl, dto).pipe(
-      map(response => response.data)
+      map(response => {
+        // Normalizar _id a id
+        const data = response.data;
+        return {
+          ...data,
+          id: data._id || data.id
+        };
+      })
     );
   }
 
   updateTransaction(id: string, dto: UpdatePersonalFinanceDto): Observable<PersonalFinance> {
     return this.http.put<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`, dto).pipe(
-      map(response => response.data)
+      map(response => {
+        // Normalizar _id a id
+        const data = response.data;
+        return {
+          ...data,
+          id: data._id || data.id
+        };
+      })
     );
   }
 
@@ -123,7 +155,18 @@ export class PersonalFinanceService {
       params = params.set('search', filter.search);
     }
 
-    return this.http.get<PaginatedResponse<PersonalFinance>>(`${this.apiUrl}/trash`, { params });
+    return this.http.get<PaginatedResponse<PersonalFinance>>(`${this.apiUrl}/trash`, { params }).pipe(
+      map(response => {
+        // Normalizar _id a id para cada transacción
+        if (response.data && Array.isArray(response.data)) {
+          response.data = response.data.map(item => ({
+            ...item,
+            id: item._id || item.id
+          }));
+        }
+        return response;
+      })
+    );
   }
 
   /**
@@ -131,7 +174,14 @@ export class PersonalFinanceService {
    */
   restoreTransaction(id: string): Observable<PersonalFinance> {
     return this.http.put<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}/restore`, {}).pipe(
-      map(response => response.data)
+      map(response => {
+        // Normalizar _id a id
+        const data = response.data;
+        return {
+          ...data,
+          id: data._id || data.id
+        };
+      })
     );
   }
 

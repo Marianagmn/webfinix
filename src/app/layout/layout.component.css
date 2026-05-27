@@ -139,8 +139,30 @@
 
 @media (max-width: 768px) {
   .layout-wrapper { grid-template-columns: 0 1fr; }
-  .sidebar { position: absolute; z-index: 20; transform: translateX(-100%); transition: transform var(--transition); }
-  .layout-wrapper.sidebar-collapsed .sidebar { transform: translateX(-100%); }
+  .sidebar { 
+    position: fixed; 
+    z-index: 1000; 
+    left: 0; 
+    top: 0; 
+    height: 100vh; 
+    width: 280px; 
+    transform: translateX(-100%); 
+    transition: transform var(--transition); 
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+  }
   .layout-wrapper:not(.sidebar-collapsed) .sidebar { transform: translateX(0); }
+  .layout-wrapper.sidebar-collapsed .sidebar { transform: translateX(-100%); }
   .content-area { padding: 1rem; }
+  
+  /* Overlay when sidebar is open on mobile */
+  .layout-wrapper:not(.sidebar-collapsed)::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+  }
 }

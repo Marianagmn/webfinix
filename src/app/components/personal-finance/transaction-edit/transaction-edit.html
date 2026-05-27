@@ -16,12 +16,12 @@
           <form *ngIf="!isLoading" [formGroup]="txnForm" (ngSubmit)="onSubmit()">
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="type" class="form-label">Tipo</label>
+                <label for="tipo" class="form-label">Tipo</label>
                 <select
                   class="form-select"
-                  id="type"
-                  formControlName="type"
-                  [class.is-invalid]="txnForm.get('type')?.touched && txnForm.get('type')?.invalid"
+                  id="tipo"
+                  formControlName="tipo"
+                  [class.is-invalid]="txnForm.get('tipo')?.touched && txnForm.get('tipo')?.invalid"
                 >
                   <option value="ingreso">Ingreso</option>
                   <option value="gasto">Gasto</option>
@@ -30,20 +30,20 @@
               </div>
 
               <div class="col-md-6 mb-3">
-                <label for="amount" class="form-label">Monto</label>
+                <label for="monto" class="form-label">Monto</label>
                 <input
                   type="number"
                   class="form-control"
-                  id="amount"
-                  formControlName="amount"
+                  id="monto"
+                  formControlName="monto"
                   step="0.01"
                   min="0.01"
-                  [class.is-invalid]="txnForm.get('amount')?.touched && txnForm.get('amount')?.invalid"
+                  [class.is-invalid]="txnForm.get('monto')?.touched && txnForm.get('monto')?.invalid"
                 />
-                <div class="invalid-feedback" *ngIf="txnForm.get('amount')?.touched && txnForm.get('amount')?.errors?.['required']">
+                <div class="invalid-feedback" *ngIf="txnForm.get('monto')?.touched && txnForm.get('monto')?.errors?.['required']">
                   El monto es requerido
                 </div>
-                <div class="invalid-feedback" *ngIf="txnForm.get('amount')?.touched && txnForm.get('amount')?.errors?.['min']">
+                <div class="invalid-feedback" *ngIf="txnForm.get('monto')?.touched && txnForm.get('monto')?.errors?.['min']">
                   El monto debe ser mayor a 0
                 </div>
               </div>
@@ -51,55 +51,69 @@
 
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="categoryId" class="form-label">Categoría</label>
+                <label for="categoria" class="form-label">Categoría</label>
                 <select
                   class="form-select"
-                  id="categoryId"
-                  formControlName="categoriaId"
-                  [class.is-invalid]="txnForm.get('categoriaId')?.touched && txnForm.get('categoriaId')?.invalid"
+                  id="categoria"
+                  formControlName="categoria"
+                  [class.is-invalid]="txnForm.get('categoria')?.touched && txnForm.get('categoria')?.invalid"
                 >
                   <option value="">Seleccionar categoría</option>
                   <option *ngIf="categories().length === 0" disabled value="">No hay categorías — crea una primero</option>
                   <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.nombre }}</option>
                 </select>
-                <div class="invalid-feedback" *ngIf="txnForm.get('categoriaId')?.touched && txnForm.get('categoriaId')?.errors?.['required']">
+                <div class="invalid-feedback" *ngIf="txnForm.get('categoria')?.touched && txnForm.get('categoria')?.errors?.['required']">
                   La categoría es requerida
                 </div>
               </div>
 
               <div class="col-md-6 mb-3">
-                <label for="accountId" class="form-label">Cuenta</label>
+                <label for="cuentaOrigenId" class="form-label">Cuenta</label>
                 <select
                   class="form-select"
-                  id="accountId"
+                  id="cuentaOrigenId"
                   formControlName="cuentaOrigenId"
-                  [class.is-invalid]="txnForm.get('cuentaOrigenId')?.touched && txnForm.get('cuentaOrigenId')?.invalid"
                 >
                   <option value="">Seleccionar cuenta</option>
                   <option *ngIf="accounts().length === 0" disabled value="">No hay cuentas — crea una primero</option>
                   <option *ngFor="let acc of accounts()" [value]="acc.id">{{ acc.nombre }}</option>
                 </select>
-                <div class="invalid-feedback" *ngIf="txnForm.get('cuentaOrigenId')?.touched && txnForm.get('cuentaOrigenId')?.errors?.['required']">
-                  La cuenta es requerida
-                </div>
               </div>
             </div>
 
             <div class="row">
               <div class="col-md-6 mb-3">
-                <label for="date" class="form-label">Fecha</label>
+                <label for="fecha" class="form-label">Fecha</label>
                 <input
                   type="date"
                   class="form-control"
-                  id="date"
-                  formControlName="date"
-                  [class.is-invalid]="txnForm.get('date')?.touched && txnForm.get('date')?.invalid"
+                  id="fecha"
+                  formControlName="fecha"
+                  [class.is-invalid]="txnForm.get('fecha')?.touched && txnForm.get('fecha')?.invalid"
                 />
-                <div class="invalid-feedback" *ngIf="txnForm.get('date')?.touched && txnForm.get('date')?.errors?.['required']">
+                <div class="invalid-feedback" *ngIf="txnForm.get('fecha')?.touched && txnForm.get('fecha')?.errors?.['required']">
                   La fecha es requerida
                 </div>
               </div>
 
+              <div class="col-md-6 mb-3">
+                <label for="metodoPago" class="form-label">Método de pago</label>
+                <select
+                  class="form-select"
+                  id="metodoPago"
+                  formControlName="metodoPago"
+                >
+                  <option value="efectivo">Efectivo</option>
+                  <option value="transferencia">Transferencia</option>
+                  <option value="tarjeta de credito">Tarjeta de crédito</option>
+                  <option value="tarjeta debito">Tarjeta débito</option>
+                  <option value="cheque">Cheque</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
               <div class="col-md-6 mb-3">
                 <label for="tags" class="form-label">Etiquetas (separadas por coma)</label>
                 <input
@@ -110,31 +124,40 @@
                   placeholder="ej: comida, hogar"
                 />
               </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="moneda" class="form-label">Moneda</label>
+                <select
+                  class="form-select"
+                  id="moneda"
+                  formControlName="moneda"
+                >
+                  <option value="COP">COP</option>
+                  <option value="USD">USD</option>
+                  <option value="EUR">EUR</option>
+                </select>
+              </div>
             </div>
 
             <div class="mb-3">
-              <label for="description" class="form-label">Descripción</label>
+              <label for="descripcion" class="form-label">Descripción</label>
               <textarea
                 class="form-control"
-                id="description"
-                formControlName="description"
+                id="descripcion"
+                formControlName="descripcion"
                 rows="3"
-                [class.is-invalid]="txnForm.get('description')?.touched && txnForm.get('description')?.invalid"
               ></textarea>
-              <div class="invalid-feedback" *ngIf="txnForm.get('description')?.touched && txnForm.get('description')?.errors?.['required']">
-                La descripción es requerida
-              </div>
             </div>
 
             <div class="mb-3 form-check">
               <input
                 type="checkbox"
                 class="form-check-input"
-                id="isRecurring"
-                formControlName="isRecurring"
+                id="esAhorro"
+                formControlName="esAhorro"
               />
-              <label class="form-check-label" for="isRecurring">
-                Es recurrente
+              <label class="form-check-label" for="esAhorro">
+                Es ahorro
               </label>
             </div>
 
