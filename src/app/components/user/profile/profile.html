@@ -122,7 +122,7 @@
                       formControlName="businessId"
                       style="padding-left:2.5rem"
                     >
-                      <option value="">-- Selecciona un negocio --</option>
+                      <option [value]="null">-- Selecciona un negocio --</option>
                       @for (business of businesses(); track business.id) {
                         <option [value]="business.id">
                           {{ business.nombre }} (NIT: {{ business.nit }})
@@ -131,9 +131,18 @@
                     </select>
                   }
                 </div>
-                <a 
-                  routerLink="/user/business/create" 
-                  class="btn btn-outline-primary" 
+                @if (profileForm.get('businessId')?.value && businesses().length > 0) {
+                  <a
+                    [routerLink]="['/user/business/edit', profileForm.get('businessId')?.value]"
+                    class="btn btn-outline-secondary"
+                    style="white-space:nowrap;padding:.5rem 1rem;font-size:.875rem"
+                  >
+                    <i class="bi bi-pencil me-1"></i>Editar
+                  </a>
+                }
+                <a
+                  routerLink="/user/business/create"
+                  class="btn btn-outline-primary"
                   style="white-space:nowrap;padding:.5rem 1rem;font-size:.875rem"
                 >
                   <i class="bi bi-plus-circle me-1"></i>Crear

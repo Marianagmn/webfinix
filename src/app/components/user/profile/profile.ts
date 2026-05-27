@@ -36,7 +36,7 @@ export class Profile implements OnInit {
   profileForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
-    businessId: [''],
+    businessId: [null],
   });
 
   ngOnInit(): void {
@@ -98,7 +98,19 @@ export class Profile implements OnInit {
     }
 
     this.isSaving.set(true);
-    this.userService.updateMe(this.profileForm.value)
+    const formValue = this.profileForm.value;
+
+    // Si businessId es null o string vacío, no enviarlo
+    const payload: any = {
+      name: formValue.name,
+      email: formValue.email,
+    };
+
+    if (formValue.businessId) {
+      payload.businessId = formValue.businessId;
+    }
+
+    this.userService.updateMe(payload)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
@@ -113,7 +125,7 @@ export class Profile implements OnInit {
         this.profileForm.patchValue({
           name: user.name || '',
           email: user.email || '',
-          businessId: user.businessId || '',
+          businessId: user.businessId || null,
         }, { emitEvent: false });
       },
       error: (err) => {
