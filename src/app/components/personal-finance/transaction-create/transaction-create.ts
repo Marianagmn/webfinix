@@ -52,12 +52,12 @@ export class TransactionCreate implements OnInit {
     this.categoryService
       .getCategories()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (categories) => this.categories.set(categories.data ?? []) });
+      .subscribe({ next: (categories) => this.categories.set(categories ?? []) });
 
     this.accountService
       .getAccounts()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (data) => this.accounts.set(data.data ?? []) });
+      .subscribe({ next: (accounts) => this.accounts.set(accounts ?? []) });
   }
 
   get tipoValue(): TransactionTipo {

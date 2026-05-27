@@ -18,18 +18,15 @@ export class CategoryService {
     } as T & { id: string };
   }
 
-  getCategories(tipo?: CategoryType, page = 1, limit = 20): Observable<PaginatedResponse<Category>> {
+  getCategories(tipo?: CategoryType, page = 1, limit = 20): Observable<Category[]> {
     let params = new HttpParams();
     if (tipo) {
       params = params.set('tipo', tipo);
     }
     params = params.set('page', page.toString());
     params = params.set('limit', limit.toString());
-    return this.http.get<PaginatedResponse<Category>>(this.apiUrl, { params }).pipe(
-      map((response) => ({
-        ...response,
-        data: response.data.map((category) => this.normalizeId(category))
-      }))
+    return this.http.get<ApiResponse<Category[]>>(this.apiUrl, { params }).pipe(
+      map((response) => response.data.map((category) => this.normalizeId(category)))
     );
   }
 

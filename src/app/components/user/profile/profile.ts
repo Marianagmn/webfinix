@@ -1,7 +1,8 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../../../services/user.service';
 import { AuthStore } from '../../../store/auth.store';
 import { ToastrService } from 'ngx-toastr';
@@ -20,6 +21,7 @@ export class Profile implements OnInit {
   private readonly authStore = inject(AuthStore);
   private readonly toastr = inject(ToastrService);
   private readonly route = inject(ActivatedRoute);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly isLoading = signal(true);
   readonly isSaving = signal(false);
@@ -32,13 +34,17 @@ export class Profile implements OnInit {
 
   ngOnInit(): void {
     // Check for business_required query param from guard
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(params => {
       if (params['message'] === 'business_required') {
         this.businessRequiredMessage.set('Necesitas configurar una empresa para acceder a las funciones de finanzas empresariales.');
       }
     });
 
-    this.userService.getMe().subscribe({
+    this.userService.getMe()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (user: User) => {
         this.profileForm.patchValue({
           name: user.name,
@@ -62,7 +68,9 @@ export class Profile implements OnInit {
     }
 
     this.isSaving.set(true);
-    this.userService.updateMe(this.profileForm.value).subscribe({
+    this.userService.updateMe(this.profileForm.value)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: (user: User) => {
         this.toastr.success('Perfil actualizado');
         this.authStore.setUser(user);

@@ -55,13 +55,14 @@
                 <select
                   class="form-select"
                   id="categoryId"
-                  formControlName="categoryId"
-                  [class.is-invalid]="txnForm.get('categoryId')?.touched && txnForm.get('categoryId')?.invalid"
+                  formControlName="categoriaId"
+                  [class.is-invalid]="txnForm.get('categoriaId')?.touched && txnForm.get('categoriaId')?.invalid"
                 >
                   <option value="">Seleccionar categoría</option>
+                  <option *ngIf="categories().length === 0" disabled value="">No hay categorías — crea una primero</option>
                   <option *ngFor="let cat of categories()" [value]="cat.id">{{ cat.nombre }}</option>
                 </select>
-                <div class="invalid-feedback" *ngIf="txnForm.get('categoryId')?.touched && txnForm.get('categoryId')?.errors?.['required']">
+                <div class="invalid-feedback" *ngIf="txnForm.get('categoriaId')?.touched && txnForm.get('categoriaId')?.errors?.['required']">
                   La categoría es requerida
                 </div>
               </div>
@@ -71,13 +72,14 @@
                 <select
                   class="form-select"
                   id="accountId"
-                  formControlName="accountId"
-                  [class.is-invalid]="txnForm.get('accountId')?.touched && txnForm.get('accountId')?.invalid"
+                  formControlName="cuentaOrigenId"
+                  [class.is-invalid]="txnForm.get('cuentaOrigenId')?.touched && txnForm.get('cuentaOrigenId')?.invalid"
                 >
                   <option value="">Seleccionar cuenta</option>
+                  <option *ngIf="accounts().length === 0" disabled value="">No hay cuentas — crea una primero</option>
                   <option *ngFor="let acc of accounts()" [value]="acc.id">{{ acc.nombre }}</option>
                 </select>
-                <div class="invalid-feedback" *ngIf="txnForm.get('accountId')?.touched && txnForm.get('accountId')?.errors?.['required']">
+                <div class="invalid-feedback" *ngIf="txnForm.get('cuentaOrigenId')?.touched && txnForm.get('cuentaOrigenId')?.errors?.['required']">
                   La cuenta es requerida
                 </div>
               </div>

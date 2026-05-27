@@ -3,6 +3,7 @@
 // Access token is kept in memory only; refresh token is in httpOnly cookie
 import { Injectable, computed, signal, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs';
 import { User } from '../models/user.model';
 import { JwtPayload } from '../models/auth.model';
 import { ApiResponse } from '../models/api-response.model';
@@ -20,6 +21,13 @@ export class AuthStore {
   readonly user = computed(() => this._user());
 
   readonly isAuthenticated = computed(() => !!this._token());
+
+  // MEDIA #2: Refresh token management (formerly in interceptor module scope)
+  private readonly _isRefreshing = signal(false);
+  readonly isRefreshing = computed(() => this._isRefreshing());
+
+  private readonly _refreshToken$ = new BehaviorSubject<string | null>(null);
+  readonly refreshToken$ = this._refreshToken$.asObservable();
 
   // C-03: roles es array
   readonly roles = computed(() => this._user()?.roles ?? []);
@@ -39,6 +47,14 @@ export class AuthStore {
   clear(): void {
     this.setToken(null);
     this.setUser(null);
+  }
+
+  setRefreshing(isRefreshing: boolean): void {
+    this._isRefreshing.set(isRefreshing);
+  }
+
+  setRefreshToken(token: string | null): void {
+    this._refreshToken$.next(token);
   }
 
   getPayload(): JwtPayload | null {

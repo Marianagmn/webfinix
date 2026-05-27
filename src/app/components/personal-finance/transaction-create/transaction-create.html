@@ -60,6 +60,9 @@
                 <select class="form-select" formControlName="categoriaId"
                   [class.is-invalid]="form.get('categoriaId')?.invalid && form.get('categoriaId')?.touched">
                   <option value="">Seleccionar categoría…</option>
+                  @if (categories().length === 0) {
+                    <option disabled value="">No hay categorías — crea una primero</option>
+                  }
                   @for (cat of categories(); track cat.id) {
                     <option [value]="cat.id">{{ cat.nombre }}</option>
                   }
@@ -84,6 +87,9 @@
                 </label>
                 <select class="form-select" formControlName="cuentaOrigenId">
                   <option value="">Sin cuenta</option>
+                  @if (accounts().length === 0) {
+                    <option disabled value="">No hay cuentas — crea una primero</option>
+                  }
                   @for (acc of accounts(); track acc.id) {
                     <option [value]="acc.id">{{ acc.nombre }} ({{ acc.moneda }})</option>
                   }
@@ -96,6 +102,9 @@
                   <label class="form-label fw-medium">Cuenta Destino</label>
                   <select class="form-select" formControlName="cuentaDestinoId">
                     <option value="">Sin cuenta</option>
+                    @if (accounts().length === 0) {
+                      <option disabled value="">No hay cuentas — crea una primero</option>
+                    }
                     @for (acc of accounts(); track acc.id) {
                       <option [value]="acc.id">{{ acc.nombre }} ({{ acc.moneda }})</option>
                     }

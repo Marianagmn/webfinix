@@ -5,7 +5,6 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CategoryService } from '../../../services/category.service';
 import { Category } from '../../../models/category.model';
-import { PaginatedResponse } from '../../../models/api-response.model';
 
 @Component({
   selector: 'app-category-list',
@@ -23,30 +22,15 @@ export class CategoryList implements OnInit {
   readonly isLoading = signal(false);
   readonly confirmDeleteId = signal<string | null>(null);
 
-  // Pagination state
-  readonly currentPage = signal(1);
-  readonly totalPages = signal(1);
-  readonly totalItems = signal(0);
-  readonly pageSize = signal(20);
-
   ngOnInit() { this.loadCategories(); }
 
   loadCategories() {
     this.isLoading.set(true);
-    this.categoryService.getCategories(undefined, this.currentPage(), this.pageSize())
+    this.categoryService.getCategories()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (res: PaginatedResponse<Category>) => {
-          const data = res.data ?? [];
-          this.categories.set(data);
-          
-          // Update pagination from meta
-          if (res.meta?.pagination) {
-            this.currentPage.set(res.meta.pagination.page);
-            this.totalPages.set(res.meta.pagination.totalPages);
-            this.totalItems.set(res.meta.pagination.total);
-          }
-          
+        next: (categories: Category[]) => {
+          this.categories.set(categories ?? []);
           this.isLoading.set(false);
         },
         error: () => { this.toastr.error('No se pudieron cargar las categorías.'); this.isLoading.set(false); },
@@ -70,22 +54,5 @@ export class CategoryList implements OnInit {
 
   tipoColor(tipo: string): string {
     return tipo === 'ingreso' ? 'success' : tipo === 'gasto' ? 'danger' : 'info';
-  }
-
-  onPageChange(page: number) {
-    this.currentPage.set(page);
-    this.loadCategories();
-  }
-
-  onNextPage() {
-    if (this.currentPage() < this.totalPages()) {
-      this.onPageChange(this.currentPage() + 1);
-    }
-  }
-
-  onPrevPage() {
-    if (this.currentPage() > 1) {
-      this.onPageChange(this.currentPage() - 1);
-    }
   }
 }

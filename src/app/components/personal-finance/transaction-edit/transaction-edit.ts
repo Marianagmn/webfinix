@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { skip, distinctUntilChanged } from 'rxjs';
 import { PersonalFinanceService } from '../../../services/personal-finance.service';
 import { CategoryService } from '../../../services/category.service';
 import { AccountService } from '../../../services/account.service';
@@ -54,7 +55,7 @@ export class TransactionEdit implements OnInit {
 
     this.accountService.getAccounts()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(accs => this.accounts.set(accs.data ?? []));
+      .subscribe(accs => this.accounts.set(accs ?? []));
 
     this.route.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -65,7 +66,11 @@ export class TransactionEdit implements OnInit {
     });
 
     this.txnForm.get('tipo')?.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        skip(1),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe(tipo => {
       this.loadCategories(tipo as 'ingreso' | 'gasto' | 'transferencia');
       this.txnForm.patchValue({ categoriaId: '' });
@@ -135,7 +140,7 @@ export class TransactionEdit implements OnInit {
       cuentaOrigenId: raw.cuentaOrigenId || undefined,
       cuentaDestinoId: raw.cuentaDestinoId || undefined,
       descripcion: raw.descripcion || undefined,
-      fecha: raw.fecha || undefined,
+      fecha: raw.fecha ? new Date(raw.fecha).toISOString() : undefined,
       metodoPago: (raw.metodoPago as MetodoPago) || 'efectivo',
       tags: tagsArray,
       esAhorro: raw.esAhorro ?? false,

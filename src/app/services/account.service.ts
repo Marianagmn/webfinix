@@ -19,15 +19,12 @@ export class AccountService {
     } as T & { id: string };
   }
 
-  getAccounts(page = 1, limit = 20): Observable<PaginatedResponse<Account>> {
+  getAccounts(page = 1, limit = 20): Observable<Account[]> {
     const params = new HttpParams()
       .set('page', page.toString())
       .set('limit', limit.toString());
-    return this.http.get<PaginatedResponse<Account>>(this.apiUrl, { params }).pipe(
-      map((response) => ({
-        ...response,
-        data: response.data.map((account) => this.normalizeId(account))
-      }))
+    return this.http.get<ApiResponse<Account[]>>(this.apiUrl, { params }).pipe(
+      map((response) => response.data.map((account) => this.normalizeId(account)))
     );
   }
 

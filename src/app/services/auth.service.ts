@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { ApiResponse, ApiResult } from '../models/api-response.model';
 import { LoginRequest, AuthResponse, RegisterDto } from '../models/auth.model';
-import { ChangePasswordDto, UpdateProfileDto, User } from '../models/user.model';
+import { User } from '../models/user.model';
 import { AuthStore } from '../store/auth.store';
 import { environment } from '../../environments/environment';
 
@@ -74,22 +74,6 @@ export class AuthService {
         if (res.success) this.authStore.setUser(res.data);
       })
     );
-  }
-
-  updateProfile(dto: UpdateProfileDto): Observable<ApiResponse<User>> {
-    return this.http.patch<ApiResponse<User>>(`${environment.apiUrl}/users/me`, dto, {
-      withCredentials: true,
-    }).pipe(
-      tap((res) => {
-        if (res.success) this.authStore.setUser(res.data);
-      })
-    );
-  }
-
-  changePassword(dto: ChangePasswordDto): Observable<ApiResponse<null>> {
-    return this.http.patch<ApiResponse<null>>(`${this.apiUrl}/me/password`, dto, {
-      withCredentials: true,
-    });
   }
 
   forgotPassword(email: string): Observable<ApiResponse<{ message: string; resetToken?: string }>> {
