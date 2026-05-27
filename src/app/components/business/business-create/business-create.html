@@ -1,0 +1,254 @@
+<div class="fin-page-header">
+  <h1>Crear Negocio</h1>
+  <p>Registra una nueva empresa para habilitar el módulo de finanzas empresariales</p>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header px-4 py-3">
+        <h6 class="mb-0" style="font-weight:700">Información del Negocio</h6>
+      </div>
+      <div class="card-body p-4">
+        <form [formGroup]="businessForm" (ngSubmit)="onSubmit()">
+
+          <!-- Información básica -->
+          <div class="mb-4">
+            <h6 style="font-weight:600;color:var(--fin-text);margin-bottom:1rem">Información Básica</h6>
+            
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre del negocio <span class="text-danger">*</span></label>
+              <div style="position:relative">
+                <i class="bi bi-building" style="position:absolute;left:.875rem;top:50%;transform:translateY(-50%);color:var(--fin-text-muted);z-index:1"></i>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nombre"
+                  formControlName="nombre"
+                  placeholder="Ej: Mi Empresa S.A.S."
+                  style="padding-left:2.5rem"
+                  [class.is-invalid]="businessForm.get('nombre')?.touched && businessForm.get('nombre')?.invalid"
+                />
+              </div>
+              @if (businessForm.get('nombre')?.touched && businessForm.get('nombre')?.errors?.['required']) {
+                <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>El nombre es requerido</div>
+              }
+              @if (businessForm.get('nombre')?.touched && businessForm.get('nombre')?.errors?.['minlength']) {
+                <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>Mínimo 3 caracteres</div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label for="nit" class="form-label">NIT <span class="text-danger">*</span></label>
+              <div style="position:relative">
+                <i class="bi bi-hash" style="position:absolute;left:.875rem;top:50%;transform:translateY(-50%);color:var(--fin-text-muted);z-index:1"></i>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nit"
+                  formControlName="nit"
+                  placeholder="Ej: 900123456"
+                  style="padding-left:2.5rem"
+                  [class.is-invalid]="businessForm.get('nit')?.touched && businessForm.get('nit')?.invalid"
+                />
+              </div>
+              @if (businessForm.get('nit')?.touched && businessForm.get('nit')?.errors?.['required']) {
+                <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>El NIT es requerido</div>
+              }
+              @if (businessForm.get('nit')?.touched && businessForm.get('nit')?.errors?.['pattern']) {
+                <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>NIT inválido (9-11 dígitos)</div>
+              }
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="tipoEmpresa" class="form-label">Tipo de empresa</label>
+                <select class="form-control" id="tipoEmpresa" formControlName="tipoEmpresa">
+                  <option value="persona_natural">Persona Natural</option>
+                  <option value="persona_juridica">Persona Jurídica</option>
+                  <option value="entidad_gubernamental">Entidad Gubernamental</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="sector" class="form-label">Sector</label>
+                <select class="form-control" id="sector" formControlName="sector">
+                  <option value="comercio">Comercio</option>
+                  <option value="servicios">Servicios</option>
+                  <option value="manufactura">Manufactura</option>
+                  <option value="tecnologia">Tecnología</option>
+                  <option value="salud">Salud</option>
+                  <option value="educacion">Educación</option>
+                  <option value="construccion">Construcción</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Información fiscal -->
+          <div class="mb-4">
+            <h6 style="font-weight:600;color:var(--fin-text);margin-bottom:1rem">Información Fiscal</h6>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="regimenTributario" class="form-label">Régimen tributario</label>
+                <select class="form-control" id="regimenTributario" formControlName="regimenTributario">
+                  <option value="simplificado">Simplificado</option>
+                  <option value="comun">Común</option>
+                  <option value="gran_contribuyente">Gran Contribuyente</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="responsableIva" class="form-label">Responsable de IVA</label>
+                <div class="form-check mt-2">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="responsableIva"
+                    formControlName="responsableIva"
+                  />
+                  <label class="form-check-label" for="responsableIva">
+                    El negocio es responsable de IVA
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ubicación -->
+          <div class="mb-4">
+            <h6 style="font-weight:600;color:var(--fin-text);margin-bottom:1rem">Ubicación</h6>
+            
+            <div class="mb-3">
+              <label for="direccion" class="form-label">Dirección</label>
+              <input
+                type="text"
+                class="form-control"
+                id="direccion"
+                formControlName="direccion"
+                placeholder="Ej: Calle 123 # 45-67"
+              />
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label for="ciudad" class="form-label">Ciudad</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="ciudad"
+                  formControlName="ciudad"
+                  placeholder="Ej: Bogotá"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="departamento" class="form-label">Departamento</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="departamento"
+                  formControlName="departamento"
+                  placeholder="Ej: Cundinamarca"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="pais" class="form-label">País</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="pais"
+                  formControlName="pais"
+                />
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="codigoPostal" class="form-label">Código postal</label>
+              <input
+                type="text"
+                class="form-control"
+                id="codigoPostal"
+                formControlName="codigoPostal"
+                placeholder="Ej: 110111"
+              />
+            </div>
+          </div>
+
+          <!-- Contacto -->
+          <div class="mb-4">
+            <h6 style="font-weight:600;color:var(--fin-text);margin-bottom:1rem">Contacto</h6>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="telefono"
+                  formControlName="telefono"
+                  placeholder="Ej: +57 300 123 4567"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  formControlName="email"
+                  placeholder="contacto@empresa.com"
+                  [class.is-invalid]="businessForm.get('email')?.touched && businessForm.get('email')?.invalid"
+                />
+                @if (businessForm.get('email')?.touched && businessForm.get('email')?.errors?.['email']) {
+                  <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>Email inválido</div>
+                }
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="sitioWeb" class="form-label">Sitio web</label>
+              <input
+                type="url"
+                class="form-control"
+                id="sitioWeb"
+                formControlName="sitioWeb"
+                placeholder="Ej: https://www.miempresa.com"
+              />
+            </div>
+          </div>
+
+          <!-- Descripción -->
+          <div class="mb-4">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea
+              class="form-control"
+              id="descripcion"
+              formControlName="descripcion"
+              rows="3"
+              placeholder="Describe brevemente tu negocio..."
+              [class.is-invalid]="businessForm.get('descripcion')?.touched && businessForm.get('descripcion')?.invalid"
+            ></textarea>
+            @if (businessForm.get('descripcion')?.touched && businessForm.get('descripcion')?.errors?.['maxlength']) {
+              <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>Máximo 500 caracteres</div>
+            }
+          </div>
+
+          <!-- Botones -->
+          <div class="d-flex justify-content-end gap-2 pt-2">
+            <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+              @if (!isSaving()) {
+                <i class="bi bi-plus-circle me-1"></i>Crear negocio
+              }
+              @if (isSaving()) {
+                <span class="spinner-border spinner-border-sm me-1" role="status"></span> Creando…
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

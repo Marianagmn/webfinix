@@ -29,7 +29,7 @@ export class LayoutComponent implements OnInit {
     });
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     // Auto-open on desktop, auto-close on mobile when resizing
     if (window.innerWidth > 768) {

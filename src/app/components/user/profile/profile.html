@@ -105,19 +105,39 @@
 
             <div class="mb-4">
               <label for="businessId" class="form-label">
-                ID de Negocio
+                Negocio
                 <span style="margin-left:.5rem;padding:.15rem .5rem;border-radius:999px;background:var(--fin-bg-card-2);font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--fin-warning)">Opcional</span>
               </label>
-              <div style="position:relative">
-                <i class="bi bi-building" style="position:absolute;left:.875rem;top:50%;transform:translateY(-50%);color:var(--fin-text-muted);z-index:1"></i>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="businessId"
-                  formControlName="businessId"
-                  placeholder="ID de tu negocio"
-                  style="padding-left:2.5rem"
-                />
+              <div style="display:flex;gap:.75rem;align-items:stretch">
+                <div style="flex:1;position:relative">
+                  <i class="bi bi-building" style="position:absolute;left:.875rem;top:50%;transform:translateY(-50%);color:var(--fin-text-muted);z-index:1"></i>
+                  @if (isLoadingBusinesses()) {
+                    <select class="form-control" disabled style="padding-left:2.5rem">
+                      <option>Cargando negocios...</option>
+                    </select>
+                  } @else {
+                    <select
+                      class="form-control"
+                      id="businessId"
+                      formControlName="businessId"
+                      style="padding-left:2.5rem"
+                    >
+                      <option value="">-- Selecciona un negocio --</option>
+                      @for (business of businesses(); track business.id) {
+                        <option [value]="business.id">
+                          {{ business.nombre }} (NIT: {{ business.nit }})
+                        </option>
+                      }
+                    </select>
+                  }
+                </div>
+                <a 
+                  routerLink="/user/business/create" 
+                  class="btn btn-outline-primary" 
+                  style="white-space:nowrap;padding:.5rem 1rem;font-size:.875rem"
+                >
+                  <i class="bi bi-plus-circle me-1"></i>Crear
+                </a>
               </div>
               <div style="font-size:.75rem;color:var(--fin-text-muted);margin-top:.4rem">
                 <i class="bi bi-info-circle me-1"></i>Vincula un negocio para habilitar el módulo de finanzas empresariales
