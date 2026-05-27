@@ -33,7 +33,7 @@ export class AnalysisView implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          this.analysisData.set(res.data);
+          this.analysisData.set(res);
           this.isLoading.set(false);
         },
         error: () => {

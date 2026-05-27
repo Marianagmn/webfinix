@@ -22,7 +22,7 @@
                 @for (t of tipos; track t) {
                   <button type="button"
                     [class]="'btn flex-fill ' + (tipoValue === t ? 'btn-primary' : 'btn-outline-secondary')"
-                    (click)="form.get('tipo')?.setValue(t)">
+                    (click)="form.get('tipo')?.setValue(t); onTipoChange()">
                     {{ t | titlecase }}
                   </button>
                 }

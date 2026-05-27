@@ -24,9 +24,9 @@ export class UserService {
   /**
    * Actualiza el perfil del usuario autenticado
    * PATCH /api/users/me
-   * Body: { name?, email? }
+   * Body: { name?, email?, businessId? }
    */
-  updateMe(data: { name?: string; email?: string }): Observable<User> {
+  updateMe(data: { name?: string; email?: string; businessId?: string }): Observable<User> {
     return this.http.patch<ApiResponse<User>>(`${this.base}/me`, data).pipe(
       map(response => response.data)
     );

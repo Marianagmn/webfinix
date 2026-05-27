@@ -98,6 +98,9 @@ export class TransactionList implements OnInit {
     if (!id) return;
     this.confirmDeleteId.set(null);
 
+    const transaction = this.transactions().find(t => t.id === id);
+    if (!transaction) return;
+
     this.financeService
       .deleteTransaction(id)
       .pipe(takeUntilDestroyed(this.destroyRef))

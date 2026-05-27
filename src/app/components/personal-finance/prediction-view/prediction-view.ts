@@ -33,7 +33,7 @@ export class PredictionView implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          this.predictionData.set(res.data);
+          this.predictionData.set(res);
           this.isLoading.set(false);
         },
         error: () => {

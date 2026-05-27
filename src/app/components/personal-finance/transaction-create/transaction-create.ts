@@ -32,7 +32,7 @@ export class TransactionCreate implements OnInit {
   readonly accounts = signal<Account[]>([]);
 
   readonly tipos: TransactionTipo[] = ['ingreso', 'gasto', 'transferencia'];
-  readonly metodosPago: MetodoPago[] = ['efectivo', 'tarjeta', 'transferencia', 'cheque', 'otro'];
+  readonly metodosPago: MetodoPago[] = ['efectivo', 'transferencia', 'tarjeta de credito', 'tarjeta debito', 'cheque', 'otro'];
 
   readonly form = this.fb.group({
     tipo: ['ingreso' as TransactionTipo, Validators.required],
@@ -49,19 +49,26 @@ export class TransactionCreate implements OnInit {
   });
 
   ngOnInit() {
-    this.categoryService
-      .getCategories()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({ next: (categories) => this.categories.set(categories ?? []) });
-
+    this.loadCategories();
     this.accountService
       .getAccounts()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({ next: (accounts) => this.accounts.set(accounts ?? []) });
   }
 
+  loadCategories() {
+    this.categoryService
+      .getCategories(this.tipoValue)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({ next: (categories) => this.categories.set(categories ?? []) });
+  }
+
   get tipoValue(): TransactionTipo {
     return this.form.get('tipo')?.value as TransactionTipo;
+  }
+
+  onTipoChange() {
+    this.loadCategories();
   }
 
   onSubmit() {

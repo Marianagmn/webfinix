@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ApiResponse, PaginatedResponse } from '../models/api-response.model';
 import {
   PersonalFinance,
@@ -80,20 +81,28 @@ export class PersonalFinanceService {
   }
 
 
-  getTransactionById(id: string): Observable<ApiResponse<PersonalFinance>> {
-    return this.http.get<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`);
+  getTransactionById(id: string): Observable<PersonalFinance> {
+    return this.http.get<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`).pipe(
+      map(response => response.data)
+    );
   }
 
-  createTransaction(dto: CreatePersonalFinanceDto): Observable<ApiResponse<PersonalFinance>> {
-    return this.http.post<ApiResponse<PersonalFinance>>(this.apiUrl, dto);
+  createTransaction(dto: CreatePersonalFinanceDto): Observable<PersonalFinance> {
+    return this.http.post<ApiResponse<PersonalFinance>>(this.apiUrl, dto).pipe(
+      map(response => response.data)
+    );
   }
 
-  updateTransaction(id: string, dto: UpdatePersonalFinanceDto): Observable<ApiResponse<PersonalFinance>> {
-    return this.http.put<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`, dto);
+  updateTransaction(id: string, dto: UpdatePersonalFinanceDto): Observable<PersonalFinance> {
+    return this.http.put<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}`, dto).pipe(
+      map(response => response.data)
+    );
   }
 
-  deleteTransaction(id: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`);
+  deleteTransaction(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}`).pipe(
+      map(() => undefined)
+    );
   }
 
   // ── Soft Delete / Restauración ────────────────────────────────────────────
@@ -120,27 +129,37 @@ export class PersonalFinanceService {
   /**
    * Restaura una transacción eliminada.
    */
-  restoreTransaction(id: string): Observable<ApiResponse<PersonalFinance>> {
-    return this.http.put<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}/restore`, {});
+  restoreTransaction(id: string): Observable<PersonalFinance> {
+    return this.http.put<ApiResponse<PersonalFinance>>(`${this.apiUrl}/${id}/restore`, {}).pipe(
+      map(response => response.data)
+    );
   }
 
   /**
    * Elimina permanentemente una transacción.
    * Requiere confirmación explícita.
    */
-  permanentlyDeleteTransaction(id: string): Observable<ApiResponse<void>> {
-    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}/permanent?confirm=true`);
+  permanentlyDeleteTransaction(id: string): Observable<void> {
+    return this.http.delete<ApiResponse<void>>(`${this.apiUrl}/${id}/permanent?confirm=true`).pipe(
+      map(() => undefined)
+    );
   }
 
-  getAnalysis(): Observable<ApiResponse<AnalysisResponse>> {
-    return this.http.get<ApiResponse<AnalysisResponse>>(`${this.apiUrl}/analysis`);
+  getAnalysis(): Observable<AnalysisResponse> {
+    return this.http.get<ApiResponse<AnalysisResponse>>(`${this.apiUrl}/analysis`).pipe(
+      map(response => response.data)
+    );
   }
 
-  getPrediction(): Observable<ApiResponse<PredictionResponse>> {
-    return this.http.get<ApiResponse<PredictionResponse>>(`${this.apiUrl}/prediction`);
+  getPrediction(): Observable<PredictionResponse> {
+    return this.http.get<ApiResponse<PredictionResponse>>(`${this.apiUrl}/prediction`).pipe(
+      map(response => response.data)
+    );
   }
 
-  getSimulation(): Observable<ApiResponse<SimulationResponse>> {
-    return this.http.get<ApiResponse<SimulationResponse>>(`${this.apiUrl}/simulation`);
+  getSimulation(): Observable<SimulationResponse> {
+    return this.http.get<ApiResponse<SimulationResponse>>(`${this.apiUrl}/simulation`).pipe(
+      map(response => response.data)
+    );
   }
 }

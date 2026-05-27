@@ -19,6 +19,7 @@ export interface User {
 export interface UpdateProfileDto {
   name?: string;
   email?: string;
+  businessId?: string;
 }
 
 export interface ChangePasswordDto {

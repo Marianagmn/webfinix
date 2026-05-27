@@ -85,8 +85,7 @@ export class TransactionEdit implements OnInit {
     this.financeService.getTransactionById(this.transactionId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-      next: (response) => {
-        const txn = response.data;
+      next: (txn) => {
         this.txnForm.patchValue({
           tipo: txn.tipo,
           monto: txn.monto,
@@ -114,7 +113,7 @@ export class TransactionEdit implements OnInit {
     this.categoryService.getCategories(tipo)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(cats => {
-      this.categories.set(cats.data ?? []);
+      this.categories.set(cats ?? []);
     });
   }
 

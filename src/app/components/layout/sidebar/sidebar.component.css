@@ -1,0 +1,12 @@
+.collapsed {
+  width: 60px !important;
+}
+
+.collapsed .list-group-item {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+}
+
+.collapsed .list-group-item i {
+  margin: 0 !important;
+}

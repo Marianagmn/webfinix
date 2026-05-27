@@ -21,16 +21,21 @@ export class CategoryList implements OnInit {
   readonly categories = signal<Category[]>([]);
   readonly isLoading = signal(false);
   readonly confirmDeleteId = signal<string | null>(null);
+  readonly currentPage = signal(1);
+  readonly totalPages = signal(1);
+  readonly totalItems = signal(0);
 
   ngOnInit() { this.loadCategories(); }
 
   loadCategories() {
     this.isLoading.set(true);
-    this.categoryService.getCategories()
+    this.categoryService.getCategories(undefined, this.currentPage(), 20)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (categories: Category[]) => {
           this.categories.set(categories ?? []);
+          this.totalItems.set(categories.length);
+          this.totalPages.set(Math.ceil(categories.length / 20));
           this.isLoading.set(false);
         },
         error: () => { this.toastr.error('No se pudieron cargar las categorías.'); this.isLoading.set(false); },
@@ -54,5 +59,24 @@ export class CategoryList implements OnInit {
 
   tipoColor(tipo: string): string {
     return tipo === 'ingreso' ? 'success' : tipo === 'gasto' ? 'danger' : 'info';
+  }
+
+  onPrevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.set(this.currentPage() - 1);
+      this.loadCategories();
+    }
+  }
+
+  onNextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.set(this.currentPage() + 1);
+      this.loadCategories();
+    }
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+    this.loadCategories();
   }
 }

@@ -21,6 +21,9 @@ export class AccountList implements OnInit {
   readonly accounts = signal<Account[]>([]);
   readonly isLoading = signal(false);
   readonly confirmDeleteId = signal<string | null>(null);
+  readonly currentPage = signal(1);
+  readonly totalPages = signal(1);
+  readonly totalItems = signal(0);
 
   ngOnInit() {
     this.loadAccounts();
@@ -29,11 +32,13 @@ export class AccountList implements OnInit {
   loadAccounts() {
     this.isLoading.set(true);
     this.accountService
-      .getAccounts()
+      .getAccounts(this.currentPage(), 20)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (accounts: Account[]) => {
           this.accounts.set(accounts ?? []);
+          this.totalItems.set(accounts.length);
+          this.totalPages.set(Math.ceil(accounts.length / 20));
           this.isLoading.set(false);
         },
         error: () => {
@@ -72,5 +77,24 @@ export class AccountList implements OnInit {
       efectivo: '💵', ahorro: '🏦', corriente: '🏧', credito: '💳', inversion: '📈',
     };
     return map[tipo] ?? '💰';
+  }
+
+  onPrevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.set(this.currentPage() - 1);
+      this.loadAccounts();
+    }
+  }
+
+  onNextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.set(this.currentPage() + 1);
+      this.loadAccounts();
+    }
+  }
+
+  onPageChange(page: number) {
+    this.currentPage.set(page);
+    this.loadAccounts();
   }
 }

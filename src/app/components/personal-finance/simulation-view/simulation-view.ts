@@ -33,7 +33,7 @@ export class SimulationView implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (res) => {
-          this.simulationData.set(res.data);
+          this.simulationData.set(res);
           this.isLoading.set(false);
         },
         error: () => {
