@@ -1,0 +1,27 @@
+/* ─── Profile page responsive ─────────────────────────────────────── */
+
+/* Avatar card: center horizontally on small screens */
+@media (max-width: 991px) {
+  /* Stack avatar on top of the form */
+  .row.g-4.justify-content-center > .col-lg-3,
+  .row.g-4.justify-content-center > .col-lg-7 {
+    width: 100%;
+  }
+}
+
+/* Tighten form padding on very small screens */
+@media (max-width: 480px) {
+  .card-body.p-4 {
+    padding: 1.25rem !important;
+  }
+
+  /* Stack action buttons full-width */
+  .d-flex.justify-content-end.gap-2 {
+    flex-direction: column-reverse;
+  }
+
+  .d-flex.justify-content-end.gap-2 .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,55 +1,83 @@
 <div class="auth-wrapper">
-  <div class="auth-card card p-4 p-md-5">
-    <div class="mb-4 text-center">
-      <h1 class="h4 mb-2">Bienvenido a Finix</h1>
-      <p class="text-muted mb-0">Accede a tu panel de gestión financiera.</p>
+  <div class="auth-card">
+
+    <!-- Brand -->
+    <div class="text-center mb-4">
+      <div class="auth-logo">
+        <i class="bi bi-graph-up-arrow"></i>
+      </div>
+      <h1>Bienvenido a Finix</h1>
+      <p class="subtitle">Accede a tu panel de gestión financiera</p>
     </div>
 
+    <hr class="auth-divider">
+
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- Email -->
       <div class="mb-3">
         <label for="email" class="form-label">Correo electrónico</label>
-        <input
-          id="email"
-          type="email"
-          class="form-control"
-          formControlName="email"
-          placeholder="usuario@finix.com"
-        />
+        <div class="input-icon-wrap">
+          <i class="bi bi-envelope"></i>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="usuario@finix.com"
+          />
+        </div>
         @if (loginForm.get('email')?.touched && loginForm.get('email')?.invalid) {
-          <div class="form-text text-danger">
-            @if (loginForm.get('email')?.errors?.['required']) {El correo es obligatorio.}
-            @if (loginForm.get('email')?.errors?.['email']) {Ingresa un correo válido.}
+          <div class="mt-1" style="font-size:.8rem;color:var(--fin-danger)">
+            @if (loginForm.get('email')?.errors?.['required']) {
+              <i class="bi bi-exclamation-circle me-1"></i>El correo es obligatorio.
+            }
+            @if (loginForm.get('email')?.errors?.['email']) {
+              <i class="bi bi-exclamation-circle me-1"></i>Ingresa un correo válido.
+            }
           </div>
         }
       </div>
 
-      <div class="mb-3">
-        <label for="password" class="form-label">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          class="form-control"
-          formControlName="password"
-          placeholder="••••••••"
-        />
+      <!-- Password -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <label for="password" class="form-label mb-0">Contraseña</label>
+          <a routerLink="/auth/forgot-password" style="font-size:.8rem;color:var(--fin-primary)">¿Olvidaste tu contraseña?</a>
+        </div>
+        <div class="input-icon-wrap mt-1">
+          <i class="bi bi-lock"></i>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="••••••••"
+          />
+        </div>
         @if (loginForm.get('password')?.touched && loginForm.get('password')?.invalid) {
-          <div class="form-text text-danger">
-            @if (loginForm.get('password')?.errors?.['required']) {La contraseña es obligatoria.}
-            @if (loginForm.get('password')?.errors?.['minlength']) {La contraseña debe tener al menos 6 caracteres.}
+          <div class="mt-1" style="font-size:.8rem;color:var(--fin-danger)">
+            @if (loginForm.get('password')?.errors?.['required']) {
+              <i class="bi bi-exclamation-circle me-1"></i>La contraseña es obligatoria.
+            }
+            @if (loginForm.get('password')?.errors?.['minlength']) {
+              <i class="bi bi-exclamation-circle me-1"></i>Mínimo 6 caracteres.
+            }
           </div>
         }
       </div>
 
-      <div class="d-grid gap-2">
-        <button type="submit" class="btn btn-primary" [disabled]="isLoading">
-          @if (!isLoading) { Iniciar Sesión }
-          @if (isLoading) { <span class="spinner-border spinner-border-sm"></span> }
-        </button>
-      </div>
+      <button type="submit" class="btn-auth" [disabled]="isLoading">
+        @if (!isLoading) {
+          <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+        }
+        @if (isLoading) {
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span>Verificando…
+        }
+      </button>
     </form>
 
-    <div class="text-center mt-4">
-      <p class="mb-0">¿No tienes cuenta? <a routerLink="/auth/register" class="text-decoration-none">Regístrate</a></p>
+    <div class="auth-footer">
+      ¿No tienes cuenta? <a routerLink="/auth/register">Regístrate gratis</a>
     </div>
   </div>
 </div>

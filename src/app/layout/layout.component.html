@@ -1,14 +1,26 @@
 <div class="layout-wrapper" [class.sidebar-collapsed]="!sidebarOpen()">
+
+  <!-- Mobile overlay: tap outside sidebar to close -->
+  @if (sidebarOpen()) {
+    <div class="sidebar-overlay" (click)="closeSidebar()" aria-hidden="true"></div>
+  }
+
+
   <aside class="sidebar">
     <div class="sidebar-header">
       <a class="sidebar-brand" routerLink="/dashboard">
-        <i class="bi bi-currency-dollar"></i>
-        <span class="brand-text">Finix</span>
+        <div class="brand-logo">
+          <i class="bi bi-graph-up-arrow"></i>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Finix</span>
+          <span class="brand-sub">Finance Platform</span>
+        </div>
       </a>
     </div>
 
     <nav class="sidebar-nav">
-      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}" class="nav-link">
         <i class="bi bi-speedometer2"></i>
         <span>Dashboard</span>
       </a>
@@ -20,15 +32,20 @@
         <i class="bi bi-tags"></i>
         <span>Categorías</span>
       </a>
+
+      <span class="nav-section-label">Finanzas</span>
+
       <a routerLink="/personal-finance" routerLinkActive="active" class="nav-link">
         <i class="bi bi-graph-up"></i>
-        <span>Finanzas personales</span>
+        <span>Personal</span>
       </a>
       <a routerLink="/business-finance" routerLinkActive="active" class="nav-link">
         <i class="bi bi-building"></i>
-        <span>Finanzas de negocio</span>
+        <span>Negocio</span>
       </a>
+
       <span class="nav-section-label">Cuenta</span>
+
       <a routerLink="/user/profile" routerLinkActive="active" class="nav-link">
         <i class="bi bi-person-circle"></i>
         <span>Perfil</span>
@@ -36,7 +53,7 @@
     </nav>
 
     <div class="sidebar-footer">
-      <button class="btn btn-outline-secondary btn-logout" type="button" (click)="logout()">
+      <button class="btn-logout" type="button" (click)="logout()">
         <i class="bi bi-box-arrow-right"></i>
         <span>Cerrar sesión</span>
       </button>
@@ -45,13 +62,21 @@
 
   <div class="main-wrapper">
     <header class="topbar">
-      <button class="btn btn-ghost btn-toggle-sidebar" type="button" (click)="toggleSidebar()" aria-label="Alternar menú lateral">
+      <button class="btn-toggle-sidebar" type="button" (click)="toggleSidebar()" aria-label="Alternar menú lateral">
         <i class="bi bi-list"></i>
       </button>
-      <div class="user-info">
+
+      <div class="topbar-right">
         @if (authStore.user()) {
-          <span class="user-name">{{ authStore.user()?.name }}</span>
-          <span class="user-role">{{ authStore.user()?.roles?.[0] }}</span>
+          <a routerLink="/user/profile" class="user-pill">
+            <div class="user-avatar">
+              {{ authStore.user()?.name?.charAt(0)?.toUpperCase() ?? 'U' }}
+            </div>
+            <div>
+              <div class="user-name">{{ authStore.user()?.name }}</div>
+              <div class="user-role">{{ authStore.user()?.roles?.[0] }}</div>
+            </div>
+          </a>
         }
       </div>
     </header>

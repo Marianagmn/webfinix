@@ -1,79 +1,146 @@
-<div class="container-fluid py-4">
+<div class="fin-page-header">
+  <h1>Mi Perfil</h1>
+  <p>Gestiona tu información personal y configuración de cuenta</p>
+</div>
+
+@if (businessRequiredMessage()) {
+  <div class="alert alert-warning d-flex align-items-start gap-3 mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+    <div>
+      {{ businessRequiredMessage() }}
+      <button type="button" class="btn-close btn-close-white float-end" style="filter:none;opacity:.6" (click)="businessRequiredMessage.set(null)"></button>
+    </div>
+  </div>
+}
+
+<!-- ── Loading state ── -->
+@if (isLoading()) {
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-sm border-0">
-        <div class="card-header bg-white border-0 pt-4">
-          <h4 class="fw-bold m-0">Mi Perfil</h4>
-        </div>
-        <div class="card-body">
-          @if (businessRequiredMessage()) {
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-              {{ businessRequiredMessage() }}
-              <button type="button" class="btn-close" (click)="businessRequiredMessage.set(null)"></button>
-            </div>
-          }
-          <div *ngIf="isLoading" class="text-center p-5">
-            <div class="spinner-border text-primary" role="status"></div>
+    <div class="col-lg-7">
+      <div class="card p-4">
+        <div class="skeleton mb-4" style="height:16px;width:40%"></div>
+        @for (i of [1,2,3]; track i) {
+          <div class="mb-3">
+            <div class="skeleton mb-2" style="height:12px;width:30%"></div>
+            <div class="skeleton" style="height:42px;width:100%;border-radius:8px"></div>
           </div>
+        }
+        <div class="skeleton mt-2" style="height:42px;width:120px;border-radius:8px;margin-left:auto"></div>
+      </div>
+    </div>
+  </div>
+}
 
-          <form *ngIf="!isLoading" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-            <div class="mb-3">
-              <label for="name" class="form-label">Nombre</label>
-              <input
-                type="text"
-                class="form-control"
-                id="name"
-                formControlName="name"
-                [class.is-invalid]="profileForm.get('name')?.touched && profileForm.get('name')?.invalid"
-              />
-              <div class="invalid-feedback" *ngIf="profileForm.get('name')?.touched && profileForm.get('name')?.errors?.['required']">
-                El nombre es requerido
+<!-- ── Profile form ── -->
+@if (!isLoading()) {
+  <div class="row g-4 justify-content-center">
+
+    <!-- Avatar card -->
+    <div class="col-lg-3">
+      <div class="card text-center p-4">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--fin-primary),var(--fin-accent));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#fff;margin:0 auto 1rem">
+          {{ profileForm.get('name')?.value?.charAt(0)?.toUpperCase() ?? 'U' }}
+        </div>
+        <div style="font-weight:700;font-size:1rem;color:var(--fin-text)">{{ profileForm.get('name')?.value || 'Tu nombre' }}</div>
+        <div style="font-size:.8rem;color:var(--fin-text-muted);margin-top:.25rem">{{ profileForm.get('email')?.value }}</div>
+        <hr style="border-color:var(--fin-border)">
+        <a routerLink="/user/change-password" class="btn btn-outline-secondary btn-sm w-100">
+          <i class="bi bi-shield-lock me-1"></i>Cambiar contraseña
+        </a>
+      </div>
+    </div>
+
+    <!-- Edit form -->
+    <div class="col-lg-7">
+      <div class="card">
+        <div class="card-header px-4 py-3">
+          <h6 class="mb-0" style="font-weight:700">Información Personal</h6>
+        </div>
+        <div class="card-body p-4">
+          <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+
+            <div class="mb-4">
+              <label for="name" class="form-label">Nombre completo</label>
+              <div style="position:relative">
+                <i class="bi bi-person" style="position:absolute;left:.875rem;top:50%;transform:translateY(-50%);color:var(--fin-text-muted);z-index:1"></i>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  formControlName="name"
+                  placeholder="Tu nombre"
+                  style="padding-left:2.5rem"
+                  [class.is-invalid]="profileForm.get('name')?.touched && profileForm.get('name')?.invalid"
+                />
               </div>
-              <div class="invalid-feedback" *ngIf="profileForm.get('name')?.touched && profileForm.get('name')?.errors?.['minlength']">
-                El nombre debe tener al menos 2 caracteres
+              @if (profileForm.get('name')?.touched && profileForm.get('name')?.errors?.['required']) {
+                <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>El nombre es requerido</div>
+              }
+              @if (profileForm.get('name')?.touched && profileForm.get('name')?.errors?.['minlength']) {
+                <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>Al menos 2 caracteres</div>
+              }
+            </div>
+
+            <div class="mb-4">
+              <label for="email" class="form-label">Correo electrónico</label>
+              <div style="position:relative">
+                <i class="bi bi-envelope" style="position:absolute;left:.875rem;top:50%;transform:translateY(-50%);color:var(--fin-text-muted);z-index:1"></i>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  formControlName="email"
+                  placeholder="correo@ejemplo.com"
+                  style="padding-left:2.5rem"
+                  [class.is-invalid]="profileForm.get('email')?.touched && profileForm.get('email')?.invalid"
+                />
+              </div>
+              @if (profileForm.get('email')?.touched && profileForm.get('email')?.errors?.['required']) {
+                <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>El email es requerido</div>
+              }
+              @if (profileForm.get('email')?.touched && profileForm.get('email')?.errors?.['email']) {
+                <div class="text-danger mt-1" style="font-size:.8rem"><i class="bi bi-exclamation-circle me-1"></i>Email inválido</div>
+              }
+            </div>
+
+            <div class="mb-4">
+              <label for="businessId" class="form-label">
+                ID de Negocio
+                <span style="margin-left:.5rem;padding:.15rem .5rem;border-radius:999px;background:var(--fin-bg-card-2);font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--fin-warning)">Opcional</span>
+              </label>
+              <div style="position:relative">
+                <i class="bi bi-building" style="position:absolute;left:.875rem;top:50%;transform:translateY(-50%);color:var(--fin-text-muted);z-index:1"></i>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="businessId"
+                  formControlName="businessId"
+                  placeholder="ID de tu negocio"
+                  style="padding-left:2.5rem"
+                />
+              </div>
+              <div style="font-size:.75rem;color:var(--fin-text-muted);margin-top:.4rem">
+                <i class="bi bi-info-circle me-1"></i>Vincula un negocio para habilitar el módulo de finanzas empresariales
               </div>
             </div>
 
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input
-                type="email"
-                class="form-control"
-                id="email"
-                formControlName="email"
-                [class.is-invalid]="profileForm.get('email')?.touched && profileForm.get('email')?.invalid"
-              />
-              <div class="invalid-feedback" *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.errors?.['required']">
-                El email es requerido
-              </div>
-              <div class="invalid-feedback" *ngIf="profileForm.get('email')?.touched && profileForm.get('email')?.errors?.['email']">
-                Email inválido
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <label for="businessId" class="form-label">ID de Negocio (Business Finance)</label>
-              <input
-                type="text"
-                class="form-control"
-                id="businessId"
-                formControlName="businessId"
-                placeholder="Ingresa tu ID de negocio para acceder a finanzas empresariales"
-              />
-              <small class="text-muted">
-                Si tienes un negocio, ingresa su ID aquí para habilitar el módulo de finanzas empresariales.
-              </small>
-            </div>
-
-            <div class="d-flex justify-content-end gap-2">
+            <div class="d-flex justify-content-end gap-2 pt-2">
+              <button type="button" class="btn btn-outline-secondary" (click)="profileForm.reset()">
+                Cancelar
+              </button>
               <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
-                <span *ngIf="!isSaving()">Guardar</span>
-                <span *ngIf="isSaving()" class="spinner-border spinner-border-sm"></span>
+                @if (!isSaving()) {
+                  <i class="bi bi-check2 me-1"></i>Guardar cambios
+                }
+                @if (isSaving()) {
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span> Guardando…
+                }
               </button>
             </div>
           </form>
         </div>
       </div>
     </div>
+
   </div>
-</div>
+}

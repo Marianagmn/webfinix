@@ -1,87 +1,185 @@
-<div class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="fw-bold m-0">Dashboard</h1>
-    <span class="text-muted">Bienvenido, {{ userName() }}</span>
+<div class="fin-page-header d-flex justify-content-between align-items-start flex-wrap gap-3">
+  <div>
+    <h1>Dashboard</h1>
+    <p>Bienvenido de vuelta, <strong style="color:var(--fin-primary)">{{ userName() }}</strong></p>
   </div>
-
-  <div *ngIf="isLoading" class="text-center p-5">
-    <div class="spinner-border text-primary" role="status"></div>
-  </div>
-
-  <div *ngIf="!isLoading">
-    <!-- Balance Summary -->
-    <div class="row mb-4">
-      <div class="col-md-4">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h6 class="text-muted mb-2">Balance Total</h6>
-            <h3 class="fw-bold mb-0">{{ totalBalance() | currency }}</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h6 class="text-muted mb-2">Cuentas</h6>
-            <h3 class="fw-bold mb-0">{{ accounts().length }}</h3>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card shadow-sm border-0">
-          <div class="card-body">
-            <h6 class="text-muted mb-2">Transacciones Recientes</h6>
-            <h3 class="fw-bold mb-0">{{ recentTransactions().length }}</h3>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Transactions -->
-    <div class="card shadow-sm border-0">
-      <div class="card-header bg-white border-0 pt-4 pb-0">
-        <div class="d-flex justify-content-between align-items-center">
-          <h5 class="fw-bold m-0">Transacciones Recientes</h5>
-          <a routerLink="/transactions" class="btn btn-sm btn-outline-primary">Ver todas</a>
-        </div>
-      </div>
-      <div class="card-body p-0 mt-3">
-        <div *ngIf="recentTransactions().length === 0" class="text-center p-5 text-muted">
-          <i class="bi bi-receipt fs-1"></i>
-          <p class="mt-2">No hay transacciones recientes.</p>
-        </div>
-        <div class="table-responsive" *ngIf="recentTransactions().length > 0">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
-              <tr>
-                <th>Fecha</th>
-                <th>Descripción</th>
-                <th>Tipo</th>
-                <th>Monto</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let txn of recentTransactions()">
-                <td>{{ txn.fecha | date:'shortDate' }}</td>
-                <td class="fw-semibold">{{ txn.descripcion }}</td>
-                <td>
-                  <span class="badge" [ngClass]="{
-                    'bg-success': txn.tipo === 'ingreso',
-                    'bg-danger': txn.tipo === 'gasto',
-                    'bg-secondary': txn.tipo === 'transferencia'
-                  }">{{ txn.tipo }}</span>
-                </td>
-                <td class="fw-bold" [ngClass]="{
-                  'text-success': txn.tipo === 'ingreso',
-                  'text-danger': txn.tipo === 'gasto'
-                }">
-                  {{ txn.tipo === 'gasto' ? '-' : (txn.tipo === 'ingreso' ? '+' : '') }}${{ txn.monto }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+  <div class="d-flex gap-2">
+    <a routerLink="/accounts" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-plus-circle me-1"></i> Nueva cuenta
+    </a>
+    <a routerLink="/personal-finance" class="btn btn-primary btn-sm">
+      <i class="bi bi-plus me-1"></i> Nueva transacción
+    </a>
   </div>
 </div>
+
+<!-- ── Loading state ── -->
+@if (isLoading()) {
+  <div class="row g-3 mb-4">
+    @for (i of [1,2,3,4]; track i) {
+      <div class="col-sm-6 col-xl-3">
+        <div class="fin-stat-card">
+          <div class="skeleton" style="height:14px;width:60%;margin-bottom:.75rem"></div>
+          <div class="skeleton" style="height:32px;width:80%"></div>
+        </div>
+      </div>
+    }
+  </div>
+  <div class="card" style="height:300px;display:flex;align-items:center;justify-content:center">
+    <div class="d-flex flex-column align-items-center gap-3">
+      <div class="spinner-border" style="width:2.5rem;height:2.5rem" role="status"></div>
+      <span style="color:var(--fin-text-muted);font-size:.875rem">Cargando datos financieros…</span>
+    </div>
+  </div>
+}
+
+<!-- ── Main content ── -->
+@if (!isLoading()) {
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+      <div class="fin-stat-card primary">
+        <div class="d-flex align-items-start justify-content-between">
+          <div>
+            <div class="fin-stat-label">Balance Total</div>
+            <div class="fin-stat-value">{{ formatCurrency(totalBalance()) }}</div>
+          </div>
+          <div class="fin-stat-icon primary"><i class="bi bi-wallet2"></i></div>
+        </div>
+        <div class="mt-2" style="font-size:.75rem;color:var(--fin-text-muted)">
+          <i class="bi bi-bank me-1"></i>{{ accounts().length }} cuenta(s)
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="fin-stat-card success">
+        <div class="d-flex align-items-start justify-content-between">
+          <div>
+            <div class="fin-stat-label">Ingresos</div>
+            <div class="fin-stat-value text-income">{{ formatCurrency(incomeMonth()) }}</div>
+          </div>
+          <div class="fin-stat-icon success"><i class="bi bi-arrow-up-right"></i></div>
+        </div>
+        <div class="mt-2" style="font-size:.75rem;color:var(--fin-text-muted)">Transacciones recientes</div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="fin-stat-card danger">
+        <div class="d-flex align-items-start justify-content-between">
+          <div>
+            <div class="fin-stat-label">Gastos</div>
+            <div class="fin-stat-value text-expense">{{ formatCurrency(expenseMonth()) }}</div>
+          </div>
+          <div class="fin-stat-icon danger"><i class="bi bi-arrow-down-right"></i></div>
+        </div>
+        <div class="mt-2" style="font-size:.75rem;color:var(--fin-text-muted)">Transacciones recientes</div>
+      </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+      <div class="fin-stat-card warning">
+        <div class="d-flex align-items-start justify-content-between">
+          <div>
+            <div class="fin-stat-label">Cuentas Activas</div>
+            <div class="fin-stat-value">{{ activeAccounts() }}</div>
+          </div>
+          <div class="fin-stat-icon warning"><i class="bi bi-credit-card"></i></div>
+        </div>
+        <div class="mt-2" style="font-size:.75rem;color:var(--fin-text-muted)">de {{ accounts().length }} total</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Transactions -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center py-3 px-4">
+      <div>
+        <h6 class="mb-0 fw-700" style="font-weight:700">Transacciones Recientes</h6>
+        <small style="color:var(--fin-text-muted)">Últimos movimientos registrados</small>
+      </div>
+      <a routerLink="/personal-finance" class="btn btn-outline-primary btn-sm">
+        Ver todas <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="card-body p-0">
+      @if (recentTransactions().length === 0) {
+        <div class="text-center py-5">
+          <div style="width:56px;height:56px;background:var(--fin-bg-card-2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+            <i class="bi bi-receipt" style="font-size:1.5rem;color:var(--fin-text-muted)"></i>
+          </div>
+          <p style="color:var(--fin-text-muted);margin:0;font-size:.875rem">No hay transacciones recientes</p>
+          <a routerLink="/personal-finance" class="btn btn-primary btn-sm mt-3">
+            <i class="bi bi-plus me-1"></i>Registrar transacción
+          </a>
+        </div>
+      }
+
+      @if (recentTransactions().length > 0) {
+        <div style="padding: 0.5rem 0">
+          @for (txn of recentTransactions(); track txn._id) {
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.25rem;border-bottom:1px solid var(--fin-border);transition:background var(--t)">
+              <div style="display:flex;align-items:center;gap:.875rem">
+                <div class="txn-icon"
+                  [class.income]="txn.tipo === 'ingreso'"
+                  [class.expense]="txn.tipo === 'gasto'"
+                  [class.transfer]="txn.tipo === 'transferencia'">
+                  <i class="bi"
+                    [class.bi-arrow-up-right]="txn.tipo === 'ingreso'"
+                    [class.bi-arrow-down-right]="txn.tipo === 'gasto'"
+                    [class.bi-arrow-left-right]="txn.tipo === 'transferencia'"></i>
+                </div>
+                <div>
+                  <div style="font-weight:600;font-size:.875rem;color:var(--fin-text)">{{ txn.descripcion }}</div>
+                  <div style="font-size:.75rem;color:var(--fin-text-muted)">
+                    {{ txn.fecha | date:'dd MMM yyyy' }}
+                    @if (txn.categoria) {
+                      <span style="margin-left:.5rem;padding:.1rem .5rem;border-radius:999px;background:var(--fin-bg-card-2);font-size:.7rem">{{ txn.categoria }}</span>
+                    }
+                  </div>
+                </div>
+              </div>
+              <div style="font-weight:700;font-size:.9rem;white-space:nowrap"
+                [class.text-income]="txn.tipo === 'ingreso'"
+                [class.text-expense]="txn.tipo === 'gasto'"
+                [class.text-transfer]="txn.tipo === 'transferencia'">
+                {{ txn.tipo === 'gasto' ? '−' : '+' }}{{ formatCurrency(txn.monto) }}
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Accounts Quick View -->
+  @if (accounts().length > 0) {
+    <div class="mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0" style="font-weight:700">Mis Cuentas</h6>
+        <a routerLink="/accounts" class="btn btn-outline-primary btn-sm">Gestionar</a>
+      </div>
+      <div class="row g-3">
+        @for (acc of accounts(); track acc.id) {
+          <div class="col-sm-6 col-lg-4">
+            <div class="card" style="padding:1.1rem 1.25rem">
+              <div class="d-flex align-items-center gap-3">
+                <div class="fin-stat-icon primary"><i class="bi bi-bank"></i></div>
+                <div style="min-width:0;flex:1">
+                  <div style="font-weight:600;font-size:.875rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ acc.nombre }}</div>
+                  <div style="font-size:.75rem;color:var(--fin-text-muted)">{{ acc.tipo }}</div>
+                </div>
+                <div style="font-weight:700;font-size:.95rem;white-space:nowrap"
+                  [class.text-income]="acc.balance >= 0"
+                  [class.text-expense]="acc.balance < 0">
+                  {{ formatCurrency(acc.balance) }}
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+}

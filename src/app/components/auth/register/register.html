@@ -1,68 +1,109 @@
 <div class="auth-wrapper">
-  <div class="auth-card card p-4 p-md-5">
-    <div class="mb-4 text-center">
-      <h1 class="h4 mb-2">Crear cuenta</h1>
-      <p class="text-muted mb-0">Regístrate para empezar a administrar tus finanzas.</p>
+  <div class="auth-card">
+
+    <!-- Brand -->
+    <div class="text-center mb-4">
+      <div class="auth-logo">
+        <i class="bi bi-person-plus"></i>
+      </div>
+      <h1>Crear cuenta</h1>
+      <p class="subtitle">Regístrate y empieza a controlar tus finanzas</p>
     </div>
 
+    <hr class="auth-divider">
+
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      <!-- Name -->
       <div class="mb-3">
         <label for="name" class="form-label">Nombre completo</label>
-        <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre completo" />
+        <div class="input-icon-wrap">
+          <i class="bi bi-person"></i>
+          <input id="name" type="text" class="form-control" formControlName="name" placeholder="Tu nombre completo" />
+        </div>
         @if (registerForm.get('name')?.touched && registerForm.get('name')?.invalid) {
-          <div class="form-text text-danger">El nombre es obligatorio.</div>
-        }
-      </div>
-
-      <div class="mb-3">
-        <label for="email" class="form-label">Correo electrónico</label>
-        <input id="email" type="email" class="form-control" formControlName="email" placeholder="usuario@finix.com" />
-        @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
-          <div class="form-text text-danger">
-            @if (registerForm.get('email')?.errors?.['required']) {El correo es obligatorio.}
-            @if (registerForm.get('email')?.errors?.['email']) {Ingresa un correo válido.}
+          <div class="mt-1" style="font-size:.8rem;color:var(--fin-danger)">
+            <i class="bi bi-exclamation-circle me-1"></i>El nombre es obligatorio.
           </div>
         }
       </div>
 
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Correo electrónico</label>
+        <div class="input-icon-wrap">
+          <i class="bi bi-envelope"></i>
+          <input id="email" type="email" class="form-control" formControlName="email" placeholder="usuario@finix.com" />
+        </div>
+        @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+          <div class="mt-1" style="font-size:.8rem;color:var(--fin-danger)">
+            @if (registerForm.get('email')?.errors?.['required']) {
+              <i class="bi bi-exclamation-circle me-1"></i>El correo es obligatorio.
+            }
+            @if (registerForm.get('email')?.errors?.['email']) {
+              <i class="bi bi-exclamation-circle me-1"></i>Ingresa un correo válido.
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Password -->
       <div class="mb-3">
         <label for="password" class="form-label">Contraseña</label>
-        <input id="password" type="password" class="form-control" formControlName="password" placeholder="••••••••" />
-        <div class="form-text text-muted">Mínimo 8 caracteres, mayúscula, minúscula y número.</div>
+        <div class="input-icon-wrap">
+          <i class="bi bi-lock"></i>
+          <input id="password" type="password" class="form-control" formControlName="password" placeholder="••••••••" />
+        </div>
+        <div style="font-size:.75rem;color:var(--fin-text-muted);margin-top:.35rem">
+          <i class="bi bi-info-circle me-1"></i>Mínimo 8 caracteres, mayúscula, minúscula y número.
+        </div>
         @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
-          <div class="form-text text-danger">
-            @if (registerForm.get('password')?.errors?.['required']) {La contraseña es obligatoria.}
-            @if (registerForm.get('password')?.errors?.['minlength']) {La contraseña debe tener al menos 8 caracteres.}
+          <div class="mt-1" style="font-size:.8rem;color:var(--fin-danger)">
+            @if (registerForm.get('password')?.errors?.['required']) {
+              <i class="bi bi-exclamation-circle me-1"></i>La contraseña es obligatoria.
+            }
+            @if (registerForm.get('password')?.errors?.['minlength']) {
+              <i class="bi bi-exclamation-circle me-1"></i>Mínimo 8 caracteres.
+            }
           </div>
         }
         @if (registerForm.errors?.['passwordComplexity'] && registerForm.get('password')?.touched) {
-          <div class="form-text text-danger">Debe incluir mayúscula, minúscula y número.</div>
-        }
-      </div>
-
-      <div class="mb-3">
-        <label for="passwordConfirm" class="form-label">Confirmar contraseña</label>
-        <input id="passwordConfirm" type="password" class="form-control" formControlName="passwordConfirm" placeholder="••••••••" />
-        @if (registerForm.get('passwordConfirm')?.touched && registerForm.get('passwordConfirm')?.invalid) {
-          <div class="form-text text-danger">
-            @if (registerForm.get('passwordConfirm')?.errors?.['required']) {La confirmación de contraseña es obligatoria.}
-            @if (registerForm.get('passwordConfirm')?.errors?.['minlength']) {La contraseña debe tener al menos 8 caracteres.}
+          <div class="mt-1" style="font-size:.8rem;color:var(--fin-danger)">
+            <i class="bi bi-exclamation-circle me-1"></i>Debe incluir mayúscula, minúscula y número.
           </div>
         }
       </div>
 
-      @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
-        <div class="form-text text-danger">Las contraseñas no coinciden.</div>
-      }
+      <!-- Confirm Password -->
+      <div class="mb-4">
+        <label for="passwordConfirm" class="form-label">Confirmar contraseña</label>
+        <div class="input-icon-wrap">
+          <i class="bi bi-shield-lock"></i>
+          <input id="passwordConfirm" type="password" class="form-control" formControlName="passwordConfirm" placeholder="••••••••" />
+        </div>
+        @if (registerForm.get('passwordConfirm')?.touched && registerForm.get('passwordConfirm')?.invalid) {
+          <div class="mt-1" style="font-size:.8rem;color:var(--fin-danger)">
+            <i class="bi bi-exclamation-circle me-1"></i>La confirmación es obligatoria.
+          </div>
+        }
+        @if (registerForm.errors?.['passwordMismatch'] && registerForm.touched) {
+          <div class="mt-1" style="font-size:.8rem;color:var(--fin-danger)">
+            <i class="bi bi-exclamation-circle me-1"></i>Las contraseñas no coinciden.
+          </div>
+        }
+      </div>
 
-      <button class="btn btn-primary w-100" type="submit" [disabled]="loading()">
-        @if (loading()) {Registrando...} @else {Crear cuenta}
+      <button class="btn-auth" type="submit" [disabled]="loading()">
+        @if (loading()) {
+          <span class="spinner-border spinner-border-sm me-2" role="status"></span>Creando cuenta…
+        } @else {
+          <i class="bi bi-person-check me-2"></i>Crear cuenta
+        }
       </button>
     </form>
 
-    <div class="mt-4 text-center text-muted">
+    <div class="auth-footer">
       ¿Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesión</a>
     </div>
   </div>
 </div>
-
