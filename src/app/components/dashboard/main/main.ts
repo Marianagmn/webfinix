@@ -85,60 +85,40 @@ export class Main implements OnInit {
 
   ngOnInit(): void {
     this.isLoading.set(true);
-    console.log('Loading dashboard data...');
     
     // Load accounts first with finalize
     this.accountService.getAccounts()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
-          console.log('Accounts request finalized');
-          console.log('Finalize executed - accounts loading complete');
+          this.isLoading.set(false);
         })
       )
       .subscribe({
         next: (accounts) => {
-          console.log('Accounts API response:', accounts);
-          console.log('Accounts array length:', accounts?.length || 0);
           this.accounts.set(accounts ?? []);
           this.totalBalance.set((accounts ?? []).reduce((sum: number, a: Account) => sum + (a.balance || 0), 0));
-          console.log('Total balance calculated:', this.totalBalance());
           
           // Then load transactions with finalize
           this.financeService.getTransactions({ page: 1, limit: 5 })
             .pipe(
               takeUntilDestroyed(this.destroyRef),
               finalize(() => {
-                console.log('Transactions request finalized');
-                console.log('Finalize executed - transactions loading complete');
-                console.log('isLoading before set to false:', this.isLoading());
                 this.isLoading.set(false);
-                console.log('isLoading after set to false:', this.isLoading());
               })
             )
             .subscribe({
               next: (transactions) => {
-                console.log('Transactions API response:', transactions);
-                console.log('Transactions data array:', transactions?.data);
-                console.log('Transactions data length:', transactions?.data?.length || 0);
                 this.recentTransactions.set((transactions?.data ?? []).slice(0, 5));
-                console.log('Recent transactions set:', this.recentTransactions());
               },
               error: (err) => {
-                console.error('Transactions load error:', err);
-                console.error('Error status:', err.status);
-                console.error('Error message:', err.message);
                 this.toastr.error('Error al cargar las transacciones');
               },
             });
         },
         error: (err) => {
-          console.error('Accounts load error:', err);
-          console.error('Error status:', err.status);
-          console.error('Error message:', err.message);
           this.toastr.error('Error al cargar las cuentas');
           this.isLoading.set(false);
-          console.log('isLoading set to false due to accounts error');
         },
       });
   }
