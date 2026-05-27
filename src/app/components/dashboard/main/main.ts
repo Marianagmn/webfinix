@@ -111,7 +111,7 @@ export class Main implements OnInit {
                 this.recentTransactions.set((transactions?.data ?? []).slice(0, 5));
               },
               error: (err) => {
-                this.toastr.error('Error al cargar las transacciones');
+                this.errorHandler.handleHttpError(err, 'Dashboard - load transactions');
               },
             });
         },

@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs/operators';
 import { UserService } from '../../../services/user.service';
 import { AuthStore } from '../../../store/auth.store';
-import { ToastrService } from 'ngx-toastr';
+import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 import { User } from '../../../models/user.model';
 
 @Component({
@@ -20,7 +20,7 @@ export class Profile implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly userService = inject(UserService);
   private readonly authStore = inject(AuthStore);
-  private readonly toastr = inject(ToastrService);
+  private readonly errorHandler = inject(ErrorHandlerService);
   private readonly route = inject(ActivatedRoute);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -83,11 +83,11 @@ export class Profile implements OnInit {
       )
       .subscribe({
       next: (user: User) => {
-        this.toastr.success('Perfil actualizado');
+        this.errorHandler.handleSuccess('Perfil actualizado');
         this.authStore.setUser(user);
       },
-      error: () => {
-        this.toastr.error('Error al actualizar perfil');
+      error: (err) => {
+        this.errorHandler.handleHttpError(err, 'Profile - update user');
       },
     });
   }

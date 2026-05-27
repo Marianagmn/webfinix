@@ -16,7 +16,7 @@ import { ErrorHandlerService } from '../../../core/services/error-handler.servic
 })
 export class AccountList implements OnInit {
   private readonly accountService = inject(AccountService);
-  private readonly toastr = inject(ToastrService);
+  private readonly errorHandler = inject(ErrorHandlerService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly accounts = signal<Account[]>([]);

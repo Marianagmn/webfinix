@@ -16,7 +16,7 @@ import { ErrorHandlerService } from '../../../core/services/error-handler.servic
 })
 export class CategoryList implements OnInit {
   private readonly categoryService = inject(CategoryService);
-  private readonly toastr = inject(ToastrService);
+  private readonly errorHandler = inject(ErrorHandlerService);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly categories = signal<Category[]>([]);
