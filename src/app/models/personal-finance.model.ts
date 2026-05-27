@@ -5,6 +5,7 @@ export type MetodoPago = 'efectivo' | 'transferencia' | 'tarjeta de credito' | '
 
 export interface PersonalFinance {
   id: string;
+  _id?: string;
   tipo: TransactionTipo;
   monto: number;
   moneda: string;
