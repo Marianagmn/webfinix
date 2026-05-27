@@ -115,11 +115,13 @@ export class TransactionCreate implements OnInit {
       : [];
 
     const tipo = raw.tipo as TransactionTipo;
+    
+    // Build clean payload without undefined values
     const payload: any = {
       tipo: tipo,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
-      categoria: raw.categoria || undefined,
+      categoria: raw.categoria,
       descripcion: raw.descripcion || undefined,
       fecha: raw.fecha ? new Date(raw.fecha).toISOString() : undefined,
       metodoPago: (raw.metodoPago as MetodoPago) || 'efectivo',
@@ -133,26 +135,26 @@ export class TransactionCreate implements OnInit {
       if (raw.cuentaDestinoId) payload.cuentaDestinoId = raw.cuentaDestinoId;
     } else if (tipo === 'ingreso') {
       if (raw.cuentaOrigenId) payload.cuentaOrigenId = raw.cuentaOrigenId;
-      // Never include cuentaDestinoId for income
-      delete payload.cuentaDestinoId;
     } else if (tipo === 'gasto') {
       if (raw.cuentaOrigenId) payload.cuentaOrigenId = raw.cuentaOrigenId;
-      // Never include cuentaDestinoId for expense
-      delete payload.cuentaDestinoId;
     }
+
+    console.log('Creating transaction with payload:', payload);
 
     this.financeService
       .createTransaction(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (response) => {
+          console.log('Transaction created successfully:', response);
           this.loading.set(false);
           this.toastr.success('Transacción creada correctamente');
           this.router.navigate(['/personal-finance']);
         },
         error: (err) => {
+          console.error('Transaction creation error:', err);
           this.loading.set(false);
-          const message = (err.error as any)?.message || 'Error al crear transacción';
+          const message = (err.error as any)?.message || err.message || 'Error al crear transacción';
           this.toastr.error(message);
         },
       });

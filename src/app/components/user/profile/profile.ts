@@ -44,10 +44,12 @@ export class Profile implements OnInit {
     });
 
     this.isLoading.set(true);
+    console.log('Loading user profile...');
     this.userService.getMe()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
       next: (user: User) => {
+        console.log('User profile loaded:', user);
         this.profileForm.patchValue({
           name: user.name || '',
           email: user.email || '',

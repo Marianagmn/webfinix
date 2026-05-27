@@ -7,7 +7,7 @@
 }
 
 .layout-wrapper.sidebar-collapsed {
-  grid-template-columns: 0 1fr;
+  grid-template-columns: 70px 1fr;
 }
 
 .sidebar {
@@ -21,6 +21,11 @@
 .sidebar-header {
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--finix-border);
+}
+
+.layout-wrapper.sidebar-collapsed .sidebar-header {
+  padding: 1.25rem 0.5rem;
+  justify-content: center;
 }
 
 .sidebar-brand {
@@ -102,6 +107,9 @@
 .btn-logout {
   width: 100%;
   justify-content: center;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .layout-wrapper.sidebar-collapsed .btn-logout span {

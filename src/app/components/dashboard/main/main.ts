@@ -32,6 +32,7 @@ export class Main implements OnInit {
 
   ngOnInit(): void {
     this.isLoading.set(true);
+    console.log('Loading dashboard data...');
     forkJoin({
       transactions: this.financeService.getTransactions({ page: 1, limit: 5 }),
       accounts: this.accountService.getAccounts(),
@@ -39,6 +40,7 @@ export class Main implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ transactions, accounts }) => {
+          console.log('Dashboard data loaded:', { transactions, accounts });
           this.recentTransactions.set((transactions.data || []).slice(0, 5));
           this.accounts.set(accounts || []);
           this.totalBalance.set((accounts || []).reduce((sum: number, a: Account) => sum + (a.balance || 0), 0));
