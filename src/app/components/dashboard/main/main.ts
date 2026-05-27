@@ -29,19 +29,23 @@ export class Main implements OnInit {
   readonly userName = computed(() => this.authStore.user()?.name ?? 'Usuario');
 
   ngOnInit(): void {
+    this.isLoading.set(true);
     forkJoin({
-      transactions: this.financeService.getTransactions(),
+      transactions: this.financeService.getTransactions({ page: 1, limit: 5 }),
       accounts: this.accountService.getAccounts(),
     })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ transactions, accounts }) => {
           this.recentTransactions.set((transactions.data || []).slice(0, 5));
-          this.accounts.set(accounts);
-          this.totalBalance.set(accounts.reduce((sum: number, a: Account) => sum + a.balance, 0));
+          this.accounts.set(accounts || []);
+          this.totalBalance.set((accounts || []).reduce((sum: number, a: Account) => sum + (a.balance || 0), 0));
           this.isLoading.set(false);
         },
-        error: () => this.isLoading.set(false),
+        error: (err) => {
+          console.error('Dashboard load error:', err);
+          this.isLoading.set(false);
+        },
       });
   }
 }

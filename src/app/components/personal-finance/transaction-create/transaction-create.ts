@@ -32,7 +32,7 @@ export class TransactionCreate implements OnInit {
   readonly accounts = signal<Account[]>([]);
 
   readonly tipos: TransactionTipo[] = ['ingreso', 'gasto', 'transferencia'];
-  readonly metodosPago: MetodoPago[] = ['efectivo', 'transferencia', 'tarjeta de credito', 'tarjeta debito', 'cheque', 'otro'];
+  readonly metodosPago: MetodoPago[] = ['efectivo', 'transferencia', 'tarjeta_credito', 'tarjeta_debito', 'cheque', 'otro'];
 
   readonly form = this.fb.group({
     tipo: ['ingreso' as TransactionTipo, Validators.required],
@@ -47,6 +47,28 @@ export class TransactionCreate implements OnInit {
     tags: [''],
     esAhorro: [false],
   });
+
+  // Dynamic validators based on transaction type
+  constructor() {
+    this.setupDynamicValidators();
+  }
+
+  private setupDynamicValidators() {
+    this.form.get('tipo')?.valueChanges.subscribe(tipo => {
+      const cuentaOrigenId = this.form.get('cuentaOrigenId');
+      const cuentaDestinoId = this.form.get('cuentaDestinoId');
+
+      if (tipo === 'transferencia') {
+        cuentaOrigenId?.setValidators([Validators.required]);
+        cuentaDestinoId?.setValidators([Validators.required]);
+      } else {
+        cuentaOrigenId?.clearValidators();
+        cuentaDestinoId?.clearValidators();
+      }
+      cuentaOrigenId?.updateValueAndValidity();
+      cuentaDestinoId?.updateValueAndValidity();
+    });
+  }
 
   ngOnInit() {
     this.loadCategories();
@@ -92,19 +114,28 @@ export class TransactionCreate implements OnInit {
           .filter(Boolean)
       : [];
 
-    const payload = {
-      tipo: raw.tipo!,
+    const tipo = raw.tipo as TransactionTipo;
+    const payload: any = {
+      tipo: tipo,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
       categoria: raw.categoria || undefined,
-      cuentaOrigenId: raw.cuentaOrigenId || undefined,
-      cuentaDestinoId: raw.cuentaDestinoId || undefined,
       descripcion: raw.descripcion || undefined,
       fecha: raw.fecha ? new Date(raw.fecha).toISOString() : undefined,
       metodoPago: (raw.metodoPago as MetodoPago) || 'efectivo',
       tags: tagsArray,
       esAhorro: raw.esAhorro ?? false,
     };
+
+    // Only include account fields based on transaction type
+    if (tipo === 'transferencia') {
+      payload.cuentaOrigenId = raw.cuentaOrigenId || undefined;
+      payload.cuentaDestinoId = raw.cuentaDestinoId || undefined;
+    } else if (tipo === 'ingreso') {
+      payload.cuentaOrigenId = raw.cuentaOrigenId || undefined;
+    } else if (tipo === 'gasto') {
+      payload.cuentaOrigenId = raw.cuentaOrigenId || undefined;
+    }
 
     this.financeService
       .createTransaction(payload)
