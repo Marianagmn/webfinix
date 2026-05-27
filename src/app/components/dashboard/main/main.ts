@@ -8,6 +8,7 @@ import { AccountService } from '../../../services/account.service';
 import { AuthStore } from '../../../store/auth.store';
 import { PersonalFinance } from '../../../models/transaction.model';
 import { Account } from '../../../models/account.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-main',
@@ -21,6 +22,7 @@ export class Main implements OnInit {
   private readonly accountService = inject(AccountService);
   private readonly authStore = inject(AuthStore);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly toastr = inject(ToastrService);
 
   readonly isLoading = signal(true);
   readonly recentTransactions = signal<PersonalFinance[]>([]);
@@ -44,6 +46,7 @@ export class Main implements OnInit {
         },
         error: (err) => {
           console.error('Dashboard load error:', err);
+          this.toastr.error('Error al cargar el dashboard');
           this.isLoading.set(false);
         },
       });

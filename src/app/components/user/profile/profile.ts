@@ -43,6 +43,7 @@ export class Profile implements OnInit {
       }
     });
 
+    this.isLoading.set(true);
     this.userService.getMe()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

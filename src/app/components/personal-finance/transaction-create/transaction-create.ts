@@ -129,12 +129,16 @@ export class TransactionCreate implements OnInit {
 
     // Only include account fields based on transaction type
     if (tipo === 'transferencia') {
-      payload.cuentaOrigenId = raw.cuentaOrigenId || undefined;
-      payload.cuentaDestinoId = raw.cuentaDestinoId || undefined;
+      if (raw.cuentaOrigenId) payload.cuentaOrigenId = raw.cuentaOrigenId;
+      if (raw.cuentaDestinoId) payload.cuentaDestinoId = raw.cuentaDestinoId;
     } else if (tipo === 'ingreso') {
-      payload.cuentaOrigenId = raw.cuentaOrigenId || undefined;
+      if (raw.cuentaOrigenId) payload.cuentaOrigenId = raw.cuentaOrigenId;
+      // Never include cuentaDestinoId for income
+      delete payload.cuentaDestinoId;
     } else if (tipo === 'gasto') {
-      payload.cuentaOrigenId = raw.cuentaOrigenId || undefined;
+      if (raw.cuentaOrigenId) payload.cuentaOrigenId = raw.cuentaOrigenId;
+      // Never include cuentaDestinoId for expense
+      delete payload.cuentaDestinoId;
     }
 
     this.financeService

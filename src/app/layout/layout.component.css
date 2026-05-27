@@ -32,7 +32,7 @@
   text-decoration: none;
 }
 
-.layout-wrapper.sidebar-collapsed .sidebar-brand span {
+.layout-wrapper.sidebar-collapsed .sidebar-brand .brand-text {
   display: none;
 }
 

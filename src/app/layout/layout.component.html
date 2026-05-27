@@ -3,42 +3,42 @@
     <div class="sidebar-header">
       <a class="sidebar-brand" routerLink="/dashboard">
         <i class="bi bi-currency-dollar"></i>
-        <span>Finix</span>
+        <span class="brand-text">Finix</span>
       </a>
     </div>
 
     <nav class="sidebar-nav">
       <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
         <i class="bi bi-speedometer2"></i>
-        Dashboard
+        <span>Dashboard</span>
       </a>
       <a routerLink="/accounts" routerLinkActive="active" class="nav-link">
         <i class="bi bi-wallet2"></i>
-        Cuentas
+        <span>Cuentas</span>
       </a>
       <a routerLink="/categories" routerLinkActive="active" class="nav-link">
         <i class="bi bi-tags"></i>
-        Categorías
+        <span>Categorías</span>
       </a>
       <a routerLink="/personal-finance" routerLinkActive="active" class="nav-link">
         <i class="bi bi-graph-up"></i>
-        Finanzas personales
+        <span>Finanzas personales</span>
       </a>
       <a routerLink="/business-finance" routerLinkActive="active" class="nav-link">
         <i class="bi bi-building"></i>
-        Finanzas de negocio
+        <span>Finanzas de negocio</span>
       </a>
       <span class="nav-section-label">Cuenta</span>
       <a routerLink="/user/profile" routerLinkActive="active" class="nav-link">
         <i class="bi bi-person-circle"></i>
-        Perfil
+        <span>Perfil</span>
       </a>
     </nav>
 
     <div class="sidebar-footer">
       <button class="btn btn-outline-secondary btn-logout" type="button" (click)="logout()">
         <i class="bi bi-box-arrow-right"></i>
-        Cerrar sesión
+        <span>Cerrar sesión</span>
       </button>
     </div>
   </aside>
