@@ -94,6 +94,10 @@ export class TransactionCreate implements OnInit {
   }
 
   onSubmit() {
+    if (this.loading()) {
+      return; // Prevent double submission
+    }
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.toastr.error('Por favor completa todos los campos requeridos');
@@ -116,7 +120,7 @@ export class TransactionCreate implements OnInit {
       : [];
 
     const tipo = raw.tipo as TransactionTipo;
-    
+
     // Build clean payload - only include fields with valid values
     const payload: any = {
       tipo: tipo,

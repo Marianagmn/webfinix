@@ -7,6 +7,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { BusinessFinanceService } from '../../../services/business-finance.service';
 import { CreateBusinessFinanceDto, BusinessFinance } from '../../../models/business-finance.model';
+import { AuthStore } from '../../../store/auth.store';
 
 @Component({
   selector: 'app-business-create',
@@ -21,14 +22,14 @@ export class BusinessCreate implements OnInit {
   private readonly router = inject(Router);
   private readonly toastr = inject(ToastrService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly authStore = inject(AuthStore);
 
   readonly isSaving = signal(false);
 
   businessForm: FormGroup = this.fb.group({
-    tipo: ['cobrar' as const, Validators.required],
+    tipo: ['ingreso' as const, Validators.required],
     monto: [null as number | null, [Validators.required, Validators.min(0.01)]],
     moneda: ['COP'],
-    categoria: ['', Validators.required],
     descripcion: ['', [Validators.required, Validators.minLength(3)]],
     fecha: ['', Validators.required],
     terceroId: [''],
@@ -36,7 +37,7 @@ export class BusinessCreate implements OnInit {
     recurrencia: this.fb.group({
       frecuencia: ['mensual'],
       diaCiclo: [null],
-      fechaInicio: ['', Validators.required],
+      fechaInicio: [''],
       fechaFin: [''],
       totalOcurrencias: [null],
     }),
@@ -49,7 +50,25 @@ export class BusinessCreate implements OnInit {
   }
 
   onSubmit(): void {
+    console.log('onSubmit called, form valid:', !this.businessForm.invalid);
+    console.log('Form value:', this.businessForm.value);
+    console.log('Form controls status:', {
+      tipo: this.businessForm.get('tipo')?.valid,
+      monto: this.businessForm.get('monto')?.valid,
+      moneda: this.businessForm.get('moneda')?.valid,
+      descripcion: this.businessForm.get('descripcion')?.valid,
+      fecha: this.businessForm.get('fecha')?.valid,
+    });
+
     if (this.businessForm.invalid) {
+      console.log('Form is invalid, errors:', this.businessForm.errors);
+      console.log('Individual field errors:', {
+        tipo: this.businessForm.get('tipo')?.errors,
+        monto: this.businessForm.get('monto')?.errors,
+        moneda: this.businessForm.get('moneda')?.errors,
+        descripcion: this.businessForm.get('descripcion')?.errors,
+        fecha: this.businessForm.get('fecha')?.errors,
+      });
       this.businessForm.markAllAsTouched();
       return;
     }
@@ -57,27 +76,40 @@ export class BusinessCreate implements OnInit {
     this.isSaving.set(true);
     const raw = this.businessForm.value;
 
-    const payload: CreateBusinessFinanceDto = {
+    const user = this.authStore.user();
+    if (!user?.id) {
+      this.toastr.error('Usuario no autenticado');
+      this.isSaving.set(false);
+      return;
+    }
+
+    const payload: any = {
       tipo: raw.tipo,
       monto: raw.monto!,
       moneda: raw.moneda || 'COP',
-      categoria: raw.categoria,
       descripcion: raw.descripcion,
       fecha: raw.fecha,
       terceroId: raw.terceroId || undefined,
       esRecurrente: raw.esRecurrente,
       recurrencia: raw.esRecurrente ? raw.recurrencia : undefined,
+      userId: user.id,
     };
 
+    console.log('Creating business transaction with payload:', payload);
     this.service.createTransaction(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
+        next: (response) => {
+          console.log('Business transaction created successfully:', response);
           this.toastr.success('Transacción empresarial creada');
           this.router.navigate(['/business-finance']);
         },
-        error: () => {
-          this.toastr.error('Error al crear transacción');
+        error: (err) => {
+          console.error('Error creating business transaction:', err);
+          console.error('Error status:', err.status);
+          console.error('Error body:', err.error);
+          const message = (err.error as any)?.message || err.message || 'Error al crear transacción';
+          this.toastr.error(message);
           this.isSaving.set(false);
         },
       });

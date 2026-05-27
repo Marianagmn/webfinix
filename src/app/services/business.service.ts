@@ -22,7 +22,14 @@ export class BusinessService {
    */
   create(data: CreateBusinessDto): Observable<Business> {
     return this.http.post<ApiResponse<Business>>(`${this.base}`, data).pipe(
-      map(response => response.data)
+      map(response => {
+        const data = response.data as any;
+        // Normalize _id to id
+        return {
+          ...data,
+          id: data._id || data.id
+        };
+      })
     );
   }
 

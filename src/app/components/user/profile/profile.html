@@ -122,8 +122,8 @@
                       formControlName="businessId"
                       style="padding-left:2.5rem"
                     >
-                      <option [value]="null">-- Selecciona un negocio --</option>
-                      @for (business of businesses(); track business.id) {
+                      <option value="">-- Selecciona un negocio --</option>
+                      @for (business of businesses(); track $index) {
                         <option [value]="business.id">
                           {{ business.nombre }} (NIT: {{ business.nit }})
                         </option>
@@ -131,7 +131,7 @@
                     </select>
                   }
                 </div>
-                @if (profileForm.get('businessId')?.value && businesses().length > 0) {
+                @if (profileForm.get('businessId')?.value && businesses().length > 0 && profileForm.get('businessId')?.value !== '') {
                   <a
                     [routerLink]="['/user/business/edit', profileForm.get('businessId')?.value]"
                     class="btn btn-outline-secondary"

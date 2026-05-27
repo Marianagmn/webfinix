@@ -9,6 +9,7 @@ import { DestroyRef } from '@angular/core';
 import { BusinessFinanceService } from '../../../services/business-finance.service';
 import { BusinessFinance, BusinessTransactionEstado } from '../../../models/business-finance.model';
 import { PaginationMeta } from '../../../models/api-response.model';
+import { AuthStore } from '../../../store/auth.store';
 
 type BusinessFinanceStatus = BusinessTransactionEstado;
 
@@ -23,6 +24,7 @@ export class BusinessList implements OnInit {
   private readonly service = inject(BusinessFinanceService);
   private readonly toastr = inject(ToastrService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly authStore = inject(AuthStore);
 
   readonly transactions = signal<BusinessFinance[]>([]);
   readonly pagination = signal<PaginationMeta | null>(null);
@@ -38,6 +40,7 @@ export class BusinessList implements OnInit {
   readonly currentPage = computed(() => this.pagination()?.pagination?.page ?? 1);
   readonly totalPages = computed(() => this.pagination()?.pagination?.totalPages ?? 1);
   readonly showDeleteModal = computed(() => !!this.deleteTargetId());
+  readonly isApprover = computed(() => this.authStore.user()?.roles?.includes('aprobador') ?? false);
 
   ngOnInit(): void {
     this.loadTransactions();

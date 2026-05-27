@@ -48,7 +48,7 @@ export class BusinessEdit implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
-    if (!id) {
+    if (!id || id === 'undefined' || id === '') {
       this.toastr.error('ID de negocio no proporcionado');
       this.router.navigate(['/user/profile']);
       return;

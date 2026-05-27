@@ -1,1 +1,129 @@
-<p>business-create works!</p>
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+
+      <!-- Header -->
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <a routerLink="/business-finance" class="btn btn-outline-secondary btn-sm">
+          ← Volver
+        </a>
+        <h2 class="h4 mb-0 fw-semibold">Nueva Transacción Empresarial</h2>
+      </div>
+
+      <!-- Form Card -->
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <form [formGroup]="businessForm" (ngSubmit)="onSubmit()">
+
+            <!-- Tipo -->
+            <div class="mb-3">
+              <label class="form-label fw-medium">Tipo de transacción <span class="text-danger">*</span></label>
+              <select class="form-select" formControlName="tipo" [class.is-invalid]="businessForm.get('tipo')?.touched && businessForm.get('tipo')?.invalid">
+                <option value="ingreso">Ingreso</option>
+                <option value="gasto">Gasto</option>
+                <option value="transferencia">Transferencia</option>
+                <option value="factura_venta">Factura Venta</option>
+                <option value="factura_compra">Factura Compra</option>
+                <option value="nomina">Nómina</option>
+                <option value="activo_fijo">Activo Fijo</option>
+              </select>
+              <div class="invalid-feedback">El tipo es requerido</div>
+            </div>
+
+            <div class="row g-3">
+              <!-- Monto -->
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Monto <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <select class="input-group-text border-end-0 bg-white" formControlName="moneda" style="max-width:90px">
+                    <option value="COP">COP</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                  </select>
+                  <input type="number" class="form-control" formControlName="monto"
+                    placeholder="0.00" step="0.01" min="0.01"
+                    [class.is-invalid]="businessForm.get('monto')?.invalid && businessForm.get('monto')?.touched">
+                  <div class="invalid-feedback">El monto es requerido y debe ser mayor a 0.</div>
+                </div>
+              </div>
+
+              <!-- Fecha -->
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Fecha <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" formControlName="fecha"
+                  [class.is-invalid]="businessForm.get('fecha')?.invalid && businessForm.get('fecha')?.touched">
+                <div class="invalid-feedback">La fecha es requerida.</div>
+              </div>
+
+              <!-- Tercero -->
+              <div class="col-md-6">
+                <label class="form-label fw-medium">Tercero (opcional)</label>
+                <input type="text" class="form-control" formControlName="terceroId"
+                  placeholder="ID del tercero">
+              </div>
+
+              <!-- Descripción -->
+              <div class="col-12">
+                <label class="form-label fw-medium">Descripción <span class="text-danger">*</span></label>
+                <textarea class="form-control" formControlName="descripcion"
+                  rows="3" placeholder="Describe la transacción..."
+                  [class.is-invalid]="businessForm.get('descripcion')?.invalid && businessForm.get('descripcion')?.touched"></textarea>
+                <div class="invalid-feedback">La descripción es requerida (mínimo 3 caracteres).</div>
+              </div>
+
+              <!-- Recurrencia -->
+              <div class="col-12">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="esRecurrente" formControlName="esRecurrente">
+                  <label class="form-check-label" for="esRecurrente">Transacción recurrente</label>
+                </div>
+              </div>
+
+              <!-- Campos de recurrencia -->
+              @if (businessForm.get('esRecurrente')?.value) {
+                <div class="col-12 mt-3 p-3 bg-light rounded">
+                  <h6 class="mb-3">Configuración de recurrencia</h6>
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <label class="form-label">Frecuencia</label>
+                      <select class="form-select" formControlName="recurrencia.frecuencia">
+                        <option value="diaria">Diaria</option>
+                        <option value="semanal">Semanal</option>
+                        <option value="mensual">Mensual</option>
+                        <option value="anual">Anual</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Fecha inicio</label>
+                      <input type="date" class="form-control" formControlName="recurrencia.fechaInicio">
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label">Fecha fin (opcional)</label>
+                      <input type="date" class="form-control" formControlName="recurrencia.fechaFin">
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+              <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary" [disabled]="isSaving()">
+                @if (!isSaving()) {
+                  <i class="bi bi-plus-circle me-1"></i>Crear transacción
+                }
+                @if (isSaving()) {
+                  <span class="spinner-border spinner-border-sm me-2"></span> Creando…
+                }
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

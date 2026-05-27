@@ -40,12 +40,17 @@ export class Profile implements OnInit {
   });
 
   ngOnInit(): void {
-    // Check for business_required query param from guard
+    // Check for business_required or business_created query param from guard
     this.route.queryParams
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(params => {
       if (params['message'] === 'business_required') {
         this.businessRequiredMessage.set('Necesitas configurar una empresa para acceder a las funciones de finanzas empresariales.');
+      }
+      if (params['message'] === 'business_created') {
+        this.businessRequiredMessage.set('Negocio creado exitosamente. Por favor selecciónalo en el campo de Negocio.');
+        // Reload businesses when a new business was created
+        this.loadBusinesses();
       }
     });
 
@@ -62,6 +67,8 @@ export class Profile implements OnInit {
       )
       .subscribe({
       next: (user: User) => {
+        console.log('User data loaded:', user);
+        console.log('User businessId:', user.businessId);
         this.profileForm.patchValue({
           name: user.name || '',
           email: user.email || '',
@@ -74,6 +81,11 @@ export class Profile implements OnInit {
     });
 
     // Load active businesses
+    this.loadBusinesses();
+  }
+
+  loadBusinesses(): void {
+    this.isLoadingBusinesses.set(true);
     this.businessService.listActive()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
@@ -83,9 +95,11 @@ export class Profile implements OnInit {
       )
       .subscribe({
         next: (businesses: Business[]) => {
+          console.log('Active businesses loaded:', businesses);
           this.businesses.set(businesses);
         },
         error: (err) => {
+          console.error('Error loading businesses:', err);
           this.errorHandler.handleHttpError(err, 'Profile - load businesses');
         },
       });
@@ -100,13 +114,13 @@ export class Profile implements OnInit {
     this.isSaving.set(true);
     const formValue = this.profileForm.value;
 
-    // Si businessId es null o string vacío, no enviarlo
+    // Si businessId es null, string vacío, o "undefined", no enviarlo
     const payload: any = {
       name: formValue.name,
       email: formValue.email,
     };
 
-    if (formValue.businessId) {
+    if (formValue.businessId && formValue.businessId !== '' && formValue.businessId !== 'undefined') {
       payload.businessId = formValue.businessId;
     }
 

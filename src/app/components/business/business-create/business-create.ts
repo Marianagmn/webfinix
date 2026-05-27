@@ -6,6 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { BusinessService } from '../../../services/business.service';
+import { UserService } from '../../../services/user.service';
+import { AuthStore } from '../../../store/auth.store';
 import { CreateBusinessDto } from '../../../models/business.model';
 
 @Component({
@@ -18,6 +20,8 @@ import { CreateBusinessDto } from '../../../models/business.model';
 export class BusinessCreate implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly service = inject(BusinessService);
+  private readonly userService = inject(UserService);
+  private readonly authStore = inject(AuthStore);
   private readonly router = inject(Router);
   private readonly toastr = inject(ToastrService);
   private readonly destroyRef = inject(DestroyRef);
@@ -76,13 +80,33 @@ export class BusinessCreate implements OnInit {
     this.service.create(payload)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => {
-          this.toastr.success('Negocio creado exitosamente');
-          this.router.navigate(['/user/profile'], {
-            queryParams: { message: 'business_created' }
-          });
+        next: (business) => {
+          console.log('Business created with ID:', business.id);
+          // Automatically link the business to the user's profile
+          this.userService.updateMe({ businessId: business.id })
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: (updatedUser) => {
+                console.log('User profile updated:', updatedUser);
+                console.log('Updated user businessId:', updatedUser.businessId);
+                this.authStore.setUser(updatedUser);
+                this.toastr.success('Negocio creado y vinculado exitosamente');
+                this.isSaving.set(false);
+                // Navigate to business-finance directly since businessId is now set
+                this.router.navigate(['/business-finance']);
+              },
+              error: (err) => {
+                console.error('Error updating user profile:', err);
+                // Even if linking fails, the business was created
+                this.toastr.success('Negocio creado exitosamente. Por favor selecciónalo en tu perfil.');
+                this.router.navigate(['/user/profile'], {
+                  queryParams: { message: 'business_created' }
+                });
+              },
+            });
         },
-        error: () => {
+        error: (err) => {
+          console.error('Error creating business:', err);
           this.toastr.error('Error al crear negocio');
           this.isSaving.set(false);
         },

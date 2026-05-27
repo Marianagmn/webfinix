@@ -5,7 +5,9 @@
     <p class="text-muted mb-0">Gestiona facturas, pagos y transacciones empresariales.</p>
   </div>
   <div class="d-flex gap-2">
-    <a routerLink="approvals" class="btn btn-outline-primary">Aprobaciones pendientes</a>
+    @if (isApprover()) {
+      <a routerLink="approvals" class="btn btn-outline-primary">Aprobaciones pendientes</a>
+    }
     <a routerLink="create" class="btn btn-primary">Nueva transacción</a>
   </div>
 </section>

@@ -39,6 +39,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   // Métodos que requieren CSRF token
   const needsCsrf = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method);
 
+  // Debug logging for business-finance requests
+  if (req.url.includes('business-finance')) {
+    console.log('Business-finance request:', {
+      url: req.url,
+      method: req.method,
+      hasToken: !!token,
+      tokenPrefix: token ? token.substring(0, 20) + '...' : 'none',
+      hasCsrf: !!csrfToken,
+      needsCsrf,
+      fullToken: token ? token : 'NO TOKEN',
+    });
+  }
+
   // C-01: withCredentials en TODAS las requests → las cookies httpOnly viajan automáticamente
   const authReq = req.clone({
     withCredentials: true,
@@ -47,6 +60,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
       ...(csrfToken && needsCsrf ? { 'x-csrf-token': csrfToken } : {}),
     },
   });
+
+  // Debug logging for business-finance requests after clone
+  if (req.url.includes('business-finance')) {
+    console.log('Business-finance request headers:', authReq.headers);
+  }
 
   return next(authReq).pipe(
     catchError((err: unknown) => {
